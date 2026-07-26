@@ -1,199 +1,242 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Activity, Server, Zap, Cpu, HardDrive, Wifi, RefreshCw, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import {
+  Activity,
+  Server,
+  Zap,
+  Wifi,
+  RefreshCw,
+  ShieldCheck,
+  Users,
+  Radio,
+  AlertTriangle,
+  Globe,
+} from 'lucide-react';
+import { useBotStatus } from '@/lib/use-bot-status';
+import { formatCompact, formatUptime } from '@/lib/format';
+
+function pingQuality(ping: number): { label: string; color: string } {
+  if (ping < 0) return { label: 'Chưa có dữ liệu', color: 'text-gray-400' };
+  if (ping <= 60) return { label: 'Phản hồi cực nhanh', color: 'text-mimi-green' };
+  if (ping <= 150) return { label: 'Ổn định', color: 'text-mimi-cyan' };
+  if (ping <= 300) return { label: 'Hơi chậm', color: 'text-mimi-amber' };
+  return { label: 'Chậm — đang theo dõi', color: 'text-mimi-pink' };
+}
 
 export default function StatusPage() {
-  const [lastRefreshed, setLastRefreshed] = useState<string>('Vừa xong');
-  const [ping, setPing] = useState<number>(24);
-  const [memory, setMemory] = useState<number>(86.4);
-  const [activeVoice, setActiveVoice] = useState<number>(18);
+  const { status, error, loading, lastUpdated, refresh } = useBotStatus(15000);
 
-  const handleRefresh = () => {
-    setPing(Math.floor(Math.random() * (35 - 18 + 1)) + 18);
-    setMemory(Number((80 + Math.random() * 15).toFixed(1)));
-    setActiveVoice(Math.floor(Math.random() * (25 - 15 + 1)) + 15);
-    setLastRefreshed(new Date().toLocaleTimeString('vi-VN'));
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handleRefresh();
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
+  const online = status?.online === true;
+  const quality = pingQuality(status?.wsPing ?? -1);
 
   return (
-    <div className="min-h-screen py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Header Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-white/10 pb-8">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-mimi-green/10 text-mimi-green text-xs font-semibold uppercase tracking-wider">
-              <Activity className="w-3.5 h-3.5 animate-pulse" />
-              <span>Hệ Thống Đang Hoạt Động Ổn Định</span>
+    <div className="min-h-screen py-14">
+      <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
+        {/* ── Đầu trang ─────────────────────────────────────────── */}
+        <div className="flex flex-col justify-between gap-6 border-b border-white/10 pb-8 sm:flex-row sm:items-center">
+          <div className="space-y-3">
+            <div
+              className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider ${
+                loading
+                  ? 'bg-white/5 text-gray-400'
+                  : online
+                    ? 'bg-mimi-green/10 text-mimi-green'
+                    : 'bg-mimi-pink/10 text-mimi-pink'
+              }`}
+            >
+              <Activity className={`h-3.5 w-3.5 ${online ? 'animate-pulse' : ''}`} />
+              <span>
+                {loading
+                  ? 'Đang kết nối với hệ thống Mimi…'
+                  : online
+                    ? 'Tất cả hệ thống hoạt động bình thường'
+                    : 'Bot đang ngoại tuyến hoặc không thể kết nối'}
+              </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
-              Trạng Thái Hệ Thống & <span className="text-gradient-mimi">Độ Trễ API</span>
+            <h1 className="text-3xl font-extrabold text-white sm:text-4xl">
+              Trạng Thái Hệ Thống <span className="text-gradient-mimi">Thời Gian Thực</span>
             </h1>
-            <p className="text-sm sm:text-base text-gray-400">
-              Cập nhật trực tiếp số liệu hoạt động, tốc độ phản hồi từ Discord Gateway và các node âm thanh Lavalink.
+            <p className="text-sm text-gray-400 sm:text-base">
+              Số liệu lấy trực tiếp từ Internal API của bot — tự làm mới mỗi 15 giây.
             </p>
           </div>
 
           <button
             type="button"
-            onClick={handleRefresh}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition-all"
+            onClick={refresh}
+            className="btn-secondary shrink-0 !px-5 !py-3 !text-sm"
           >
-            <RefreshCw className="w-4 h-4" />
-            <span>Làm Mới ({lastRefreshed})</span>
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>
+              Làm mới
+              {lastUpdated ? ` (${lastUpdated.toLocaleTimeString('vi-VN')})` : ''}
+            </span>
           </button>
         </div>
 
-        {/* Top Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1: Ping */}
-          <div className="glass-panel rounded-2xl p-6 space-y-3 relative overflow-hidden">
+        {/* ── Cảnh báo lỗi ──────────────────────────────────────── */}
+        {error && !loading && (
+          <div className="glass-panel flex items-start gap-4 rounded-3xl border-mimi-pink/30 p-6">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mimi-pink/15 text-mimi-pink">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-bold text-white">Không lấy được dữ liệu từ bot</h3>
+              <p className="text-sm leading-relaxed text-gray-400">{error}</p>
+              <p className="text-xs text-gray-500">
+                Website vẫn hoạt động bình thường — chỉ kết nối Web ↔ Bot đang gián đoạn.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Thẻ số liệu ───────────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Ping */}
+          <div className="glass-panel card-lift space-y-3 rounded-3xl p-6">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase tracking-wider font-semibold text-gray-400">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Độ Trễ Discord Gateway
               </span>
-              <Wifi className="w-5 h-5 text-mimi-green" />
+              <Wifi className="h-5 w-5 text-mimi-green" />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-white font-mono">{ping}</span>
+              <span className="font-mono text-4xl font-extrabold text-white">
+                {status && status.wsPing >= 0 ? status.wsPing : '—'}
+              </span>
               <span className="text-sm font-semibold text-mimi-green">ms</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-mimi-green">
-              <span className="w-2 h-2 rounded-full bg-mimi-green" />
-              <span>Phản hồi cực nhanh (Tuyệt vời)</span>
+            <div className={`flex items-center gap-1.5 text-xs ${quality.color}`}>
+              <span className="h-2 w-2 rounded-full bg-current" />
+              <span>{quality.label}</span>
             </div>
           </div>
 
-          {/* Card 2: Uptime */}
-          <div className="glass-panel rounded-2xl p-6 space-y-3 relative overflow-hidden">
+          {/* Uptime */}
+          <div className="glass-panel card-lift space-y-3 rounded-3xl p-6">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase tracking-wider font-semibold text-gray-400">
-                Thời Gian Uptime
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Thời Gian Hoạt Động
               </span>
-              <Zap className="w-5 h-5 text-mimi-cyan" />
+              <Zap className="h-5 w-5 text-mimi-cyan" />
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-white font-mono">99.98</span>
-              <span className="text-sm font-semibold text-mimi-cyan">%</span>
+            <div className="font-mono text-2xl font-extrabold leading-snug text-white">
+              {status ? formatUptime(status.uptimeSeconds) : '—'}
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <span>Không có sự cố gián đoạn trong 30 ngày</span>
-            </div>
+            <p className="text-xs text-gray-400">Tính từ lần khởi động gần nhất của bot</p>
           </div>
 
-          {/* Card 3: Active Voice */}
-          <div className="glass-panel rounded-2xl p-6 space-y-3 relative overflow-hidden">
+          {/* Máy chủ + thành viên */}
+          <div className="glass-panel card-lift space-y-3 rounded-3xl p-6">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase tracking-wider font-semibold text-gray-400">
-                Kết Nối Âm Nhạc (Voice)
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Máy Chủ Đang Phục Vụ
               </span>
-              <Server className="w-5 h-5 text-mimi-purple" />
+              <Server className="h-5 w-5 text-mimi-violet" />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-white font-mono">{activeVoice}</span>
-              <span className="text-sm font-semibold text-mimi-purple">luồng active</span>
+              <span className="font-mono text-4xl font-extrabold text-white">
+                {status ? formatCompact(status.guildCount) : '—'}
+              </span>
+              <span className="text-sm font-semibold text-mimi-violet">servers</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-mimi-purple">
-              <span>Đang phát nhạc chất lượng cao Opus</span>
-            </div>
+            <p className="flex items-center gap-1.5 text-xs text-gray-400">
+              <Users className="h-3.5 w-3.5" />
+              <span>
+                {status ? formatCompact(status.reachableUsers) : '—'} thành viên tiếp cận
+              </span>
+            </p>
           </div>
 
-          {/* Card 4: Memory Usage */}
-          <div className="glass-panel rounded-2xl p-6 space-y-3 relative overflow-hidden">
+          {/* Phiên voice */}
+          <div className="glass-panel card-lift space-y-3 rounded-3xl p-6">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase tracking-wider font-semibold text-gray-400">
-                Bộ Nhớ RAM Bot (Node.js)
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Phiên Nghe Nhạc
               </span>
-              <Cpu className="w-5 h-5 text-amber-400" />
+              <Radio className="h-5 w-5 text-mimi-amber" />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-white font-mono">{memory}</span>
-              <span className="text-sm font-semibold text-amber-400">MB / 512 MB</span>
+              <span className="font-mono text-4xl font-extrabold text-white">
+                {status ? status.activeVoiceSessions : '—'}
+              </span>
+              <span className="text-sm font-semibold text-mimi-amber">kênh voice</span>
             </div>
-            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-amber-400 h-full rounded-full"
-                style={{ width: `${(memory / 512) * 100}%` }}
-              />
-            </div>
+            <p className="text-xs text-gray-400">Số kết nối voice đang phát nhạc lúc này</p>
           </div>
         </div>
 
-        {/* Infrastructure Table */}
-        <div className="glass-panel rounded-3xl p-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <HardDrive className="w-5 h-5 text-mimi-green" />
-              <span>Cấu Trúc Hệ Thống Máy Chủ (Infrastructure)</span>
+        {/* ── Bảng hạ tầng ─────────────────────────────────────── */}
+        <div className="glass-panel space-y-6 rounded-3xl p-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+              <Globe className="h-5 w-5 text-mimi-green" />
+              <span>Hạ Tầng Hệ Thống</span>
             </h2>
-            <span className="text-xs px-3 py-1 rounded-full bg-mimi-green/20 text-mimi-green font-semibold">
-              All Systems Operational
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                online
+                  ? 'bg-mimi-green/20 text-mimi-green'
+                  : 'bg-mimi-amber/20 text-mimi-amber'
+              }`}
+            >
+              {online ? 'All Systems Operational' : 'Partial Outage'}
             </span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-gray-400">
-                  <th className="py-3 px-4">Thành Phần</th>
-                  <th className="py-3 px-4">Vị Trí Máy Chủ</th>
-                  <th className="py-3 px-4">Trạng Thái</th>
-                  <th className="py-3 px-4">Uptime 30 Ngày</th>
-                  <th className="py-3 px-4">Độ Trễ</th>
+                  <th className="px-4 py-3">Thành Phần</th>
+                  <th className="px-4 py-3">Vị Trí</th>
+                  <th className="px-4 py-3">Trạng Thái</th>
+                  <th className="px-4 py-3">Ghi Chú</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
                 <tr>
-                  <td className="py-4 px-4 font-semibold text-white flex items-center gap-2">
-                    <Server className="w-4 h-4 text-mimi-green" />
+                  <td className="flex items-center gap-2 px-4 py-4 font-semibold text-white">
+                    <Server className="h-4 w-4 text-mimi-green" />
                     <span>Bot Core (Discord Gateway)</span>
                   </td>
-                  <td className="py-4 px-4 text-gray-300">VibeHost / VPS Vietnam</td>
-                  <td className="py-4 px-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mimi-green/20 text-mimi-green text-xs font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-mimi-green" />
-                      Online
-                    </span>
+                  <td className="px-4 py-4 text-gray-300">VibeHost — Việt Nam</td>
+                  <td className="px-4 py-4">
+                    <StatusBadge online={online} loading={loading} />
                   </td>
-                  <td className="py-4 px-4 text-gray-300 font-mono">99.99%</td>
-                  <td className="py-4 px-4 text-mimi-green font-mono">{ping} ms</td>
+                  <td className="px-4 py-4 font-mono text-xs text-gray-400">
+                    {status && status.wsPing >= 0 ? `ws ping ${status.wsPing}ms` : '—'}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-4 font-semibold text-white flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-mimi-cyan" />
-                    <span>Lavalink / Audio Nodes (Opus Engine)</span>
+                  <td className="flex items-center gap-2 px-4 py-4 font-semibold text-white">
+                    <ShieldCheck className="h-4 w-4 text-mimi-violet" />
+                    <span>Web Dashboard & API Proxy</span>
                   </td>
-                  <td className="py-4 px-4 text-gray-300">Singapore / VN Dedicated</td>
-                  <td className="py-4 px-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mimi-green/20 text-mimi-green text-xs font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-mimi-green" />
-                      Online
-                    </span>
+                  <td className="px-4 py-4 text-gray-300">Nhân Hòa cPanel — Việt Nam</td>
+                  <td className="px-4 py-4">
+                    {/* Trang này đang được phục vụ từ chính web server đó */}
+                    <StatusBadge online loading={false} />
                   </td>
-                  <td className="py-4 px-4 text-gray-300 font-mono">99.95%</td>
-                  <td className="py-4 px-4 text-mimi-cyan font-mono">15 ms</td>
+                  <td className="px-4 py-4 font-mono text-xs text-gray-400">
+                    Next.js 14 · Phusion Passenger
+                  </td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-4 font-semibold text-white flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-mimi-purple" />
-                    <span>Web Dashboard & Internal API Proxy</span>
+                  <td className="flex items-center gap-2 px-4 py-4 font-semibold text-white">
+                    <Zap className="h-4 w-4 text-mimi-cyan" />
+                    <span>Internal API (Web ↔ Bot)</span>
                   </td>
-                  <td className="py-4 px-4 text-gray-300">cPanel Nhân Hòa Node.js App</td>
-                  <td className="py-4 px-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-mimi-green/20 text-mimi-green text-xs font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-mimi-green" />
-                      Online
-                    </span>
+                  <td className="px-4 py-4 text-gray-300">Kênh nội bộ có xác thực token</td>
+                  <td className="px-4 py-4">
+                    <StatusBadge online={!error && !!status} loading={loading} />
                   </td>
-                  <td className="py-4 px-4 text-gray-300 font-mono">100%</td>
-                  <td className="py-4 px-4 text-mimi-purple font-mono">12 ms</td>
+                  <td className="px-4 py-4 font-mono text-xs text-gray-400">
+                    {status?.updatedAt
+                      ? `cập nhật ${new Date(status.updatedAt).toLocaleTimeString('vi-VN')}`
+                      : '—'}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -201,5 +244,27 @@ export default function StatusPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function StatusBadge({ online, loading }: { online: boolean; loading: boolean }) {
+  if (loading) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-gray-400">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400" />
+        Đang kiểm tra
+      </span>
+    );
+  }
+  return online ? (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-mimi-green/20 px-2.5 py-0.5 text-xs font-semibold text-mimi-green">
+      <span className="h-1.5 w-1.5 rounded-full bg-mimi-green" />
+      Online
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-mimi-pink/20 px-2.5 py-0.5 text-xs font-semibold text-mimi-pink">
+      <span className="h-1.5 w-1.5 rounded-full bg-mimi-pink" />
+      Offline
+    </span>
   );
 }

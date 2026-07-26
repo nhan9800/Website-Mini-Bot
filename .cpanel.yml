@@ -3,5 +3,8 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/$USER/website-mini-bot
     - /bin/cp -R * $DEPLOYPATH
-    - cd $DEPLOYPATH && npm install --production=false && npm run build
-    - touch $DEPLOYPATH/tmp/restart.txt
+    # Chỉ cài dependencies runtime — TUYỆT ĐỐI KHÔNG chạy `next build` trên host
+    # (giới hạn 2GB RAM sẽ bị OOM Killed). Thư mục .next đã được build sẵn và
+    # commit kèm trong repo.
+    - cd $DEPLOYPATH && npm install --no-audit --no-fund
+    - mkdir -p $DEPLOYPATH/tmp && touch $DEPLOYPATH/tmp/restart.txt

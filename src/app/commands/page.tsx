@@ -1,311 +1,263 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { Search, Terminal, Music, Shield, Clock, DollarSign, Settings, Sparkles } from 'lucide-react';
-import type { CommandItem } from '@/lib/types';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  Search,
+  Terminal,
+  Music,
+  Shield,
+  Clock,
+  Coins,
+  Settings,
+  Sparkles,
+  Wifi,
+  WifiOff,
+  MicVocal,
+} from 'lucide-react';
+import type { ApiCommand } from '@/lib/types';
 
-const commandsList: CommandItem[] = [
-  // Music
-  {
-    name: 'play',
-    category: 'music',
-    description: 'Phát nhạc từ YouTube, Spotify hoặc SoundCloud vào Voice Channel hiện tại.',
-    usage: '/play <tên bài hát hoặc URL>',
-    aliases: ['p', 'sing'],
-    slashCommand: true,
-  },
-  {
-    name: 'pause',
-    category: 'music',
-    description: 'Tạm dừng hoặc tiếp tục bài hát đang phát.',
-    usage: '/pause',
-    aliases: ['resume'],
-    slashCommand: true,
-  },
-  {
-    name: 'skip',
-    category: 'music',
-    description: 'Bỏ qua bài hát hiện tại và chuyển sang bài tiếp theo trong hàng chờ.',
-    usage: '/skip',
-    aliases: ['s', 'next'],
-    slashCommand: true,
-  },
-  {
-    name: 'queue',
-    category: 'music',
-    description: 'Hiển thị danh sách hàng chờ bài hát hiện tại của máy chủ.',
-    usage: '/queue [trang]',
-    aliases: ['q', 'list'],
-    slashCommand: true,
-  },
-  {
-    name: 'volume',
-    category: 'music',
-    description: 'Điều chỉnh âm lượng phát nhạc (từ 1% đến 150%).',
-    usage: '/volume <mức %>',
-    aliases: ['v', 'vol'],
-    slashCommand: true,
-  },
-  {
-    name: 'loop',
-    category: 'music',
-    description: 'Bật/tắt chế độ lặp lại bài hát hiện tại hoặc toàn bộ danh sách phát.',
-    usage: '/loop <off | track | queue>',
-    aliases: ['repeat'],
-    slashCommand: true,
-  },
-  {
-    name: 'leave',
-    category: 'music',
-    description: 'Dừng phát nhạc, xóa hàng chờ và rời khỏi Voice Channel.',
-    usage: '/leave',
-    aliases: ['dc', 'disconnect', 'stop'],
-    slashCommand: true,
-  },
+type Category = 'music' | 'verification' | 'attendance' | 'economy' | 'voice' | 'system';
 
-  // Verification
-  {
-    name: 'setupverify',
-    category: 'verification',
-    description: 'Thiết lập hệ thống xác thực 24h và role cho máy chủ.',
-    usage: '/setupverify <role_unverified> <role_verified>',
-    slashCommand: true,
-  },
-  {
-    name: 'verify',
-    category: 'verification',
-    description: 'Tự xác thực tài khoản để nhận role thành viên hợp lệ.',
-    usage: '/verify',
-    slashCommand: true,
-  },
-  {
-    name: 'resetverify',
-    category: 'verification',
-    description: 'Quản trị viên đặt lại trạng thái xác thực lúc 00:00 UTC+7 thủ công.',
-    usage: '/resetverify',
-    slashCommand: true,
-  },
-
-  // Attendance
-  {
-    name: 'setupattendance',
-    category: 'attendance',
-    description: 'Cấu hình kênh chấm công độc lập cho nhân sự máy chủ.',
-    usage: '/setupattendance <channel>',
-    slashCommand: true,
-  },
-  {
-    name: 'attendance',
-    category: 'attendance',
-    description: 'Chấm công vào/ra ca làm việc (check-in / check-out).',
-    usage: '/attendance <in | out>',
-    slashCommand: true,
-  },
-  {
-    name: 'reportattendance',
-    category: 'attendance',
-    description: 'Xuất báo cáo tổng hợp giờ làm việc của thành viên trong tuần/tháng.',
-    usage: '/reportattendance [user]',
-    slashCommand: true,
-  },
-
-  // Economy
-  {
-    name: 'balance',
-    category: 'economy',
-    description: 'Xem số dư xu của bạn hoặc của một thành viên khác trong máy chủ.',
-    usage: '/balance [user]',
-    aliases: ['bal', 'money'],
-    slashCommand: true,
-  },
-  {
-    name: 'daily',
-    category: 'economy',
-    description: 'Nhận phần thưởng xu điểm danh hằng ngày.',
-    usage: '/daily',
-    slashCommand: true,
-  },
-  {
-    name: 'transfer',
-    category: 'economy',
-    description: 'Chuyển xu cho thành viên khác (tự động cảnh báo nếu > 5.000.000 xu).',
-    usage: '/transfer <user> <số xu>',
-    slashCommand: true,
-  },
-
-  // System
-  {
-    name: 'help',
-    category: 'system',
-    description: 'Hiển thị menu hướng dẫn sử dụng toàn bộ lệnh của Mimi.',
-    usage: '/help [lệnh]',
-    slashCommand: true,
-  },
-  {
-    name: 'ping',
-    category: 'system',
-    description: 'Kiểm tra độ trễ kết nối (latency) của Bot và Discord API.',
-    usage: '/ping',
-    slashCommand: true,
-  },
-  {
-    name: 'status',
-    category: 'system',
-    description: 'Xem thống kê tình trạng hệ thống, uptime và bộ nhớ của Mimi.',
-    usage: '/status',
-    slashCommand: true,
-  },
+const CATEGORIES: { key: Category | 'all'; label: string; icon: React.ElementType }[] = [
+  { key: 'all', label: 'Tất Cả', icon: Terminal },
+  { key: 'music', label: 'Âm Nhạc', icon: Music },
+  { key: 'verification', label: 'Xác Thực', icon: Shield },
+  { key: 'attendance', label: 'Chấm Công', icon: Clock },
+  { key: 'economy', label: 'Kinh Tế', icon: Coins },
+  { key: 'voice', label: 'Voice & TTS', icon: MicVocal },
+  { key: 'system', label: 'Hệ Thống', icon: Settings },
 ];
 
-const categories = [
-  { id: 'all', label: 'Tất Cả Lệnh', icon: Terminal },
-  { id: 'music', label: 'Âm Nhạc', icon: Music },
-  { id: 'verification', label: 'Xác Thực 24h', icon: Shield },
-  { id: 'attendance', label: 'Chấm Công', icon: Clock },
-  { id: 'economy', label: 'Kinh Tế', icon: DollarSign },
-  { id: 'system', label: 'Hệ Thống', icon: Settings },
+/** Suy ra danh mục từ tên lệnh (API của bot không trả về category). */
+function inferCategory(name: string): Category {
+  const n = name.toLowerCase();
+  if (/(play|pause|resume|skip|stop|queue|volume|loop|shuffle|seek|nowplaying|np|lyric|autoplay|leave|join|247|stay)/.test(n))
+    return 'music';
+  if (/(verify|unverify|xacthuc)/.test(n)) return 'verification';
+  if (/(attendance|checkin|checkout|chamcong|cong)/.test(n)) return 'attendance';
+  if (/(economy|coin|xu|daily|balance|bal|pay|top|rank)/.test(n)) return 'economy';
+  if (/(tts|voice|room|speak|noi)/.test(n)) return 'voice';
+  return 'system';
+}
+
+const categoryStyle: Record<Category, string> = {
+  music: 'bg-mimi-green/15 text-mimi-green border-mimi-green/30',
+  verification: 'bg-mimi-purple/15 text-mimi-violet border-mimi-purple/30',
+  attendance: 'bg-mimi-cyan/15 text-mimi-cyan border-mimi-cyan/30',
+  economy: 'bg-mimi-amber/15 text-mimi-amber border-mimi-amber/30',
+  voice: 'bg-mimi-pink/15 text-mimi-pink border-mimi-pink/30',
+  system: 'bg-white/10 text-gray-300 border-white/15',
+};
+
+const categoryLabel: Record<Category, string> = {
+  music: 'Âm Nhạc',
+  verification: 'Xác Thực',
+  attendance: 'Chấm Công',
+  economy: 'Kinh Tế',
+  voice: 'Voice & TTS',
+  system: 'Hệ Thống',
+};
+
+/** Danh mục dự phòng khi bot offline — các lệnh cốt lõi chắc chắn tồn tại. */
+const FALLBACK_COMMANDS: ApiCommand[] = [
+  { name: 'play', description: 'Phát nhạc từ YouTube vào kênh thoại hiện tại (tên bài hoặc URL).', options: [{ name: 'query', description: 'Tên bài hát hoặc link', type: 3, required: true }], defaultMemberPermissions: null },
+  { name: 'pause', description: 'Tạm dừng bài hát đang phát.', options: [], defaultMemberPermissions: null },
+  { name: 'resume', description: 'Tiếp tục phát bài hát đang tạm dừng.', options: [], defaultMemberPermissions: null },
+  { name: 'skip', description: 'Bỏ qua bài hiện tại, chuyển sang bài kế tiếp trong hàng chờ.', options: [], defaultMemberPermissions: null },
+  { name: 'queue', description: 'Xem danh sách hàng chờ phát nhạc của máy chủ.', options: [], defaultMemberPermissions: null },
+  { name: 'volume', description: 'Chỉnh âm lượng phát nhạc (0–150%).', options: [{ name: 'level', description: 'Mức âm lượng', type: 4, required: true }], defaultMemberPermissions: null },
+  { name: 'loop', description: 'Bật/tắt lặp lại bài hiện tại hoặc cả hàng chờ.', options: [], defaultMemberPermissions: null },
+  { name: 'lyrics', description: 'Tra lời bài hát đang phát (nguồn lrclib).', options: [], defaultMemberPermissions: null },
+  { name: 'leave', description: 'Dừng nhạc, xóa hàng chờ và rời kênh thoại.', options: [], defaultMemberPermissions: null },
+  { name: 'verify', description: 'Xác thực thành viên trong hệ thống xác thực 24 giờ.', options: [], defaultMemberPermissions: null },
+  { name: 'attendance', description: 'Check-in / check-out chấm công nhân sự.', options: [], defaultMemberPermissions: null },
+  { name: 'config', description: 'Xem và thay đổi cấu hình bot của máy chủ (prefix, chế độ xác thực…).', options: [], defaultMemberPermissions: null },
 ];
 
 export default function CommandsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [commands, setCommands] = useState<ApiCommand[] | null>(null);
+  const [isLive, setIsLive] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState<Category | 'all'>('all');
 
-  const filteredCommands = useMemo(() => {
-    return commandsList.filter((cmd) => {
-      const matchCategory = activeCategory === 'all' || cmd.category === activeCategory;
-      const matchSearch =
-        cmd.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cmd.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (cmd.aliases && cmd.aliases.some((a) => a.toLowerCase().includes(searchQuery.toLowerCase())));
-      return matchCategory && matchSearch;
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/commands', { cache: 'no-store' });
+        const data = await res.json();
+        if (!cancelled) {
+          if (res.ok && data?.ok && Array.isArray(data.commands) && data.commands.length > 0) {
+            setCommands(data.commands);
+            setIsLive(true);
+          } else {
+            setCommands(FALLBACK_COMMANDS);
+            setIsLive(false);
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          setCommands(FALLBACK_COMMANDS);
+          setIsLive(false);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    const list = commands ?? [];
+    return list.filter((cmd) => {
+      const cat = inferCategory(cmd.name);
+      if (category !== 'all' && cat !== category) return false;
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return cmd.name.toLowerCase().includes(q) || cmd.description.toLowerCase().includes(q);
     });
-  }, [searchQuery, activeCategory]);
+  }, [commands, search, category]);
 
   return (
-    <div className="min-h-screen py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Header Title */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-mimi-green/10 border border-mimi-green/30 text-mimi-green text-xs font-semibold uppercase tracking-wide">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Danh Sách Lệnh Chuẩn</span>
+    <div className="min-h-screen py-14">
+      <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        {/* ── Đầu trang ─────────────────────────────────────────── */}
+        <div className="mx-auto max-w-3xl space-y-4 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
+            <Terminal className="h-3.5 w-3.5" />
+            <span>Tra cứu lệnh</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-            Khám Phá Toàn Bộ <span className="text-gradient-mimi">Lệnh Mimi Bot</span>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+            Toàn Bộ Lệnh Của <span className="text-gradient-mimi">Mimi</span>
           </h1>
-          <p className="text-gray-400 text-base sm:text-lg">
-            Hỗ trợ cả Slash Commands (cú pháp <code className="text-mimi-green bg-white/5 px-1.5 py-0.5 rounded">/</code>) và lệnh prefix truyền thống cho quản trị máy chủ.
+          <p className="text-base text-gray-400 sm:text-lg">
+            {loading
+              ? 'Đang tải danh sách lệnh…'
+              : isLive
+                ? `${commands?.length ?? 0} lệnh slash đang được đăng ký trực tiếp trên Discord.`
+                : 'Bot đang ngoại tuyến — hiển thị danh sách lệnh cốt lõi.'}
           </p>
+          {!loading && (
+            <div
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                isLive ? 'bg-mimi-green/15 text-mimi-green' : 'bg-mimi-amber/15 text-mimi-amber'
+              }`}
+            >
+              {isLive ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+              <span>{isLive ? 'Dữ liệu trực tiếp từ bot' : 'Dữ liệu dự phòng'}</span>
+            </div>
+          )}
         </div>
 
-        {/* Search & Filter Bar */}
-        <div className="space-y-6">
-          {/* Search Input */}
-          <div className="max-w-2xl mx-auto relative">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+        {/* ── Tìm kiếm + lọc ────────────────────────────────────── */}
+        <div className="space-y-5">
+          <div className="relative mx-auto max-w-xl">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
-              placeholder="Tìm kiếm lệnh theo tên, công dụng hoặc từ khóa..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-2xl glass-panel text-white placeholder-gray-500 border border-white/10 focus:border-mimi-green/50 focus:outline-none transition-all shadow-lg text-sm sm:text-base"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm lệnh… (vd: play, verify, volume)"
+              className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 pl-12 pr-4 text-sm text-white placeholder-gray-500 outline-none backdrop-blur-md transition-colors focus:border-mimi-green/50 focus:bg-white/[0.07]"
             />
           </div>
 
-          {/* Category Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-2">
-            {categories.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = activeCategory === cat.id;
+            {CATEGORIES.map((c) => {
+              const Icon = c.icon;
+              const active = category === c.key;
               return (
                 <button
-                  key={cat.id}
+                  key={c.key}
                   type="button"
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                    isActive
-                      ? 'bg-mimi-green text-[#070711] shadow-glow'
-                      : 'bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10'
+                  onClick={() => setCategory(c.key)}
+                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+                    active
+                      ? 'bg-gradient-brand text-[#05060f] shadow-glow'
+                      : 'border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{cat.label}</span>
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{c.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Commands Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCommands.length > 0 ? (
-            filteredCommands.map((cmd) => (
-              <div
-                key={cmd.name}
-                className="glass-panel rounded-2xl p-6 space-y-4 hover:border-white/20 transition-all duration-200 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-mimi-green font-mono">
-                        /{cmd.name}
-                      </span>
-                      {cmd.slashCommand && (
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-white/10 text-gray-300 font-mono">
-                          Slash
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-xs uppercase tracking-wider px-2 py-0.5 rounded bg-mimi-purple/20 text-mimi-purple font-semibold">
-                      {cmd.category}
+        {/* ── Danh sách lệnh ────────────────────────────────────── */}
+        {loading ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="glass-panel h-32 animate-pulse rounded-3xl" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="glass-panel space-y-3 rounded-3xl p-12 text-center">
+            <Search className="mx-auto h-10 w-10 text-gray-500" />
+            <p className="text-lg font-semibold text-white">Không tìm thấy lệnh nào</p>
+            <p className="text-sm text-gray-400">
+              Thử từ khóa khác hoặc chọn danh mục &ldquo;Tất Cả&rdquo;.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {filtered.map((cmd) => {
+              const cat = inferCategory(cmd.name);
+              return (
+                <div
+                  key={cmd.name}
+                  className="glass-panel card-lift space-y-3 rounded-3xl p-6 hover:border-white/20"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <code className="rounded-xl bg-black/40 px-3 py-1.5 font-mono text-sm font-bold text-mimi-green">
+                      /{cmd.name}
+                    </code>
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${categoryStyle[cat]}`}
+                    >
+                      {categoryLabel[cat]}
                     </span>
                   </div>
-
-                  <p className="text-sm text-gray-300 leading-relaxed">
-                    {cmd.description}
+                  <p className="text-sm leading-relaxed text-gray-300">
+                    {cmd.description || 'Chưa có mô tả.'}
                   </p>
-                </div>
-
-                <div className="pt-4 border-t border-white/10 space-y-2">
-                  <div className="flex items-center justify-between text-xs text-gray-400 font-mono">
-                    <span>Cách dùng:</span>
-                    <span className="text-white bg-black/40 px-2 py-1 rounded">
-                      {cmd.usage}
-                    </span>
-                  </div>
-                  {cmd.aliases && cmd.aliases.length > 0 && (
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                      <span>Viết tắt:</span>
-                      {cmd.aliases.map((alias) => (
+                  {cmd.options.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 border-t border-white/5 pt-3">
+                      {cmd.options.map((opt) => (
                         <span
-                          key={alias}
-                          className="px-1.5 py-0.5 rounded bg-white/5 text-gray-300 font-mono"
+                          key={opt.name}
+                          title={opt.description}
+                          className={`rounded-lg px-2 py-0.5 font-mono text-[11px] ${
+                            opt.required
+                              ? 'bg-mimi-green/10 text-mimi-green'
+                              : 'bg-white/5 text-gray-400'
+                          }`}
                         >
-                          {alias}
+                          {opt.required ? `<${opt.name}>` : `[${opt.name}]`}
                         </span>
                       ))}
                     </div>
                   )}
                 </div>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full py-16 text-center space-y-3">
-              <p className="text-lg text-gray-400">
-                Không tìm thấy lệnh nào phù hợp với từ khóa &ldquo;<strong className="text-white">{searchQuery}</strong>&rdquo;.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('');
-                  setActiveCategory('all');
-                }}
-                className="text-sm text-mimi-green hover:underline"
-              >
-                Đặt lại bộ lọc tìm kiếm
-              </button>
-            </div>
-          )}
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── Ghi chú ───────────────────────────────────────────── */}
+        <div className="glass-panel flex flex-col items-center justify-between gap-4 rounded-3xl p-7 sm:flex-row">
+          <div className="flex items-center gap-3 text-sm text-gray-400">
+            <Sparkles className="h-5 w-5 shrink-0 text-mimi-green" />
+            <span>
+              <code className="text-mimi-green">&lt;bắt buộc&gt;</code> ·{' '}
+              <code className="text-gray-300">[tùy chọn]</code> — di chuột lên tham số để xem mô
+              tả chi tiết.
+            </span>
+          </div>
         </div>
       </div>
     </div>

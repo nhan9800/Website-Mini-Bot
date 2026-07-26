@@ -1,68 +1,61 @@
-import { NextResponse } from 'next/server';
-import { env } from '@/lib/env';
+import { callMimiApi, toRouteResponse } from '@/lib/mimi-api';
+import type { GuildSettingsResponse } from '@/lib/types';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { guildId: string } }
-) {
-  const { guildId } = params;
+export const dynamic = 'force-dynamic';
 
-  try {
-    const url = `${env.MIMI_API_HOST}:${env.MIMI_API_PORT}/api/guilds/${guildId}/settings`;
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${env.MIMI_API_TOKEN}`,
-      },
-      next: { revalidate: 0 },
-    });
+const GUILD_ID_RE = /^\d{15,22}$/;
+// Khớp allowlist editableSettingKeys của bot (internalApi.js)
+const EDITABLE_KEYS = ['prefix', 'unverifyOnMute', 'verifyDailyMode'] as const;
 
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: 'Không thể đọc cấu hình từ Bot', status: res.status },
-        { status: res.status }
-      );
-    }
-
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch (err: any) {
-    return NextResponse.json(
-      {
-        error: 'Bot Internal API không phản hồi',
-        details: err.message,
-      },
-      { status: 503 }
-    );
-  }
+function badRequest(message: string): Response {
+  return new Response(
+    JSON.stringify({ ok: false, error: { code: 'BAD_REQUEST', message } }),
+    { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+  );
 }
 
-export async function POST(
+/** GET /api/guilds/:id/settings → GET {bot}/internal/guilds/:id/settings */
+export async function GET(
+  _request: Request,
+  { params }: { params: { guildId: string } }
+) {
+  const { guildId } = params;
+  if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
+
+  const result = await callMimiApi<GuildSettingsResponse>(`/internal/guilds/${guildId}/settings`);
+  return toRouteResponse(result);
+}
+
+/**
+ * PATCH /api/guilds/:id/settings → PATCH {bot}/internal/guilds/:id/settings
+ * Bot chỉ nhận PATCH (không phải POST) và chỉ cho sửa các key trong allowlist.
+ */
+export async function PATCH(
   request: Request,
   { params }: { params: { guildId: string } }
 ) {
   const { guildId } = params;
+  if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
+  let body: Record<string, unknown> = {};
   try {
-    const body = await request.json();
-    const url = `${env.MIMI_API_HOST}:${env.MIMI_API_PORT}/api/guilds/${guildId}/settings`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.MIMI_API_TOKEN}`,
-      },
-      body: JSON.stringify(body),
-    });
-
-    const data = await res.json();
-    return NextResponse.json(data, { status: res.status });
-  } catch (err: any) {
-    return NextResponse.json(
-      {
-        error: 'Lỗi khi cập nhật cấu hình máy chủ',
-        details: err.message,
-      },
-      { status: 503 }
-    );
+    body = await request.json();
+  } catch {
+    return badRequest('Body phải là JSON.');
   }
+
+  // Lọc trước ở web để báo lỗi sớm, thay vì đẩy rác sang bot
+  const patch: Record<string, unknown> = {};
+  for (const key of EDITABLE_KEYS) {
+    if (key in body) patch[key] = body[key];
+  }
+  if (Object.keys(patch).length === 0) {
+    return badRequest(`Không có trường hợp lệ nào để cập nhật. Cho phép: ${EDITABLE_KEYS.join(', ')}.`);
+  }
+
+  const result = await callMimiApi<{ ok: boolean; applied: Record<string, unknown> }>(
+    `/internal/guilds/${guildId}/settings`,
+    { method: 'PATCH', body: patch }
+  );
+  return toRouteResponse(result);
 }

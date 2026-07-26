@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { env } from "@/lib/env";
 
-const jakarta = Plus_Jakarta_Sans({
+// Be Vietnam Pro: bộ font thiết kế riêng cho tiếng Việt — dấu má chuẩn, đẹp ở mọi weight.
+const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-mimi",
   display: "swap",
 });
@@ -22,30 +23,39 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
   title: {
-    default: "Mimi — Discord Music & Community Ecosystem",
-    template: "%s · Mimi",
+    default: "Mimi — Bot Nhạc Discord & Quản Trị Cộng Đồng",
+    template: "%s · Mimi Bot",
   },
   description:
-    "Mời Mimi vào máy chủ Discord của bạn để nghe nhạc chất lượng cao, quản lý hệ thống xác thực, chấm công nhân sự và trải nghiệm dashboard trực quan hiện đại.",
-  keywords: ["Discord bot", "music bot", "Mimi", "bot nhạc Discord", "bot Việt Nam", "nextjs dashboard"],
+    "Mời Mimi vào máy chủ Discord để nghe nhạc chất lượng cao từ YouTube, điều khiển bằng nút bấm hoặc dashboard web, kèm hệ thống xác thực 24h, chấm công và giám sát kinh tế.",
+  keywords: [
+    "Discord bot",
+    "music bot",
+    "Mimi bot",
+    "bot nhạc Discord",
+    "bot Discord Việt Nam",
+    "dashboard điều khiển nhạc",
+  ],
   authors: [{ name: "Mimi Team" }],
   openGraph: {
     type: "website",
     locale: "vi_VN",
     url: env.NEXT_PUBLIC_SITE_URL,
     siteName: "Mimi Bot",
-    title: "Mimi — Discord Music & Community Ecosystem",
-    description: "Trải nghiệm nghe nhạc Discord cực đỉnh cùng hệ sinh thái quản trị cộng đồng thông minh.",
+    title: "Mimi — Bot Nhạc Discord & Quản Trị Cộng Đồng",
+    description:
+      "Nghe nhạc Discord chất lượng cao, điều khiển bằng nút bấm hoặc dashboard web thời gian thực.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mimi — Discord Music Bot",
-    description: "Biến voice channel Discord thành không gian âm nhạc tuyệt đỉnh.",
+    title: "Mimi — Bot Nhạc Discord",
+    description: "Biến voice channel Discord thành không gian âm nhạc sống động.",
   },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070711",
+  themeColor: "#05060f",
   width: "device-width",
   initialScale: 1,
 };
@@ -56,11 +66,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={`${jakarta.variable} ${jetbrains.variable}`}>
-      <body className="min-h-screen bg-[#070711] text-gray-100 font-sans antialiased selection:bg-mimi-green/30 selection:text-mimi-green">
-        <div className="mimi-bg-glow" aria-hidden />
+    <html lang="vi" className={`${beVietnam.variable} ${jetbrains.variable}`}>
+      <body className="min-h-screen bg-background font-sans text-gray-100 antialiased">
+        {/* Nền aurora + lưới chấm cố định phía sau toàn trang */}
+        <div className="mimi-aurora" aria-hidden />
+        <div className="mimi-grid" aria-hidden />
         <Header />
-        <main className="relative z-10 pt-20">{children}</main>
+        <main className="relative z-10 pt-24">{children}</main>
         <Footer />
       </body>
     </html>

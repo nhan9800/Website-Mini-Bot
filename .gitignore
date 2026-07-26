@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -8,8 +6,9 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# next.js — LƯU Ý: thư mục .next ĐƯỢC COMMIT (build sẵn ở máy dev, host chỉ pull
+# về chạy, không build). Chỉ bỏ qua cache build vì rất nặng và không cần khi chạy.
+/.next/cache/
 /out/
 
 # production

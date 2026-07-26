@@ -1,68 +1,61 @@
-import { NextResponse } from 'next/server';
-import { env } from '@/lib/env';
+import { callMimiApi, toRouteResponse } from '@/lib/mimi-api';
+import type { PlayerState } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
+const GUILD_ID_RE = /^\d{15,22}$/;
+const ALLOWED_ACTIONS = new Set(['pause', 'resume', 'skip', 'stop', 'volume']);
+
+function badRequest(message: string): Response {
+  return new Response(
+    JSON.stringify({ ok: false, error: { code: 'BAD_REQUEST', message } }),
+    { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+  );
+}
+
+/** GET /api/guilds/:id/player → GET {bot}/internal/guilds/:id/player */
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { guildId: string } }
 ) {
   const { guildId } = params;
+  if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
-  try {
-    const url = `${env.MIMI_API_HOST}:${env.MIMI_API_PORT}/api/guilds/${guildId}/player`;
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${env.MIMI_API_TOKEN}`,
-      },
-      next: { revalidate: 0 },
-    });
-
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: 'Không thể kết nối đến Bot Internal API', status: res.status },
-        { status: res.status }
-      );
-    }
-
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch (err: any) {
-    return NextResponse.json(
-      {
-        error: 'Bot Internal API chưa trực tuyến hoặc sai cổng kết nối',
-        details: err.message,
-      },
-      { status: 503 }
-    );
-  }
+  const result = await callMimiApi<{ ok: boolean; player: PlayerState }>(
+    `/internal/guilds/${guildId}/player`
+  );
+  return toRouteResponse(result);
 }
 
+/**
+ * POST /api/guilds/:id/player  body: { action: 'pause'|'resume'|'skip'|'stop'|'volume', volume? }
+ * → POST {bot}/internal/guilds/:id/player/:action
+ */
 export async function POST(
   request: Request,
   { params }: { params: { guildId: string } }
 ) {
   const { guildId } = params;
+  if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
+  let body: any = {};
   try {
-    const body = await request.json();
-    const url = `${env.MIMI_API_HOST}:${env.MIMI_API_PORT}/api/guilds/${guildId}/player`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.MIMI_API_TOKEN}`,
-      },
-      body: JSON.stringify(body),
-    });
-
-    const data = await res.json();
-    return NextResponse.json(data, { status: res.status });
-  } catch (err: any) {
-    return NextResponse.json(
-      {
-        error: 'Không thể gửi lệnh điều khiển tới Bot',
-        details: err.message,
-      },
-      { status: 503 }
-    );
+    body = await request.json();
+  } catch {
+    return badRequest('Body phải là JSON.');
   }
+
+  const action = String(body?.action || '');
+  if (!ALLOWED_ACTIONS.has(action)) {
+    return badRequest(`Hành động không hỗ trợ: "${action}". Cho phép: pause, resume, skip, stop, volume.`);
+  }
+
+  const result = await callMimiApi<{ ok: boolean; player: PlayerState }>(
+    `/internal/guilds/${guildId}/player/${action}`,
+    {
+      method: 'POST',
+      body: action === 'volume' ? { volume: Number(body?.volume) } : undefined,
+    }
+  );
+  return toRouteResponse(result);
 }
