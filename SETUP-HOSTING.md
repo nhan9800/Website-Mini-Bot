@@ -20,6 +20,34 @@ GitHub Actions **đã chạy được rồi** — nhánh `deploy` đã tồn t�
 
 ---
 
+## Cách nhanh — một lệnh làm gần hết
+
+Nếu hosting có **Terminal**, không cần làm thủ công từng bước. Mở Terminal và chạy:
+
+```bash
+cd ~ && git clone -b deploy --depth 1 https://github.com/nhan9800/Website-Mini-Bot.git .mimi-setup && bash .mimi-setup/scripts/bootstrap-host.sh
+```
+
+Lệnh này **chưa xoá gì cả** — nó chỉ in ra kế hoạch để bạn đọc trước. Xem xong, nếu đồng ý thì chạy lại kèm `--yes`, và khai tên thư mục app cũ cần dọn:
+
+```bash
+bash ~/.mimi-setup/scripts/bootstrap-host.sh --yes --remove-old mimi_app
+```
+
+> Thay `mimi_app` bằng **Application root** thật của app cũ (xem ở Bước 1 bên dưới). Không chắc thì cứ bỏ `--remove-old` đi — script vẫn chạy, chỉ là thư mục cũ còn nằm đó chiếm chỗ, dọn sau cũng được.
+
+Script tự làm: dọn bản cũ → tải nhánh `deploy` → tạo app Node (nếu host có CLI) → `npm ci --omit=dev` → restart → kiểm tra `/api/version`. Chỗ nào không tự làm được, nó dừng lại và in đúng thông tin cần điền vào giao diện cPanel, rồi bạn chạy lại chính lệnh đó để đi tiếp — chạy nhiều lần vô hại.
+
+Hai việc script **cố ý không làm**, bạn phải tự làm trong giao diện:
+- Đặt `MIMI_API_TOKEN` (không truyền secret qua dòng lệnh, tránh lưu vào lịch sử shell).
+- Thêm Cron Job tự động kéo code.
+
+Chống xoá nhầm: script chỉ xoá thư mục nằm **bên trong** thư mục nhà, và từ chối thẳng `public_html`, `mail`, `tmp`, `.ssh`, hay bất kỳ đường dẫn nào trỏ ngược ra ngoài (`..`, `.`). Đã test các trường hợp này.
+
+Dọn thư mục cài đặt sau khi xong: `rm -rf ~/.mimi-setup`
+
+---
+
 ## Bước 0 — Kiểm tra gói hosting có đủ điều kiện
 
 Đăng nhập cPanel Nhân Hòa, tìm trong ô Search:
