@@ -44,8 +44,12 @@ if [ -z "$VENV" ]; then
     echo "  Không tìm thấy nodevenv cho '$APPNAME' — đã tạo Node.js App trong cPanel chưa?"
     exit 1
 fi
+# Tắt `set -u` khi nạp: script activate của cPanel tham chiếu CL_VIRTUAL_ENV khi
+# biến này chưa được gán, gặp `set -u` là cron sẽ chết mỗi lần chạy.
+set +u
 # shellcheck disable=SC1090
 . "$VENV" || { echo "  không activate được nodevenv"; exit 1; }
+set -u
 
 npm ci --omit=dev --no-audit --no-fund || { echo "  npm ci lỗi"; exit 1; }
 

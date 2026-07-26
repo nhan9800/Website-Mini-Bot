@@ -181,7 +181,6 @@ say "4/6 · Đăng ký ứng dụng Node.js"
 
 if [ -d "$VENV_DIR" ]; then
     ok "App '$APP_NAME' đã tồn tại — không tạo lại."
-    warn "Kiểm tra trong Setup Node.js App: startup file phải là 'server.cjs'."
 elif command -v cloudlinux-selector >/dev/null 2>&1; then
     cloudlinux-selector create --json --interpreter nodejs \
         --user "$(whoami)" \
@@ -213,8 +212,12 @@ if [ -z "$VENV_ACTIVATE" ]; then
     exit 0
 fi
 
+# Tắt `set -u` khi nạp: script activate của cPanel tham chiếu CL_VIRTUAL_ENV khi
+# biến này chưa được gán, gặp `set -u` là chết ngay giữa chừng.
+set +u
 # shellcheck disable=SC1090
 . "$VENV_ACTIVATE" || die "Không kích hoạt được môi trường Node."
+set -u
 ok "Node $(node -v)"
 
 cd "$APP_DIR" || die "Không vào được $APP_DIR"
