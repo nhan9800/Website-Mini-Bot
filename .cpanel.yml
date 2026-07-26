@@ -1,0 +1,7 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/$USER/website-mini-bot
+    - /bin/cp -R * $DEPLOYPATH
+    - cd $DEPLOYPATH && npm install --production=false && npm run build
+    - touch $DEPLOYPATH/tmp/restart.txt
