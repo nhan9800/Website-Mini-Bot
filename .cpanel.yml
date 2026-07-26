@@ -1,10 +1,37 @@
 ---
+# cPanel Git Version Control chạy các bước này sau mỗi lần kéo code về.
+#
+# NHÁNH PHẢI CHECKOUT LÀ `deploy`, KHÔNG phải `main`:
+#   - `main`   chỉ có mã nguồn, không có .next → site sẽ lỗi 500.
+#   - `deploy` do GitHub Actions dựng sẵn, đã kèm .next build xong.
+#
+# TUYỆT ĐỐI KHÔNG thêm `npm run build`: host giới hạn 2GB RAM (LVE), next build
+# sẽ bị kill giữa chừng và làm hỏng luôn bản .next đang chạy.
+#
+# Mỗi task chạy trong một shell RIÊNG — biến export ở dòng trước không còn hiệu
+# lực ở dòng sau, và `npm` chỉ có trong PATH sau khi activate nodevenv. Vì vậy
+# mỗi dòng phải tự chứa đủ những gì nó cần.
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/$USER/website-mini-bot
-    - /bin/cp -R * $DEPLOYPATH
-    # Chỉ cài dependencies runtime — TUYỆT ĐỐI KHÔNG chạy `next build` trên host
-    # (giới hạn 2GB RAM sẽ bị OOM Killed). Thư mục .next đã được build sẵn và
-    # commit kèm trong repo.
-    - cd $DEPLOYPATH && npm install --no-audit --no-fund
-    - mkdir -p $DEPLOYPATH/tmp && touch $DEPLOYPATH/tmp/restart.txt
+    # Chép mã nguồn sang thư mục ứng dụng. Dùng "/." thay vì "/*" để lấy được cả
+    # thư mục ẩn (.next!). Nếu Repository Path trùng luôn thư mục app thì bỏ qua.
+    - >-
+      DEPLOYPATH="$HOME/website-mini-bot"; SRC="$(pwd)";
+      if [ "$SRC" != "$DEPLOYPATH" ]; then mkdir -p "$DEPLOYPATH" && /bin/cp -R "$SRC/." "$DEPLOYPATH/"; fi
+
+    # Chốt chặn TRƯỚC khi động vào gì khác: thiếu .next nghĩa là đang ở nhầm nhánh.
+    # Dừng hẳn thay vì restart, để site cũ vẫn chạy chứ không sập.
+    - >-
+      DEPLOYPATH="$HOME/website-mini-bot";
+      test -f "$DEPLOYPATH/.next/BUILD_ID" || { echo "HUY DEPLOY: thieu .next/BUILD_ID - dang checkout nham nhanh main?"; exit 1; }
+
+    # `npm ci` thay vì `npm install`: không ghi lại package-lock.json, nhờ vậy cây
+    # git luôn sạch và lần kéo code sau không vướng "local changes would be overwritten".
+    - >-
+      DEPLOYPATH="$HOME/website-mini-bot";
+      . "$HOME"/nodevenv/website-mini-bot/*/bin/activate && cd "$DEPLOYPATH" &&
+      npm ci --omit=dev --no-audit --no-fund
+
+    - >-
+      DEPLOYPATH="$HOME/website-mini-bot";
+      mkdir -p "$DEPLOYPATH/tmp" && touch "$DEPLOYPATH/tmp/restart.txt" && echo "DEPLOY XONG"

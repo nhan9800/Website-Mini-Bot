@@ -2,7 +2,11 @@
 
 > **Mục Tiêu**: Deploy website Next.js 14 App Router của Mimi Bot lên hosting **cPanel Nhân Hòa** có **Setup Node.js App (Phusion Passenger)**.
 
-> ⚡ **QUAN TRỌNG — quy trình mới từ v2.1.0**: Website được **BUILD SẴN** ở máy dev và commit thư mục `.next/` lên GitHub. Trên hosting **TUYỆT ĐỐI KHÔNG chạy `npm run build`** — hosting chỉ có 2GB RAM (LVE) nên build sẽ bị hệ thống kill (lỗi `Killed` / OOM). Chỉ cần `git pull` + `npm install` + restart.
+> ⚡ **QUAN TRỌNG — quy trình từ v2.2.0**: GitHub Actions build sẵn rồi đẩy kết quả sang **nhánh `deploy`**; cPanel chỉ kéo nhánh đó về, `npm install` và restart. Không build ở máy dev, cũng **TUYỆT ĐỐI KHÔNG build trên host** (2GB RAM LVE sẽ bị OOM `Killed`).
+>
+> Trên cPanel phải checkout đúng nhánh **`deploy`** — nhánh `main` không chứa `.next` nên site sẽ lỗi 500.
+>
+> Chi tiết đầy đủ: `CI-CD-AUTO-DEPLOY.md` ở thư mục gốc.
 
 ---
 
@@ -20,7 +24,7 @@
    - **Application mode**: Chọn `Production`.
    - **Application root**: Nhập tên thư mục lưu code, ví dụ `website-mini-bot`.
    - **Application URL**: Chọn tên miền của bạn, ví dụ `mimibot.id.vn`.
-   - **Application startup file**: Nhập chính xác `server.js` (Passenger gọi file này để khởi chạy Next.js).
+   - **Application startup file**: Nhập chính xác `server.cjs` (đuôi .cjs bắt buộc: package.json có `"type": "module"` nên Passenger require() file .js sẽ lỗi ERR_REQUIRE_ESM).
 3. Bấm **Create** để cPanel tạo môi trường ảo (virtual environment) và file `.htaccess`.
 
 ---
@@ -31,12 +35,13 @@
 1. Trong cPanel -> Chọn **Git Version Control** -> **Create**:
    - **Clone URL**: `https://github.com/nhan9800/Website-Mini-Bot.git`
    - **Repository Path**: trỏ đúng thư mục `website-mini-bot` đã tạo ở bước 2.
-2. Khi có code mới: bấm **Update from Remote** hoặc chạy `git pull` trong Terminal.
+2. Bấm **Manage** -> đổi **Checked-Out Branch** sang **`deploy`**. Đây là bước hay bị bỏ sót: nhánh `main` chỉ có mã nguồn, không có `.next`.
+3. Khi có code mới: bấm **Update from Remote** (hoặc để webhook tự làm — xem `CI-CD-AUTO-DEPLOY.md`).
 
 ### Cách B: Terminal cPanel
 ```bash
 cd ~
-git clone https://github.com/nhan9800/Website-Mini-Bot.git website-mini-bot
+git clone -b deploy https://github.com/nhan9800/Website-Mini-Bot.git website-mini-bot
 ```
 
 ---
@@ -49,19 +54,30 @@ Mở **Terminal** của cPanel và chạy:
 # 1. Kích hoạt môi trường Node.js của cPanel
 source ~/nodevenv/website-mini-bot/*/bin/activate
 
-# 2. Vào thư mục web, kéo code + bản build mới nhất
+# 2. Vào thư mục web, kéo bản build mới nhất (nhánh deploy!)
 cd ~/website-mini-bot
-git pull origin main
+git pull origin deploy
 
 # 3. Cài thư viện runtime (KHÔNG chạy npm run build!)
-npm install --no-audit --no-fund
+npm ci --omit=dev --no-audit --no-fund
 
-# 4. Restart Passenger
+# 4. Kiểm tra đúng nhánh: phải có BUILD_ID
+cat .next/BUILD_ID || echo "THIEU .next — dang o nham nhanh main?"
+
+# 5. Restart Passenger
 mkdir -p tmp && touch tmp/restart.txt
 echo "=== DEPLOY XONG ==="
 ```
 
-Thư mục `.next/` (bản build production) đã nằm sẵn trong repo — host chỉ việc chạy.
+Thư mục `.next/` (bản build production) do GitHub Actions dựng sẵn trên nhánh `deploy` — host chỉ việc chạy.
+
+Kiểm chứng sau khi restart:
+
+```bash
+curl -s https://mimibot.id.vn/api/version
+```
+
+Trường `shortCommit` phải khớp commit mới nhất trên `main`.
 
 ---
 
@@ -101,12 +117,16 @@ Sau khi thêm/sửa biến môi trường phải bấm **Restart** thì mới c�
 
 ## 7. Giải Quyết Lỗi Thường Gặp (Troubleshooting)
 
-- **Lỗi `Killed` khi build**: Bạn đang chạy `npm run build` trên host — KHÔNG cần và không nên. Bản build đã có sẵn trong repo, chỉ cần `git pull`.
-- **Trang trắng / file `_next/static/*` báo 500**: Thư mục `.next` trên host bị hỏng (thường do build dở bị kill). Xóa và lấy lại bản chuẩn:
+- **Lỗi `Killed` khi build**: Bạn đang chạy `npm run build` trên host — KHÔNG cần và không nên. Bản build do GitHub Actions dựng sẵn trên nhánh `deploy`, host chỉ việc kéo về.
+- **Trang trắng / file `_next/static/*` báo 500**: Thư mục `.next` trên host bị hỏng hoặc đang ở nhầm nhánh. Lấy lại bản chuẩn từ nhánh `deploy`:
   ```bash
-  cd ~/website-mini-bot && rm -rf .next && git checkout -- .next 2>/dev/null || git pull origin main
+  cd ~/website-mini-bot
+  git fetch origin deploy && git checkout deploy && git reset --hard origin/deploy
+  cat .next/BUILD_ID   # phải in ra một chuỗi, nếu trống là vẫn sai nhánh
   touch tmp/restart.txt
   ```
-- **Lỗi 503 / Application Not Starting**: Kiểm tra `Application startup file` phải là `server.js` và đã `npm install` xong.
+- **`git pull` báo "local changes would be overwritten"**: có file bị sửa trên host (thường do chạy `npm install` làm đổi `package-lock.json`). Dùng `git reset --hard origin/deploy` như trên, và về sau dùng `npm ci` thay cho `npm install`.
+- **`git pull` báo "refusing to merge unrelated histories"**: nhánh `deploy` đã bị dựng lại từ đầu. Xoá thư mục và clone lại: `cd ~ && rm -rf website-mini-bot && git clone -b deploy https://github.com/nhan9800/Website-Mini-Bot.git website-mini-bot`.
+- **Lỗi 503 / Application Not Starting**: Kiểm tra `Application startup file` phải là `server.cjs` và đã `npm ci` xong.
 - **Dashboard báo "Chưa cấu hình MIMI_API_TOKEN"**: Thêm biến `MIMI_API_TOKEN` (mục 5) rồi Restart.
 - **Trạng thái bot hiện "ngoại tuyến" dù bot đang chạy**: Kiểm tra `curl http://hcm3.vibehost.vn:20019/health/live` từ Terminal cPanel — nếu không phản hồi, VibeHost đang chặn cổng hoặc bot chưa bật Internal API.

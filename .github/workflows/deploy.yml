@@ -1,0 +1,133 @@
+name: Build & Deploy Web
+
+# Vì sao build ở đây mà không build trên host: hosting cPanel Nhân Hòa bị giới hạn
+# 2GB RAM (LVE), `next build` ở đó luôn bị OOM Killed. GitHub Actions có sẵn ~7GB
+# nên build tại đây rồi chỉ đẩy kết quả sang nhánh `deploy`.
+#
+# Nhánh `main`   = mã nguồn (KHÔNG chứa .next).
+# Nhánh `deploy` = mã nguồn + .next đã build sẵn — đây là nhánh cPanel kéo về.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    name: Build rồi đẩy sang nhánh deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cài Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cài dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Kiểm tra kiểu TypeScript
+        # Chặn sớm ở đây, vì next.config bật ignoreBuildErrors nên `next build`
+        # sẽ không tự dừng khi có lỗi kiểu.
+        run: npx tsc --noEmit
+
+      - name: Build Next.js
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_BUILD_COMMIT: ${{ github.sha }}
+          NEXT_PUBLIC_BUILD_BRANCH: ${{ github.ref_name }}
+          NEXT_PUBLIC_BUILD_RUN: ${{ github.run_number }}
+        run: |
+          export NEXT_PUBLIC_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          npm run build
+
+      - name: Kiểm tra kết quả build
+        run: |
+          [ -f .next/BUILD_ID ] || { echo "❌ Không có .next/BUILD_ID — build hỏng."; exit 1; }
+          echo "✅ BUILD_ID = $(cat .next/BUILD_ID)"
+
+      - name: Đẩy sang nhánh deploy
+        env:
+          GIT_SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # .next/cache: bộ nhớ đệm build, hàng trăm MB, host không dùng tới.
+          # .github: GITHUB_TOKEN mặc định KHÔNG có quyền `workflows`, nên commit
+          #   chứa file .github/workflows/* sẽ bị GitHub từ chối ngay lúc push.
+          rm -rf .next/cache .github
+
+          # Lịch sử nhánh deploy phải LIÊN TỤC. cPanel "Update from Remote" kéo bằng
+          # --ff-only: nếu mỗi lần build lại tạo một nhánh mồ côi rồi force-push thì
+          # từ lần deploy thứ hai host sẽ báo "unrelated histories" và đứng im mãi.
+          git fetch origin deploy 2>/dev/null || true
+          if git rev-parse --verify origin/deploy >/dev/null 2>&1; then
+            # Đổi HEAD sang deploy nhưng GIỮ NGUYÊN cây làm việc vừa build xong
+            # (checkout thường sẽ ghi đè mất .next mới).
+            git branch -f deploy origin/deploy
+            git symbolic-ref HEAD refs/heads/deploy
+            git reset -q
+          else
+            git checkout -q --orphan deploy
+            git rm -rq --cached . 2>/dev/null || true
+          fi
+
+          git add -A -f .next
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Không có gì thay đổi so với bản dựng trước — bỏ qua."
+            exit 0
+          fi
+          git commit -q -m "build: $GIT_SHA (run $RUN_NUMBER)"
+          git push origin deploy
+          echo "✅ Đã đẩy bản dựng sang nhánh deploy."
+
+      - name: Nhắc bước còn lại
+        run: |
+          echo "Bản dựng đã nằm trên nhánh 'deploy'."
+          echo "cPanel Nhân Hòa sẽ kéo về khi webhook kích hoạt (Git Version Control → nhánh deploy)."
+          echo "Nếu chưa bật webhook, vào cPanel bấm 'Update from Remote' một lần."
+
+  verify:
+    name: Xác minh site đã lên bản mới
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    # Không để job này làm đỏ pipeline: cPanel kéo code là bước nằm ngoài GitHub,
+    # có thể chậm hoặc cần bấm tay. Ở đây chỉ báo trạng thái để biết mà xử lý.
+    continue-on-error: true
+    steps:
+      - name: Hỏi /api/version của site thật
+        run: |
+          SHORT="$(echo '${{ github.sha }}' | cut -c1-7)"
+          echo "Chờ https://mimibot.id.vn/api/version báo commit $SHORT ..."
+          for i in $(seq 1 20); do
+            sleep 15
+            BODY=$(curl -s -m 10 https://mimibot.id.vn/api/version || true)
+            echo "  lần $i: $BODY"
+            case "$BODY" in
+              *"\"shortCommit\":\"$SHORT\""*)
+                echo "✅ Site đang chạy commit $SHORT."
+                exit 0 ;;
+            esac
+          done
+          echo "⚠️ Sau 5 phút site vẫn chưa chạy commit $SHORT."
+          echo "   Bản dựng đã sẵn trên nhánh 'deploy' — việc còn lại là cPanel kéo về."
+          echo "   Kiểm tra: cPanel → Git Version Control → Update from Remote, và webhook trên GitHub."
+          exit 1

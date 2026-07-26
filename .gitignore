@@ -6,9 +6,10 @@
 # testing
 /coverage
 
-# next.js — LƯU Ý: thư mục .next ĐƯỢC COMMIT (build sẵn ở máy dev, host chỉ pull
-# về chạy, không build). Chỉ bỏ qua cache build vì rất nặng và không cần khi chạy.
-/.next/cache/
+# next.js — nhánh `main` KHÔNG chứa .next nữa. GitHub Actions build rồi đẩy kết
+# quả sang nhánh `deploy` (xem .github/workflows/deploy.yml); cPanel kéo nhánh đó.
+# Nhờ vậy main gọn, không còn diff nhị phân mỗi lần đổi giao diện.
+/.next/
 /out/
 
 # production
