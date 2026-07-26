@@ -5,12 +5,14 @@
 # phụ thuộc vào webhook. Chạy được nhiều lần liên tiếp mà không gây tác dụng phụ:
 # không có commit mới thì thoát ngay, không restart vô ích.
 #
-# Cài (cPanel → Cron Jobs), chạy mỗi 5 phút:
+# Cài (cPanel → Cron Jobs), chạy mỗi 5 phút — thay đường dẫn cho khớp app root:
 #   */5 * * * * bash $HOME/website-mini-bot/scripts/host-pull.sh >> $HOME/mimi-deploy.log 2>&1
 set -u
 
-APP="$HOME/website-mini-bot"
-BRANCH="deploy"
+# Tự suy ra thư mục ứng dụng từ vị trí của chính script (script nằm trong repo),
+# nên đặt app ở đâu cũng chạy — không cần sửa đường dẫn cứng.
+APP="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BRANCH="${MIMI_DEPLOY_BRANCH:-deploy}"
 
 cd "$APP" || { echo "[$(date -u +%FT%TZ)] Không vào được $APP"; exit 1; }
 
@@ -34,9 +36,16 @@ if [ ! -f "$APP/.next/BUILD_ID" ]; then
     exit 1
 fi
 
-# npm chỉ có trong PATH sau khi kích hoạt môi trường Node của cPanel.
+# npm chỉ có trong PATH sau khi kích hoạt môi trường Node của cPanel. Tên môi
+# trường trùng tên thư mục ứng dụng, nên suy ra từ $APP thay vì ghi cứng.
+APPNAME="$(basename "$APP")"
+VENV=$(ls -d "$HOME"/nodevenv/"$APPNAME"/*/bin/activate 2>/dev/null | head -1)
+if [ -z "$VENV" ]; then
+    echo "  Không tìm thấy nodevenv cho '$APPNAME' — đã tạo Node.js App trong cPanel chưa?"
+    exit 1
+fi
 # shellcheck disable=SC1090
-. "$HOME"/nodevenv/website-mini-bot/*/bin/activate || { echo "  không activate được nodevenv"; exit 1; }
+. "$VENV" || { echo "  không activate được nodevenv"; exit 1; }
 
 npm ci --omit=dev --no-audit --no-fund || { echo "  npm ci lỗi"; exit 1; }
 
