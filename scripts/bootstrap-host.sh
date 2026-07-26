@@ -19,6 +19,9 @@
 #   --domain DOMAIN      tên miền (mặc định: mimibot.id.vn)
 #   --remove-old DIR     thư mục app cũ cần xoá (lặp lại được nhiều lần)
 #   --branch BRANCH      nhánh cần chạy (mặc định: deploy)
+#   --reset-venv         xoá luôn môi trường Node hiện có (mặc định GIỮ LẠI —
+#                        môi trường này chỉ tạo lại được qua giao diện cPanel,
+#                        xoá đi là phải vào UI bấm tay mới đi tiếp được)
 # =====================================================================
 set -uo pipefail
 
@@ -27,6 +30,7 @@ APP_NAME="website-mini-bot"
 DOMAIN="mimibot.id.vn"
 BRANCH="deploy"
 DO_IT=0
+RESET_VENV=0
 OLD_DIRS=()
 
 while [ $# -gt 0 ]; do
@@ -36,6 +40,7 @@ while [ $# -gt 0 ]; do
         --domain) DOMAIN="$2"; shift 2 ;;
         --branch) BRANCH="$2"; shift 2 ;;
         --remove-old) OLD_DIRS+=("$2"); shift 2 ;;
+        --reset-venv) RESET_VENV=1; shift ;;
         *) echo "Tham số lạ: $1"; exit 2 ;;
     esac
 done
@@ -87,7 +92,9 @@ cat <<PLAN
 
    Sẽ XOÁ:
      - $APP_DIR
-     - $VENV_DIR
+$( if [ "$RESET_VENV" = 1 ]; then echo "     - $VENV_DIR  (môi trường Node — sẽ phải tạo lại trong cPanel!)";
+   elif [ -d "$VENV_DIR" ]; then echo "     (GIỮ LẠI $VENV_DIR — dùng lại môi trường Node sẵn có)";
+   fi )
 $(for d in "${OLD_DIRS[@]:-}"; do [ -n "$d" ] && echo "     - $HOME/$d  (app cũ)"; done)
 
    Sẽ TẠO LẠI:
@@ -139,7 +146,14 @@ for d in "${OLD_DIRS[@]:-}"; do
 done
 
 safe_rm "$APP_DIR"
-safe_rm "$VENV_DIR" "môi trường Node"
+
+# Môi trường Node chỉ tạo lại được qua giao diện cPanel (hoặc cloudlinux-selector).
+# Còn dùng được thì giữ — xoá đi chỉ tổ phải vào UI bấm tay mới đi tiếp được.
+if [ "$RESET_VENV" = 1 ]; then
+    safe_rm "$VENV_DIR" "môi trường Node"
+elif [ -d "$VENV_DIR" ]; then
+    ok "Giữ lại môi trường Node sẵn có: $VENV_DIR"
+fi
 
 npm cache clean --force >/dev/null 2>&1 && ok "Đã dọn npm cache" || true
 
@@ -157,7 +171,10 @@ ok "Commit: $(git -C "$APP_DIR" rev-parse --short HEAD)"
 # ---------------------------------------------------------------------
 say "4/6 · Đăng ký ứng dụng Node.js"
 
-if command -v cloudlinux-selector >/dev/null 2>&1; then
+if [ -d "$VENV_DIR" ]; then
+    ok "App '$APP_NAME' đã tồn tại — không tạo lại."
+    warn "Kiểm tra trong Setup Node.js App: startup file phải là 'server.cjs'."
+elif command -v cloudlinux-selector >/dev/null 2>&1; then
     cloudlinux-selector create --json --interpreter nodejs \
         --user "$(whoami)" \
         --app-root "$APP_NAME" \
