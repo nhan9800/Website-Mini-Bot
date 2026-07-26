@@ -1,0 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #05060f;
+    --foreground: #f4f5f8;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: rgba(46, 204, 113, 0.35);
+    color: #eafff3;
+  }
+
+  /* Focus ring nhất quán cho accessibility */
+  :focus-visible {
+    outline: 2px solid rgba(46, 204, 113, 0.7);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* ── Panel kính mờ ─────────────────────────────────────────────── */
+  .glass-panel {
+    background: linear-gradient(180deg, rgba(20, 22, 43, 0.72), rgba(13, 14, 30, 0.72));
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-panel-glow {
+    background: linear-gradient(180deg, rgba(20, 24, 46, 0.82), rgba(12, 14, 30, 0.85));
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(46, 204, 113, 0.22);
+    box-shadow:
+      0 20px 50px -20px rgba(0, 0, 0, 0.6),
+      0 0 32px -10px rgba(46, 204, 113, 0.22),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  }
+
+  /* Card nổi lên khi hover */
+  .card-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-5px);
+  }
+
+  /* ── Chữ gradient ─────────────────────────────────────────────── */
+  .text-gradient-mimi {
+    background: linear-gradient(120deg, #3ee586 0%, #22d3ee 55%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-violet {
+    background: linear-gradient(120deg, #a78bfa 0%, #f472b6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Viền gradient bao quanh (card nổi bật) ───────────────────── */
+  .gradient-ring {
+    position: relative;
+  }
+  .gradient-ring::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.6), rgba(34, 211, 238, 0.4), rgba(139, 92, 246, 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ── Nút chính ────────────────────────────────────────────────── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-brand px-7 py-3.5 text-sm font-bold text-[#05060f] shadow-glow transition-all duration-300;
+  }
+  .btn-primary:hover {
+    @apply shadow-glow-lg;
+    transform: translateY(-2px) scale(1.02);
+  }
+  .btn-primary:active {
+    transform: scale(0.97);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-200;
+  }
+  .btn-secondary:hover {
+    @apply border-white/20 bg-white/10;
+  }
+}
+
+@layer utilities {
+  /* ── Nền: aurora + lưới chấm ──────────────────────────────────── */
+  .mimi-aurora {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(42% 38% at 18% 8%, rgba(46, 204, 113, 0.13) 0%, transparent 70%),
+      radial-gradient(38% 34% at 85% 12%, rgba(139, 92, 246, 0.12) 0%, transparent 70%),
+      radial-gradient(45% 40% at 55% 95%, rgba(34, 211, 238, 0.08) 0%, transparent 70%);
+  }
+
+  .mimi-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  /* Delay tiện dụng cho animation dàn hàng */
+  .delay-75ms { animation-delay: 75ms; }
+  .delay-150ms { animation-delay: 150ms; }
+  .delay-225ms { animation-delay: 225ms; }
+  .delay-300ms { animation-delay: 300ms; }
+  .delay-450ms { animation-delay: 450ms; }
+  .delay-600ms { animation-delay: 600ms; }
+
+  /* Che mờ hai đầu marquee */
+  .marquee-mask {
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+}
+
+/* ── Đĩa vinyl 3D (CSS thuần) ────────────────────────────────────── */
+.vinyl-stage {
+  perspective: 1000px;
+}
+
+.vinyl-disc {
+  position: relative;
+  border-radius: 9999px;
+  transform: rotateX(18deg);
+  transform-style: preserve-3d;
+  background:
+    radial-gradient(circle at 50% 50%, #16181f 0%, #0a0b10 55%, #16181f 56%, #0a0b10 100%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 5px);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.8),
+    0 0 40px -8px rgba(46, 204, 113, 0.25),
+    inset 0 0 60px rgba(0, 0, 0, 0.6);
+  animation: vinylSpin 6s linear infinite;
+}
+
+/* Vệt sáng phản chiếu chạy trên mặt đĩa */
+.vinyl-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 40deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.1) 18deg,
+    transparent 45deg,
+    transparent 180deg,
+    rgba(34, 211, 238, 0.08) 210deg,
+    transparent 250deg
+  );
+}
+
+/* Nhãn giữa đĩa */
+.vinyl-label {
+  position: absolute;
+  inset: 32%;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #2ecc71, #22d3ee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.35);
+}
+
+.vinyl-label::after {
+  content: "";
+  position: absolute;
+  width: 9%;
+  height: 9%;
+  border-radius: 9999px;
+  background: #05060f;
+}
+
+@keyframes vinylSpin {
+  from { transform: rotateX(18deg) rotateZ(0deg); }
+  to { transform: rotateX(18deg) rotateZ(360deg); }
+}
+
+/* ── Thanh cuộn ──────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #05060f;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  border: 2px solid #05060f;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(46, 204, 113, 0.5);
+}
+
+/* ── Slider âm lượng ─────────────────────────────────────────────── */
+input[type="range"].mimi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background:
+    linear-gradient(90deg, #2ecc71, #22d3ee) 0 / var(--fill, 50%) 100% no-repeat,
+    rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+input[type="range"].mimi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid #2ecc71;
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.6);
+  transition: transform 0.15s ease;
+}
+input[type="range"].mimi-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type="range"].mimi-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid #2ecc71;
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.6);
+}
+
+/* ── Tôn trọng người dùng giảm chuyển động ───────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

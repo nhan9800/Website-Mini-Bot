@@ -1,0 +1,39 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js — nhánh `main` KHÔNG chứa .next nữa. GitHub Actions build rồi đẩy kết
+# quả sang nhánh `deploy` (xem .github/workflows/deploy.yml); cPanel kéo nhánh đó.
+# Nhờ vậy main gọn, không còn diff nhị phân mỗi lần đổi giao diện.
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
