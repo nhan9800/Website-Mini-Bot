@@ -1,12 +1,10 @@
 // Startup file cho Phusion Passenger (cPanel Node.js App — Nhân Hòa).
 //
-// Vì sao là .cjs chứ không phải .js: package.json khai báo "type": "module", nên
-// mọi file .js trong dự án được coi là ESM. Passenger nạp startup file bằng
-// require(), mà require() một file ESM thì ném ERR_REQUIRE_ESM trên nhiều bản
-// Node — site sẽ không khởi động nổi. Đuôi .cjs buộc file này là CommonJS nên
-// require() luôn nạp được, bất kể phiên bản Node của hosting.
+// File này là CommonJS (package.json KHÔNG khai báo "type": "module"), vì Passenger
+// nạp startup file bằng require(). Nếu để dự án ở chế độ ESM thì require() một
+// file .js sẽ ném ERR_REQUIRE_ESM và site không khởi động nổi — lỗi 503 khó đoán.
 //
-// Đặt "Application startup file" trong cPanel = server.cjs
+// server.cjs là bản sao y hệt, để dù cPanel đang trỏ vào tên nào cũng chạy được.
 const { createServer } = require('node:http');
 const next = require('next');
 

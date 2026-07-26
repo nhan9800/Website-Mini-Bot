@@ -24,7 +24,7 @@
    - **Application mode**: Chọn `Production`.
    - **Application root**: Nhập tên thư mục lưu code, ví dụ `website-mini-bot`.
    - **Application URL**: Chọn tên miền của bạn, ví dụ `mimibot.id.vn`.
-   - **Application startup file**: Nhập chính xác `server.cjs` (đuôi .cjs bắt buộc: package.json có `"type": "module"` nên Passenger require() file .js sẽ lỗi ERR_REQUIRE_ESM).
+   - **Application startup file**: Để `server.js` (mặc định) hoặc `server.cjs` — hai file giống hệt nhau, cả hai đều chạy được.
 3. Bấm **Create** để cPanel tạo môi trường ảo (virtual environment) và file `.htaccess`.
 
 ---
@@ -127,6 +127,6 @@ Sau khi thêm/sửa biến môi trường phải bấm **Restart** thì mới c�
   ```
 - **`git pull` báo "local changes would be overwritten"**: có file bị sửa trên host (thường do chạy `npm install` làm đổi `package-lock.json`). Dùng `git reset --hard origin/deploy` như trên, và về sau dùng `npm ci` thay cho `npm install`.
 - **`git pull` báo "refusing to merge unrelated histories"**: nhánh `deploy` đã bị dựng lại từ đầu. Xoá thư mục và clone lại: `cd ~ && rm -rf website-mini-bot && git clone -b deploy https://github.com/nhan9800/Website-Mini-Bot.git website-mini-bot`.
-- **Lỗi 503 / Application Not Starting**: Kiểm tra `Application startup file` phải là `server.cjs` và đã `npm ci` xong.
+- **Lỗi 503 / Application Not Starting**: Kiểm tra `Application startup file` phải là `server.js` hoặc `server.cjs`, và đã `npm ci` xong.
 - **Dashboard báo "Chưa cấu hình MIMI_API_TOKEN"**: Thêm biến `MIMI_API_TOKEN` (mục 5) rồi Restart.
 - **Trạng thái bot hiện "ngoại tuyến" dù bot đang chạy**: Kiểm tra `curl http://hcm3.vibehost.vn:20019/health/live` từ Terminal cPanel — nếu không phản hồi, VibeHost đang chặn cổng hoặc bot chưa bật Internal API.
