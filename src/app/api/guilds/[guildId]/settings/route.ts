@@ -14,15 +14,39 @@ function badRequest(message: string): Response {
   );
 }
 
+function missingKey(): Response {
+  return new Response(
+    JSON.stringify({
+      ok: false,
+      error: {
+        code: 'DASHBOARD_KEY_REQUIRED',
+        message: 'Thiếu khoá truy cập. Gõ /dashboard trong server Discord để lấy link có khoá.',
+      },
+    }),
+    { status: 403, headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+  );
+}
+
+/** Khoá do bot ký, trình duyệt gửi lên qua header — web chỉ chuyển tiếp. */
+function readAccessKey(request: Request): string {
+  return (request.headers.get('x-mimi-key') || '').trim();
+}
+
 /** GET /api/guilds/:id/settings → GET {bot}/internal/guilds/:id/settings */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { guildId: string } }
 ) {
   const { guildId } = params;
   if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
-  const result = await callMimiApi<GuildSettingsResponse>(`/internal/guilds/${guildId}/settings`);
+  const accessKey = readAccessKey(request);
+  if (!accessKey) return missingKey();
+
+  const result = await callMimiApi<GuildSettingsResponse>(
+    `/internal/guilds/${guildId}/settings`,
+    { accessKey }
+  );
   return toRouteResponse(result);
 }
 
@@ -36,6 +60,9 @@ export async function PATCH(
 ) {
   const { guildId } = params;
   if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
+
+  const accessKey = readAccessKey(request);
+  if (!accessKey) return missingKey();
 
   let body: Record<string, unknown> = {};
   try {
@@ -55,7 +82,7 @@ export async function PATCH(
 
   const result = await callMimiApi<{ ok: boolean; applied: Record<string, unknown> }>(
     `/internal/guilds/${guildId}/settings`,
-    { method: 'PATCH', body: patch }
+    { method: 'PATCH', accessKey, body: patch }
   );
   return toRouteResponse(result);
 }

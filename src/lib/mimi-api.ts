@@ -15,6 +15,10 @@ import 'server-only';
  *   POST  /internal/guilds/:id/player/:action   (pause|resume|skip|stop|volume)
  *
  * Token luôn ở phía server, không bao giờ lộ ra trình duyệt.
+ *
+ * Các endpoint /internal/guilds/:id/* còn đòi header X-Mimi-Access-Key — khoá do
+ * bot ký, người dùng lấy bằng lệnh /dashboard trong Discord (bot kiểm tra quyền
+ * Quản Lý Máy Chủ trước khi phát). Web chỉ chuyển tiếp khoá, không tự tạo được.
  */
 
 function trimSlash(value: string): string {
@@ -74,7 +78,7 @@ function describeNetworkError(err: unknown): { code: string; message: string } {
 
 export async function callMimiApi<T = unknown>(
   path: string,
-  init: { method?: string; body?: unknown } = {}
+  init: { method?: string; body?: unknown; accessKey?: string } = {}
 ): Promise<MimiApiResult<T>> {
   if (!serverEnv.MIMI_API_TOKEN) {
     return {
@@ -97,6 +101,7 @@ export async function callMimiApi<T = unknown>(
       method: init.method ?? 'GET',
       headers: {
         Authorization: `Bearer ${serverEnv.MIMI_API_TOKEN}`,
+        ...(init.accessKey ? { 'X-Mimi-Access-Key': init.accessKey } : {}),
         ...(init.body ? { 'Content-Type': 'application/json' } : {}),
       },
       body: init.body ? JSON.stringify(init.body) : undefined,

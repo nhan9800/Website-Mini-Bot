@@ -24,6 +24,7 @@ import {
 import type { PlayerState, GuildSettingsResponse, ApiErrorBody } from '@/lib/types';
 import { formatDuration } from '@/lib/format';
 import { Soundwave } from '@/components/ui/soundwave';
+import { adoptAccessKeyFromUrl, accessKeyHeader, clearAccessKey } from '@/lib/access-key';
 
 type PlayerAction = 'pause' | 'resume' | 'skip' | 'stop' | 'volume';
 
@@ -56,6 +57,14 @@ export default function GuildDashboardPage({
   const { guildId } = params;
   const [activeTab, setActiveTab] = useState<'player' | 'settings'>('player');
 
+  // Khoá truy cập server này: lấy từ `?key=` trên link do lệnh /dashboard phát ra,
+  // lưu vào sessionStorage rồi gỡ khỏi URL. Chưa có khoá thì không gọi API.
+  const [accessKey, setAccessKey] = useState<string | null>(null);
+  useEffect(() => {
+    setAccessKey(adoptAccessKeyFromUrl(guildId));
+  }, [guildId]);
+  const hasKey = !!accessKey;
+
   // ── Trạng thái player (từ API thật) ─────────────────────────────
   const [player, setPlayer] = useState<PlayerState | null>(null);
   const [playerError, setPlayerError] = useState<string | null>(null);
@@ -77,8 +86,12 @@ export default function GuildDashboardPage({
 
   // ── Lấy player state, poll mỗi 5s ───────────────────────────────
   const fetchPlayer = useCallback(async () => {
+    if (!accessKey) return;
     try {
-      const res = await fetch(`/api/guilds/${guildId}/player`, { cache: 'no-store' });
+      const res = await fetch(`/api/guilds/${guildId}/player`, {
+        cache: 'no-store',
+        headers: accessKeyHeader(accessKey),
+      });
       const data = await res.json();
       if (res.ok && data?.ok && data.player) {
         setPlayer(data.player as PlayerState);
@@ -92,15 +105,16 @@ export default function GuildDashboardPage({
     } finally {
       setPlayerLoading(false);
     }
-  }, [guildId]);
+  }, [guildId, accessKey]);
 
   useEffect(() => {
+    if (!accessKey) return;
     fetchPlayer();
     const t = setInterval(() => {
       if (!document.hidden) fetchPlayer();
     }, 5000);
     return () => clearInterval(t);
-  }, [fetchPlayer]);
+  }, [fetchPlayer, accessKey]);
 
   // Tua tiến trình cục bộ giữa các lần poll (mượt hơn)
   useEffect(() => {
@@ -113,8 +127,12 @@ export default function GuildDashboardPage({
 
   // ── Lấy settings ────────────────────────────────────────────────
   const fetchSettings = useCallback(async () => {
+    if (!accessKey) return;
     try {
-      const res = await fetch(`/api/guilds/${guildId}/settings`, { cache: 'no-store' });
+      const res = await fetch(`/api/guilds/${guildId}/settings`, {
+        cache: 'no-store',
+        headers: accessKeyHeader(accessKey),
+      });
       const data = await res.json();
       if (res.ok && data?.ok) {
         const payload = data as GuildSettingsResponse;
@@ -131,11 +149,11 @@ export default function GuildDashboardPage({
     } catch {
       setSettingsError('Không thể kết nối tới máy chủ web.');
     }
-  }, [guildId]);
+  }, [guildId, accessKey]);
 
   useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+    if (accessKey) fetchSettings();
+  }, [fetchSettings, accessKey]);
 
   // ── Gửi lệnh điều khiển ─────────────────────────────────────────
   const sendAction = useCallback(
@@ -144,7 +162,7 @@ export default function GuildDashboardPage({
       try {
         const res = await fetch(`/api/guilds/${guildId}/player`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...accessKeyHeader(accessKey ?? '') },
           body: JSON.stringify({ action, ...extra }),
         });
         const data = await res.json();
@@ -161,7 +179,7 @@ export default function GuildDashboardPage({
         setActionBusy(null);
       }
     },
-    [guildId]
+    [guildId, accessKey]
   );
 
   // Volume: kéo mượt, chỉ gửi sau khi ngừng kéo 400ms
@@ -182,7 +200,7 @@ export default function GuildDashboardPage({
     try {
       const res = await fetch(`/api/guilds/${guildId}/settings`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...accessKeyHeader(accessKey ?? '') },
         body: JSON.stringify({ prefix: prefix.trim(), unverifyOnMute, verifyDailyMode }),
       });
       const data = await res.json();
@@ -205,6 +223,17 @@ export default function GuildDashboardPage({
   const volume = volumeDraft ?? player?.volume ?? 100;
   const durationMs = track?.durationMs ?? 0;
   const progress = durationMs > 0 ? Math.min((localPositionMs / durationMs) * 100, 100) : 0;
+
+  // accessKey === null nghĩa là chưa đọc xong sessionStorage (tránh nháy màn hình khoá)
+  if (accessKey === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <RefreshCw className="h-7 w-7 animate-spin text-mimi-green" />
+      </div>
+    );
+  }
+
+  if (!hasKey) return <NeedKeyScreen guildId={guildId} />;
 
   return (
     <div className="min-h-screen py-12">
@@ -302,14 +331,26 @@ export default function GuildDashboardPage({
                 Kiểm tra: bot đã online chưa · Mimi đã ở trong server này chưa · Guild ID có đúng không.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => (activeTab === 'player' ? fetchPlayer() : fetchSettings())}
-              className="ml-auto shrink-0 rounded-xl border border-white/10 bg-white/5 p-2.5 text-gray-300 transition-colors hover:text-white"
-              aria-label="Thử lại"
-            >
-              <RefreshCw className="h-4 w-4" />
-            </button>
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => (activeTab === 'player' ? fetchPlayer() : fetchSettings())}
+                className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-gray-300 transition-colors hover:text-white"
+                aria-label="Thử lại"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clearAccessKey(guildId);
+                  setAccessKey('');
+                }}
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-semibold text-gray-300 transition-colors hover:text-white"
+              >
+                Gỡ khoá
+              </button>
+            </div>
           </div>
         )}
 
@@ -644,6 +685,43 @@ export default function GuildDashboardPage({
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/** Màn hình khi vào thẳng URL mà chưa có khoá truy cập. */
+function NeedKeyScreen({ guildId }: { guildId: string }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center px-4 py-16">
+      <div className="glass-panel-glow gradient-ring w-full max-w-xl space-y-6 rounded-[2rem] p-9 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10">
+          <Shield className="h-8 w-8 text-mimi-green" />
+        </div>
+        <div className="space-y-3">
+          <h1 className="text-2xl font-extrabold text-white">Cần khoá truy cập</h1>
+          <p className="text-sm leading-relaxed text-gray-400">
+            Bảng điều khiển của một server chỉ mở cho người có quyền{' '}
+            <strong className="text-white">Quản Lý Máy Chủ</strong>. Vào Discord, gõ lệnh
+            dưới đây trong server rồi bấm link Mimi gửi lại:
+          </p>
+          <code className="inline-block rounded-xl border border-white/10 bg-black/40 px-5 py-3 font-mono text-base font-bold text-mimi-green">
+            /dashboard
+          </code>
+          <p className="text-xs text-gray-500">
+            Link đó gắn riêng với server <span className="font-mono text-gray-400">{guildId}</span> và
+            hết hạn sau 7 ngày.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-3 border-t border-white/10 pt-6">
+          <Link href="/dashboard" className="btn-secondary !px-6 !py-3 !text-sm">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Quay lại</span>
+          </Link>
+          <Link href="/support" className="btn-secondary !px-6 !py-3 !text-sm">
+            <span>Cần trợ giúp?</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

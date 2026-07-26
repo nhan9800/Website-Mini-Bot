@@ -80,6 +80,14 @@ Trong **Setup Node.js App** -> **Environment variables**, thêm:
 >
 > Có thể thay 2 biến host+port bằng một biến duy nhất `MIMI_API_BASE` = `http://hcm3.vibehost.vn:20019`.
 
+### Cách mở Dashboard của một server (từ v2.2.0)
+
+Dashboard không còn mở bằng cách gõ Guild ID nữa. Người dùng vào server Discord, gõ **`/dashboard`** — Mimi kiểm tra quyền **Quản Lý Máy Chủ** rồi gửi lại link kèm khoá truy cập (hạn 7 ngày).
+
+Lý do: web luôn tự đính service token khi gọi bot, nên nếu không có khoá riêng thì bất kỳ ai biết Guild ID cũng dừng được nhạc hay đổi prefix của server lạ. Xem `docs/SECURITY.md` bên repo bot.
+
+Phía bot (VibeHost) nên đặt thêm biến `MIMI_WEB_BASE` = `https://mimibot.id.vn` để link `/dashboard` trỏ đúng tên miền.
+
 Sau khi thêm/sửa biến môi trường phải bấm **Restart** thì mới có hiệu lực.
 
 ---

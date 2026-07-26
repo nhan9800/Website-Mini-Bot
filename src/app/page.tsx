@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import {
   Sparkles,
   ArrowRight,
@@ -26,6 +27,12 @@ import { Reveal } from '@/components/ui/reveal';
 import { Icon3D, type Icon3DName } from '@/components/ui/icon3d';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { TrendingChart } from '@/components/trending-chart';
+
+// Cảnh 3D WebGL nặng — chỉ tải ở client, trong lúc chờ hiện particles nhẹ.
+const Hero3D = dynamic(() => import('@/components/three/hero-3d'), {
+  ssr: false,
+  loading: () => <Particles />,
+});
 
 /* ── Dữ liệu nội dung ─────────────────────────────────────────── */
 
@@ -124,32 +131,11 @@ export default function HomePage() {
     <div className="-mt-24 min-h-screen">
       {/* ══ HERO — cao hết màn hình, căn giữa, nền particles ══════ */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 text-center">
-        <Particles />
-        {/* lớp phủ gradient cho chữ nổi */}
+        {/* Cảnh 3D: đĩa vinyl quay + vòng equalizer + nốt nhạc bay */}
+        <Hero3D />
+        {/* lớp phủ gradient cho chữ nổi trên nền 3D */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,rgba(46,204,113,0.10),transparent_70%)]" />
-
-        {/* Emoji 3D bay lơ lửng hai bên hero */}
-        <div className="pointer-events-none absolute left-[8%] top-[24%] hidden animate-float opacity-90 lg:block">
-          <Icon3D name="headphone" size={84} />
-        </div>
-        <div
-          className="pointer-events-none absolute right-[9%] top-[30%] hidden animate-float opacity-90 lg:block"
-          style={{ animationDelay: '1.2s' }}
-        >
-          <Icon3D name="music" size={72} />
-        </div>
-        <div
-          className="pointer-events-none absolute bottom-[22%] left-[14%] hidden animate-float opacity-80 lg:block"
-          style={{ animationDelay: '2s' }}
-        >
-          <Icon3D name="mic" size={58} />
-        </div>
-        <div
-          className="pointer-events-none absolute bottom-[26%] right-[13%] hidden animate-float opacity-80 lg:block"
-          style={{ animationDelay: '0.6s' }}
-        >
-          <Icon3D name="sparkles" size={56} />
-        </div>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_52%_38%_at_50%_38%,rgba(5,6,15,0.55),transparent_78%)]" />
 
         <div className="relative z-10 mx-auto max-w-4xl space-y-8">
           <div className="inline-flex animate-fade-up items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green backdrop-blur-sm">

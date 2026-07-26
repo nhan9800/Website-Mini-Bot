@@ -79,14 +79,39 @@ export default function DashboardSelectorPage() {
             Điều Khiển Mimi <span className="text-gradient-mimi">Từ Trình Duyệt</span>
           </h1>
           <p className="text-base text-gray-400 sm:text-lg">
-            Nhập ID máy chủ Discord có Mimi để mở trình phát nhạc trực tiếp, quản lý hàng chờ
-            và chỉnh cấu hình bot.
+            Gõ <code className="rounded bg-black/40 px-2 py-0.5 font-mono text-mimi-green">/dashboard</code>{' '}
+            trong server Discord của bạn, Mimi sẽ gửi link kèm khoá truy cập để mở trình phát
+            nhạc, quản lý hàng chờ và chỉnh cấu hình bot.
           </p>
         </div>
 
-        {/* ── Ô nhập Guild ID ───────────────────────────────────── */}
+        {/* ── Hướng dẫn lấy khoá ────────────────────────────────── */}
         <div className="mx-auto max-w-2xl">
-          <form onSubmit={handleSubmit} className="glass-panel-glow gradient-ring space-y-4 rounded-3xl p-7 sm:p-9">
+          <div className="glass-panel-glow gradient-ring space-y-5 rounded-3xl p-7 text-center sm:p-9">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10">
+              <KeyRound className="h-7 w-7 text-mimi-green" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-lg font-bold text-white">Mở Dashboard bằng lệnh trong Discord</h2>
+              <p className="text-sm leading-relaxed text-gray-400">
+                Chỉ người có quyền <strong className="text-white">Quản Lý Máy Chủ</strong> mới mở
+                được bảng điều khiển. Mimi kiểm tra quyền ngay trong Discord rồi mới phát link —
+                nhờ vậy người ngoài không điều khiển được nhạc hay đổi cấu hình server của bạn.
+              </p>
+            </div>
+            <code className="inline-block rounded-xl border border-white/10 bg-black/40 px-6 py-3 font-mono text-base font-bold text-mimi-green">
+              /dashboard
+            </code>
+            <p className="text-xs text-gray-500">Link nhận được có hạn 7 ngày, hết hạn thì gõ lại lệnh.</p>
+          </div>
+        </div>
+
+        {/* ── Ô nhập Guild ID (chỉ mở trang, vẫn cần khoá) ──────── */}
+        <details className="mx-auto max-w-2xl">
+          <summary className="cursor-pointer text-center text-xs text-gray-500 transition-colors hover:text-gray-300">
+            Đã có khoá trong phiên này? Mở nhanh bằng Guild ID
+          </summary>
+          <form onSubmit={handleSubmit} className="glass-panel mt-4 space-y-4 rounded-3xl p-7">
             <label htmlFor="guild-id" className="flex items-center gap-2 text-sm font-bold text-white">
               <KeyRound className="h-4 w-4 text-mimi-green" />
               <span>ID Máy Chủ Discord (Guild ID)</span>
@@ -114,11 +139,12 @@ export default function DashboardSelectorPage() {
               <MousePointerClick className="mt-0.5 h-4 w-4 shrink-0 text-mimi-cyan" />
               <span>
                 Cách lấy ID: Discord → <strong className="text-gray-300">Cài đặt → Nâng cao → bật Developer Mode</strong>,
-                sau đó chuột phải vào tên server → <strong className="text-gray-300">Copy Server ID</strong>.
+                sau đó chuột phải vào tên server → <strong className="text-gray-300">Copy Server ID</strong>. Trang
+                sẽ vẫn yêu cầu khoá nếu phiên này chưa có.
               </span>
             </div>
           </form>
-        </div>
+        </details>
 
         {/* ── Server gần đây ────────────────────────────────────── */}
         {recent.length > 0 && (

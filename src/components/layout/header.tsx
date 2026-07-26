@@ -72,7 +72,7 @@ export function Header() {
               <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-white">
                 Mimi
                 <span className="rounded-full border border-mimi-green/30 bg-mimi-green/15 px-2 py-0.5 text-[10px] font-bold text-mimi-green">
-                  v2.1
+                  v2.2
                 </span>
               </span>
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-gray-500">

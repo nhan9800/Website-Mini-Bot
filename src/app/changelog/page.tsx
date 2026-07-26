@@ -9,6 +9,19 @@ export const metadata: Metadata = {
 
 const releases = [
   {
+    version: 'v2.2.0 — Hero 3D & Khoá Truy Cập Dashboard',
+    date: '26/07/2026',
+    tag: 'Major Update',
+    icon: Rocket,
+    items: [
+      'Trang chủ có cảnh 3D WebGL thật: đĩa vinyl quay theo trục, vòng equalizer 44 thanh chuyển màu theo nhịp, nốt nhạc phát sáng bay lơ lửng và camera nghiêng theo chuột.',
+      'Cảnh 3D tự tắt khi cuộn qua khỏi hero, tôn trọng tuỳ chọn "giảm chuyển động" của hệ điều hành, và quay về nền particles nếu máy không hỗ trợ WebGL.',
+      'Dashboard nay yêu cầu khoá truy cập: gõ /dashboard trong Discord để nhận link riêng. Trước đây bất kỳ ai biết ID server đều điều khiển được nhạc và đổi cấu hình server lạ.',
+      'Sửa 44 lỗi trong bot sau đợt rà soát toàn bộ mã nguồn: rò rỉ bộ nhớ, tiến trình tải nhạc mồ côi, nút Bỏ Qua không ăn khi bật Lặp Bài, và nhiều lỗi hàng chờ khác.',
+      'Nâng Next.js lên 14.2.35 để vá các lỗ hổng bảo mật đã công bố.',
+    ],
+  },
+  {
     version: 'v2.1.0 — Website Đại Tu & Kết Nối Dữ Liệu Thật',
     date: '26/07/2026',
     tag: 'Major Update',
