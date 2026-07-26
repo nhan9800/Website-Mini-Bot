@@ -1,16 +1,18 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/commands/page": "app/commands/page.js",
-  "/status/page": "app/status/page.js",
   "/dashboard/[guildId]/page": "app/dashboard/[guildId]/page.js",
-  "/support/page": "app/support/page.js",
   "/dashboard/page": "app/dashboard/page.js",
+  "/icon.png/route": "app/icon.png/route.js",
+  "/status/page": "app/status/page.js",
   "/page": "app/page.js",
-  "/api/commands/route": "app/api/commands/route.js",
   "/api/status/route": "app/api/status/route.js",
+  "/api/commands/route": "app/api/commands/route.js",
+  "/api/trending/route": "app/api/trending/route.js",
   "/api/guilds/[guildId]/player/route": "app/api/guilds/[guildId]/player/route.js",
-  "/changelog/page": "app/changelog/page.js",
   "/api/guilds/[guildId]/settings/route": "app/api/guilds/[guildId]/settings/route.js",
-  "/terms/page": "app/terms/page.js",
-  "/privacy/page": "app/privacy/page.js"
+  "/changelog/page": "app/changelog/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/support/page": "app/support/page.js",
+  "/terms/page": "app/terms/page.js"
 }

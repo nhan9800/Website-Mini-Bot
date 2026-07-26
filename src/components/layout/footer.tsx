@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { AudioLines, Heart, ExternalLink, Github, MessageSquare } from 'lucide-react';
+import { Heart, ExternalLink, Github, MessageSquare } from 'lucide-react';
 import { env } from '@/lib/env';
 
 const exploreLinks = [
@@ -25,8 +25,16 @@ export function Footer() {
           {/* Thương hiệu */}
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand text-[#05060f]">
-                <AudioLines className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-mimi-green/25 bg-mimi-green/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icons/headphone.png"
+                  alt=""
+                  width={22}
+                  height={22}
+                  draggable={false}
+                  className="select-none"
+                />
               </div>
               <span className="text-lg font-extrabold tracking-tight text-white">Mimi</span>
             </Link>

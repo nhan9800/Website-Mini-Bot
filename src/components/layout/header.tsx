@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  AudioLines,
   LayoutDashboard,
   Terminal,
   Activity,
@@ -58,7 +57,15 @@ export function Header() {
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative h-11 w-11 rounded-2xl bg-gradient-brand p-[2px] shadow-glow transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105">
               <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#05060f]">
-                <AudioLines className="h-5 w-5 text-mimi-green transition-colors group-hover:text-mimi-cyan" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icons/headphone.png"
+                  alt=""
+                  width={26}
+                  height={26}
+                  draggable={false}
+                  className="select-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+                />
               </div>
             </div>
             <div className="flex flex-col leading-tight">

@@ -3,15 +3,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  Music,
-  Shield,
-  Clock,
   Sparkles,
   ArrowRight,
-  Server,
   Zap,
   Terminal,
-  Users,
   LayoutDashboard,
   ChevronDown,
   Quote,
@@ -28,13 +23,22 @@ import { formatCompact, formatUptime } from '@/lib/format';
 import { Soundwave } from '@/components/ui/soundwave';
 import { Particles } from '@/components/ui/particles';
 import { Reveal } from '@/components/ui/reveal';
+import { Icon3D, type Icon3DName } from '@/components/ui/icon3d';
+import { TiltCard } from '@/components/ui/tilt-card';
+import { TrendingChart } from '@/components/trending-chart';
 
 /* ── Dữ liệu nội dung ─────────────────────────────────────────── */
 
-const services = [
+const services: {
+  icon: Icon3DName;
+  ring: string;
+  hover: string;
+  title: string;
+  desc: string;
+  bullets: string[];
+}[] = [
   {
-    icon: Music,
-    color: 'text-mimi-green',
+    icon: 'music',
     ring: 'border-mimi-green/25 bg-mimi-green/10',
     hover: 'hover:border-mimi-green/50',
     title: 'Bot Nhạc Chất Lượng Cao',
@@ -42,8 +46,7 @@ const services = [
     bullets: ['Không cần API key', 'Ở lại kênh 24/7', 'Lyrics + TTS tiếng Việt'],
   },
   {
-    icon: Shield,
-    color: 'text-mimi-violet',
+    icon: 'shield',
     ring: 'border-mimi-purple/25 bg-mimi-purple/10',
     hover: 'hover:border-mimi-purple/50',
     title: 'Xác Thực & An Ninh',
@@ -51,8 +54,7 @@ const services = [
     bullets: ['Reset đúng giờ VN', 'Role tự động', 'Chống phá server'],
   },
   {
-    icon: Clock,
-    color: 'text-mimi-cyan',
+    icon: 'money',
     ring: 'border-mimi-cyan/25 bg-mimi-cyan/10',
     hover: 'hover:border-mimi-cyan/50',
     title: 'Chấm Công & Kinh Tế',
@@ -60,8 +62,7 @@ const services = [
     bullets: ['Báo cáo tự động', 'Cảnh báo gian lận', 'Quản lý minh bạch'],
   },
   {
-    icon: LayoutDashboard,
-    color: 'text-mimi-amber',
+    icon: 'dashboard',
     ring: 'border-mimi-amber/25 bg-mimi-amber/10',
     hover: 'hover:border-mimi-amber/50',
     title: 'Dashboard Web Thời Gian Thực',
@@ -126,6 +127,29 @@ export default function HomePage() {
         <Particles />
         {/* lớp phủ gradient cho chữ nổi */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,rgba(46,204,113,0.10),transparent_70%)]" />
+
+        {/* Emoji 3D bay lơ lửng hai bên hero */}
+        <div className="pointer-events-none absolute left-[8%] top-[24%] hidden animate-float opacity-90 lg:block">
+          <Icon3D name="headphone" size={84} />
+        </div>
+        <div
+          className="pointer-events-none absolute right-[9%] top-[30%] hidden animate-float opacity-90 lg:block"
+          style={{ animationDelay: '1.2s' }}
+        >
+          <Icon3D name="music" size={72} />
+        </div>
+        <div
+          className="pointer-events-none absolute bottom-[22%] left-[14%] hidden animate-float opacity-80 lg:block"
+          style={{ animationDelay: '2s' }}
+        >
+          <Icon3D name="mic" size={58} />
+        </div>
+        <div
+          className="pointer-events-none absolute bottom-[26%] right-[13%] hidden animate-float opacity-80 lg:block"
+          style={{ animationDelay: '0.6s' }}
+        >
+          <Icon3D name="sparkles" size={56} />
+        </div>
 
         <div className="relative z-10 mx-auto max-w-4xl space-y-8">
           <div className="inline-flex animate-fade-up items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green backdrop-blur-sm">
@@ -192,31 +216,30 @@ export default function HomePage() {
       <section className="border-y border-white/5 bg-white/[0.02] py-12">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
           <StatBlock
-            icon={Server}
-            color="text-mimi-green"
+            icon="robot"
             value={status ? formatCompact(status.guildCount) : '—'}
             label="Máy chủ đang phục vụ"
           />
           <StatBlock
-            icon={Users}
-            color="text-mimi-violet"
+            icon="heart"
             value={status ? formatCompact(status.reachableUsers) : '—'}
             label="Thành viên tiếp cận"
           />
           <StatBlock
-            icon={Music}
-            color="text-mimi-cyan"
+            icon="headphone"
             value={status ? String(status.activeVoiceSessions) : '—'}
             label="Phiên nhạc đang phát"
           />
           <StatBlock
-            icon={Zap}
-            color="text-mimi-amber"
+            icon="rocket"
             value={status ? formatUptime(status.uptimeSeconds) : '—'}
             label="Thời gian hoạt động"
           />
         </div>
       </section>
+
+      {/* ══ BXH NHẠC VIỆT NAM (dữ liệu live iTunes VN) ═══════════ */}
+      <TrendingChart />
 
       {/* ══ DỊCH VỤ / TÍNH NĂNG ═══════════════════════════════════ */}
       <section id="dich-vu" className="scroll-mt-24 py-24">
@@ -237,30 +260,31 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {services.map((s, i) => {
-              const Icon = s.icon;
               return (
                 <Reveal key={s.title} delay={i * 90}>
-                  <div className={`glass-panel card-lift group h-full space-y-5 rounded-3xl p-8 ${s.hover}`}>
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border ${s.ring} ${s.color} transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-110`}
-                      >
-                        <Icon className="h-7 w-7" />
-                      </div>
-                      <h3 className="text-xl font-bold text-white">{s.title}</h3>
-                    </div>
-                    <p className="text-sm leading-relaxed text-gray-400">{s.desc}</p>
-                    <ul className="flex flex-wrap gap-2 pt-1">
-                      {s.bullets.map((b) => (
-                        <li
-                          key={b}
-                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-gray-300"
+                  <TiltCard className="h-full">
+                    <div className={`glass-panel group h-full space-y-5 rounded-3xl p-8 transition-colors ${s.hover}`}>
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border ${s.ring} transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-110`}
                         >
-                          {b}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                          <Icon3D name={s.icon} size={40} />
+                        </div>
+                        <h3 className="text-xl font-bold text-white">{s.title}</h3>
+                      </div>
+                      <p className="text-sm leading-relaxed text-gray-400">{s.desc}</p>
+                      <ul className="flex flex-wrap gap-2 pt-1">
+                        {s.bullets.map((b) => (
+                          <li
+                            key={b}
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-gray-300"
+                          >
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </TiltCard>
                 </Reveal>
               );
             })}
@@ -387,8 +411,8 @@ export default function HomePage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <Reveal>
               <div className="glass-panel card-lift flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-green/40">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-brand text-2xl font-black text-[#05060f] shadow-glow">
-                  N
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10 shadow-glow">
+                  <Icon3D name="rocket" size={40} />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">nhan9800</h3>
@@ -401,8 +425,8 @@ export default function HomePage() {
             </Reveal>
             <Reveal delay={100}>
               <div className="glass-panel card-lift flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-purple/40">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-purple/30 bg-mimi-purple/15 text-mimi-violet">
-                  <Users className="h-8 w-8" />
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-purple/30 bg-mimi-purple/15">
+                  <Icon3D name="robot" size={40} />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">Cộng Đồng Mimi</h3>
@@ -511,19 +535,17 @@ export default function HomePage() {
 
 /** Khối số liệu lớn ở dải stats. */
 function StatBlock({
-  icon: Icon,
-  color,
+  icon,
   value,
   label,
 }: {
-  icon: React.ElementType;
-  color: string;
+  icon: Icon3DName;
   value: string;
   label: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 text-center">
-      <Icon className={`h-6 w-6 ${color}`} />
+    <div className="flex flex-col items-center gap-2.5 text-center">
+      <Icon3D name={icon} size={40} />
       <span className="font-mono text-3xl font-extrabold text-white sm:text-4xl">{value}</span>
       <span className="text-xs uppercase tracking-wider text-gray-400">{label}</span>
     </div>
