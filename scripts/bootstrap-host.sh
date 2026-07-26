@@ -95,7 +95,7 @@ cat <<PLAN
 $( if [ "$RESET_VENV" = 1 ]; then echo "     - $VENV_DIR  (môi trường Node — sẽ phải tạo lại trong cPanel!)";
    elif [ -d "$VENV_DIR" ]; then echo "     (GIỮ LẠI $VENV_DIR — dùng lại môi trường Node sẵn có)";
    fi )
-$(for d in "${OLD_DIRS[@]:-}"; do [ -n "$d" ] && echo "     - $HOME/$d  (app cũ)"; done)
+$(for d in ${OLD_DIRS[@]+"${OLD_DIRS[@]}"}; do [ -n "$d" ] && echo "     - $HOME/$d  (app cũ)"; done)
 
    Sẽ TẠO LẠI:
      - clone nhánh $BRANCH vào $APP_DIR
@@ -128,20 +128,28 @@ fi
 # ---------------------------------------------------------------------
 say "2/6 · Gỡ bản cũ"
 
-# Gỡ đăng ký app trong CloudLinux Node Selector nếu CLI có sẵn. Không có thì bỏ
-# qua — lát nữa tạo lại bằng giao diện cPanel cũng được.
-if command -v cloudlinux-selector >/dev/null 2>&1; then
-    for d in "$APP_NAME" "${OLD_DIRS[@]:-}"; do
-        [ -n "$d" ] || continue
-        cloudlinux-selector destroy --json --interpreter nodejs \
-            --user "$(whoami)" --app-root "$d" >/dev/null 2>&1 \
-            && ok "Đã gỡ đăng ký app: $d" || true
-    done
-else
-    warn "Không có cloudlinux-selector — nhớ tự Destroy app cũ trong Setup Node.js App."
+# Gỡ đăng ký các app CŨ KHÁC (nếu được chỉ định qua --remove-old).
+#
+# KHÔNG đụng vào đăng ký của chính app đang dùng: destroy sẽ xoá luôn môi trường
+# Node và gỡ khối cấu hình Passenger khỏi .htaccess — tức là hạ site, rồi phải
+# vào giao diện cPanel tạo lại mới chạy được. Chỉ làm khi người dùng yêu cầu rõ
+# bằng --reset-venv.
+if [ "$RESET_VENV" = 1 ] && command -v cloudlinux-selector >/dev/null 2>&1; then
+    cloudlinux-selector destroy --json --interpreter nodejs \
+        --user "$(whoami)" --app-root "$APP_NAME" >/dev/null 2>&1 \
+        && ok "Đã gỡ đăng ký app: $APP_NAME" || true
 fi
 
-for d in "${OLD_DIRS[@]:-}"; do
+# "${ARR[@]:-}" trên mảng RỖNG nở ra một chuỗi trắng, khiến "$HOME/$d" thành
+# "$HOME/" — tức là đi xoá thư mục nhà. Dùng dạng ${ARR[@]+...} để mảng rỗng nở
+# ra đúng con số không phần tử.
+for d in ${OLD_DIRS[@]+"${OLD_DIRS[@]}"}; do
+    [ -n "$d" ] || continue
+    if command -v cloudlinux-selector >/dev/null 2>&1; then
+        cloudlinux-selector destroy --json --interpreter nodejs \
+            --user "$(whoami)" --app-root "$d" >/dev/null 2>&1 \
+            && ok "Đã gỡ đăng ký app cũ: $d" || true
+    fi
     safe_rm "$HOME/$d" "app cũ"
 done
 
