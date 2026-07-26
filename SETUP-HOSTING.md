@@ -31,10 +31,10 @@ cd ~ && git clone -b deploy --depth 1 https://github.com/nhan9800/Website-Mini-B
 Lệnh này **chưa xoá gì cả** — nó chỉ in ra kế hoạch để bạn đọc trước. Xem xong, nếu đồng ý thì chạy lại kèm `--yes`, và khai tên thư mục app cũ cần dọn:
 
 ```bash
-bash ~/.mimi-setup/scripts/bootstrap-host.sh --yes --remove-old mimi_app
+bash ~/.mimi-setup/scripts/bootstrap-host.sh --yes
 ```
 
-> Thay `mimi_app` bằng **Application root** thật của app cũ (xem ở Bước 1 bên dưới). Không chắc thì cứ bỏ `--remove-old` đi — script vẫn chạy, chỉ là thư mục cũ còn nằm đó chiếm chỗ, dọn sau cũng được.
+> Script tự nhận ra app Node sẵn có và GIỮ LẠI môi trường Node của nó (môi trường này chỉ tạo lại được qua giao diện cPanel). Muốn dọn luôn thư mục app cũ khác thì thêm `--remove-old TÊN_THƯ_MỤC`.
 
 Script tự làm: dọn bản cũ → tải nhánh `deploy` → tạo app Node (nếu host có CLI) → `npm ci --omit=dev` → restart → kiểm tra `/api/version`. Chỗ nào không tự làm được, nó dừng lại và in đúng thông tin cần điền vào giao diện cPanel, rồi bạn chạy lại chính lệnh đó để đi tiếp — chạy nhiều lần vô hại.
 
@@ -61,29 +61,42 @@ Dọn thư mục cài đặt sau khi xong: `rm -rf ~/.mimi-setup`
 
 ---
 
-## Bước 1 — Xử lý ứng dụng cũ đang chiếm tên miền
+## Bước 1 — Xác định thư mục đang phục vụ tên miền
 
-cPanel **không cho hai ứng dụng Node cùng trỏ vào một domain**. Ứng dụng cũ đang giữ `mimibot.id.vn`, nên phải giải phóng trước.
+Đừng đoán — hỏi thẳng cấu hình Passenger:
 
-1. Vào **Setup Node.js App**, xem danh sách app hiện có.
-2. Tìm app có **Application URL** = `mimibot.id.vn`. Ghi lại **Application root** của nó (nhiều khả năng là `mimi_app`) — lát nữa cần để dọn.
-3. Bấm **Destroy** (biểu tượng thùng rác) trên app đó.
+```bash
+grep -i passenger ~/public_html/.htaccess
+```
 
-> Destroy chỉ xoá *cấu hình app* và môi trường Node ảo, **không xoá mã nguồn** trong thư mục. Thư mục cũ vẫn còn nguyên, muốn xoá thì làm ở Bước 7.
+Dòng `PassengerAppRoot` chỉ đích danh thư mục đang chạy site, `PassengerStartupFile` cho biết file khởi động. Ví dụ trên hosting Nhân Hòa hiện tại:
 
-**Kiểm tra:** mở `https://mimibot.id.vn` — giờ phải ra lỗi hoặc trang mặc định. Đó là dấu hiệu đúng, nghĩa là domain đã được giải phóng.
+```
+PassengerAppRoot "/home/nhmimjcc/website-mini-bot"
+PassengerStartupFile server.js
+```
+
+Nghĩa là app Node **đã tồn tại sẵn** với app root `website-mini-bot`. Trường hợp này **không cần tạo app mới, không cần Destroy gì cả** — chỉ thay nội dung thư mục rồi restart. Bỏ qua Bước 3, đi thẳng tới Bước 2 rồi Bước 4.
+
+Nếu `PassengerAppRoot` trỏ vào thư mục tên khác, dùng tên đó cho `--app-name` ở các lệnh sau. Nếu `~/nodevenv/` trống (chưa có app nào), làm Bước 3 để tạo mới.
 
 ---
 
-## Bước 2 — Tải mã nguồn về trước khi tạo app
+## Bước 2 — Tải mã nguồn
 
-Làm bước này **trước** Bước 3, vì cPanel tạo app sẽ sinh sẵn file mẫu trong thư mục, khiến `git clone` sau đó báo "destination path already exists".
-
-Mở **Terminal**, chạy:
+Nếu app **đã tồn tại** (Bước 1), thư mục app đang có mã nguồn cũ. Thay bằng bản mới:
 
 ```bash
-cd ~
+cd ~ && mv website-mini-bot website-mini-bot.bak && \
 git clone -b deploy https://github.com/nhan9800/Website-Mini-Bot.git website-mini-bot
+```
+
+Đổi tên thay vì xoá — còn bản cũ để quay lại nếu cần. Xong xuôi rồi dọn ở Bước 7.
+
+Nếu app **chưa tồn tại**, chạy bước này trước Bước 3 (cPanel tạo app sẽ sinh sẵn file mẫu, khiến `git clone` sau đó báo "destination path already exists"):
+
+```bash
+cd ~ && git clone -b deploy https://github.com/nhan9800/Website-Mini-Bot.git website-mini-bot
 ```
 
 **Kiểm tra** — lệnh sau phải in ra một chuỗi ngẫu nhiên, không được trống:
@@ -110,9 +123,9 @@ cd ~/website-mini-bot && git checkout deploy && git reset --hard origin/deploy
 | Application mode | `Production` |
 | Application root | `website-mini-bot` |
 | Application URL | `mimibot.id.vn` |
-| Application startup file | `server.cjs` |
+| Application startup file | `server.js` (mặc định, không cần đổi) |
 
-> ⚠️ Phải là **`server.cjs`**, không phải `server.js`. Dự án khai báo `"type": "module"` nên Passenger nạp file `.js` sẽ lỗi `ERR_REQUIRE_ESM` và site không khởi động nổi.
+> Dự án có sẵn cả `server.js` lẫn `server.cjs`, nội dung giống hệt nhau và đều là CommonJS — để tên nào Passenger cũng nạp được, không cần đụng vào ô này.
 
 Bấm **Create**.
 
@@ -199,13 +212,13 @@ Không có dòng nào là đúng (nghĩa là không có bản mới). Có lỗi 
 ## Bước 7 — Dọn thư mục cũ (làm sau khi site mới chạy ổn vài ngày)
 
 ```bash
-ls ~   # tìm thư mục app cũ, ví dụ mimi_app
+ls ~   # xem còn thư mục cũ nào
 ```
 
 Chắc chắn site mới đã chạy ổn rồi hãy xoá:
 
 ```bash
-rm -rf ~/mimi_app     # thay bằng tên thật ở Bước 1
+rm -rf ~/website-mini-bot.bak     # bản cũ đã đổi tên ở Bước 2
 ```
 
 ---
@@ -230,7 +243,7 @@ node scripts/check-deploy.mjs
 
 | Hiện tượng | Nguyên nhân | Cách sửa |
 | :--- | :--- | :--- |
-| 503 / Application Not Starting | startup file đang là `server.js` | Đổi thành `server.cjs` rồi Restart |
+| 503 / Application Not Starting | thiếu node_modules | Chạy lại `npm ci --omit=dev` trong nodevenv rồi Restart |
 | Trang trắng, `_next/static/*` lỗi 500 | đang ở nhánh `main` (không có `.next`) | `git checkout deploy && git reset --hard origin/deploy` |
 | `/api/version` trả `"dev"` | đang chạy bản build tay | Kéo lại từ nhánh `deploy` |
 | `/api/version` báo 404 | code cũ hơn 26/07/2026 | Kéo lại từ nhánh `deploy` |

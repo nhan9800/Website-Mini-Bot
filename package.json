@@ -3,7 +3,6 @@
   "version": "2.2.0",
   "private": true,
   "description": "Website & Dashboard chính thức của Mimi — Discord Music & Community Bot",
-  "type": "module",
   "main": "server.js",
   "engines": {
     "node": ">=18.17.0"
