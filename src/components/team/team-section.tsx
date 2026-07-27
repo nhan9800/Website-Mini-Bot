@@ -99,11 +99,10 @@ export function TeamSection() {
           </p>
         </Reveal>
 
+        {/* --- CORE TEAM --- */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {team.map((member, idx) => {
+          {team.filter(m => m.group === 'core').map((member, idx) => {
             const isFounder = member.role.toLowerCase().includes('founder');
-            const isDev = member.isDev;
-            const isPurple = member.color?.toLowerCase() === '#9b59b6' || (!isDev && !isFounder);
             
             let borderHoverClass = 'hover:border-mimi-purple/60';
             let shadowGlowStyle = '0 0 25px rgba(139,92,246,0.3)';
@@ -114,21 +113,18 @@ export function TeamSection() {
 
             if (isFounder) {
               borderHoverClass = 'hover:border-[#ff6b81]';
-              shadowGlowStyle = '0 0 45px rgba(255,107,129,0.5)'; // Glow mạnh nhất cho Founder
+              shadowGlowStyle = '0 0 45px rgba(255,107,129,0.5)';
               RoleIcon = Crown;
               badgeText = 'Founder';
               badgeColorClass = 'text-[#ff6b81]';
               avatarRingClass = 'ring-[#ff6b81]/40';
-            } else if (isDev) {
+            } else {
               borderHoverClass = 'hover:border-[#00f2fe]';
-              shadowGlowStyle = '0 0 25px rgba(0,242,254,0.35)'; // Glow ngầu nhưng yếu hơn Founder
+              shadowGlowStyle = '0 0 25px rgba(0,242,254,0.35)';
               RoleIcon = Code2;
               badgeText = 'System Dev';
               badgeColorClass = 'text-[#00f2fe]';
               avatarRingClass = 'ring-[#00f2fe]/30';
-            } else if (!isPurple) {
-              borderHoverClass = 'hover:border-mimi-green/60';
-              shadowGlowStyle = '0 0 25px rgba(46,204,113,0.3)';
             }
 
             return (
@@ -139,7 +135,7 @@ export function TeamSection() {
                   <div
                     className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
                     style={{
-                      borderColor: member.color || (isPurple ? '#8b5cf6' : '#2ecc71'),
+                      borderColor: member.color || (isFounder ? '#ff6b81' : '#00f2fe'),
                       boxShadow: shadowGlowStyle,
                     }}
                   >
@@ -153,7 +149,6 @@ export function TeamSection() {
                       }}
                     />
                     <div className={`absolute inset-0 rounded-2xl ring-1 ring-inset ${avatarRingClass}`} />
-                    {/* Chấm trạng thái Discord */}
                     <span
                       className={`absolute bottom-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-2 ring-black ${
                         STATUS_COLORS[member.status || 'online'] || 'bg-mimi-green'
@@ -167,12 +162,12 @@ export function TeamSection() {
                       <h3 className="text-lg font-bold text-white">{member.name}</h3>
                       <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-bold text-gray-400 border border-white/10">
                         <RoleIcon className={`h-2.5 w-2.5 ${badgeColorClass}`} />
-                        <span className={isFounder ? 'text-[#ff6b81]' : (isDev ? 'text-[#00f2fe]' : '')}>{badgeText}</span>
+                        <span className={badgeColorClass}>{badgeText}</span>
                       </span>
                     </div>
                     <p
                       className="text-sm font-semibold"
-                      style={{ color: member.color || (isPurple ? '#a78bfa' : '#2ecc71') }}
+                      style={{ color: member.color || (isFounder ? '#ff6b81' : '#00f2fe') }}
                     >
                       {member.role}
                     </p>
@@ -185,6 +180,48 @@ export function TeamSection() {
             );
           })}
         </div>
+
+        {/* --- ADMIN & SUPPORT TEAM --- */}
+        {team.filter(m => m.group === 'admin' || m.group === 'community').length > 0 && (
+          <div className="mt-20">
+            <Reveal className="mx-auto mb-10 max-w-2xl space-y-3 text-center">
+              <h3 className="text-2xl font-bold text-white">Đội Ngũ Quản Trị & Hỗ Trợ</h3>
+              <p className="text-sm text-gray-400">Những người hùng thầm lặng điều phối sự kiện và hỗ trợ giải đáp thắc mắc của cộng đồng MIMI.</p>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {team.filter(m => m.group === 'admin' || m.group === 'community').map((member, idx) => (
+                <Reveal key={member.id} delay={idx * 50}>
+                  <div className="glass-panel group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04]">
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/10">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={member.avatar || '/logo.webp'}
+                        alt={member.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/logo.webp';
+                        }}
+                      />
+                      <span
+                        className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                          STATUS_COLORS[member.status || 'online'] || 'bg-mimi-green'
+                        }`}
+                        title={STATUS_TITLES[member.status || 'online'] || 'Discord Member'}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="truncate text-sm font-bold text-gray-200 group-hover:text-white">{member.name}</h4>
+                      <p className="truncate text-xs font-medium" style={{ color: member.color || '#9b59b6' }}>
+                        {member.role}
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

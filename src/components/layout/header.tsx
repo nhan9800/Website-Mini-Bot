@@ -21,6 +21,7 @@ const navItems = [
   { href: '/', label: 'Trang Chủ', icon: Home },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/commands', label: 'Lệnh', icon: Terminal },
+  { href: '/partners', label: 'Đối Tác', icon: Star },
   { href: '/status', label: 'Trạng Thái', icon: Activity },
   { href: '/support', label: 'Hỗ Trợ', icon: LifeBuoy },
 ];
