@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
+import { Icon3D } from '@/components/ui/icon3d';
 
 function pingQuality(ping: number): { label: string; color: string } {
   if (ping < 0) return { label: 'Chưa có dữ liệu', color: 'text-gray-400' };
@@ -99,7 +100,7 @@ export default function StatusPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Độ Trễ Discord Gateway
               </span>
-              <Wifi className="h-5 w-5 text-mimi-green" />
+              <Icon3D name="rocket" size={32} />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-mono text-4xl font-extrabold text-white">
@@ -119,7 +120,7 @@ export default function StatusPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Thời Gian Hoạt Động
               </span>
-              <Zap className="h-5 w-5 text-mimi-cyan" />
+              <Icon3D name="clock" size={32} />
             </div>
             <div className="font-mono text-2xl font-extrabold leading-snug text-white">
               {status ? formatUptime(status.uptimeSeconds) : '—'}
@@ -133,7 +134,7 @@ export default function StatusPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Máy Chủ Đang Phục Vụ
               </span>
-              <Server className="h-5 w-5 text-mimi-violet" />
+              <Icon3D name="robot" size={32} />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-mono text-4xl font-extrabold text-white">
@@ -155,7 +156,7 @@ export default function StatusPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Phiên Nghe Nhạc
               </span>
-              <Radio className="h-5 w-5 text-mimi-amber" />
+              <Icon3D name="headphone" size={32} />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-mono text-4xl font-extrabold text-white">
@@ -198,7 +199,7 @@ export default function StatusPage() {
               <tbody className="divide-y divide-white/5 text-sm">
                 <tr>
                   <td className="flex items-center gap-2 px-4 py-4 font-semibold text-white">
-                    <Server className="h-4 w-4 text-mimi-green" />
+                    <Icon3D name="robot" size={20} />
                     <span>Bot Core (Discord Gateway)</span>
                   </td>
                   <td className="px-4 py-4 text-gray-300">VibeHost — Việt Nam</td>
@@ -211,7 +212,7 @@ export default function StatusPage() {
                 </tr>
                 <tr>
                   <td className="flex items-center gap-2 px-4 py-4 font-semibold text-white">
-                    <ShieldCheck className="h-4 w-4 text-mimi-violet" />
+                    <Icon3D name="shield" size={20} />
                     <span>Web Dashboard & API Proxy</span>
                   </td>
                   <td className="px-4 py-4 text-gray-300">Nhân Hòa cPanel — Việt Nam</td>
@@ -225,7 +226,7 @@ export default function StatusPage() {
                 </tr>
                 <tr>
                   <td className="flex items-center gap-2 px-4 py-4 font-semibold text-white">
-                    <Zap className="h-4 w-4 text-mimi-cyan" />
+                    <Icon3D name="sparkles" size={20} />
                     <span>Internal API (Web ↔ Bot)</span>
                   </td>
                   <td className="px-4 py-4 text-gray-300">Kênh nội bộ có xác thực token</td>

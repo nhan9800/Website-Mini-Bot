@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { WebPlayer } from "@/components/music/web-player";
 import { env } from "@/lib/env";
 
 // Be Vietnam Pro: bộ font thiết kế riêng cho tiếng Việt — dấu má chuẩn, đẹp ở mọi weight.
@@ -72,7 +73,8 @@ export default function RootLayout({
         <div className="mimi-aurora" aria-hidden />
         <div className="mimi-grid" aria-hidden />
         <Header />
-        <main className="relative z-10 pt-24">{children}</main>
+        <main className="relative z-10 pt-24 pb-32">{children}</main>
+        <WebPlayer />
         <Footer />
       </body>
     </html>
