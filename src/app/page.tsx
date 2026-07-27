@@ -173,11 +173,11 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="btn-primary !px-9 !py-4 !text-base"
             >
-              <Sparkles className="h-5 w-5" />
+              <Icon3D name="sparkles" size={20} />
               <span>Mời Mimi Miễn Phí</span>
             </a>
             <Link href="/dashboard" className="btn-secondary !px-9 !py-4 !text-base">
-              <LayoutDashboard className="h-5 w-5" />
+              <Icon3D name="dashboard" size={20} />
               <span>Mở Dashboard</span>
             </Link>
           </div>
@@ -232,7 +232,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
-              <Star className="h-3.5 w-3.5" />
+              <Icon3D name="star" size={16} />
               <span>Dịch vụ của Mimi</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
@@ -283,7 +283,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <Reveal className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-purple/30 bg-mimi-purple/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-violet">
-              <Heart className="h-3.5 w-3.5" />
+              <Icon3D name="heart" size={16} />
               <span>Về Mimi</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
@@ -304,11 +304,11 @@ export default function HomePage() {
             </div>
             <div className="flex flex-wrap gap-4 pt-2">
               <Link href="/status" className="btn-secondary !px-6 !py-3 !text-sm">
-                <Zap className="h-4 w-4" />
+                <Icon3D name="rocket" size={18} />
                 <span>Xem Trạng Thái Live</span>
               </Link>
               <Link href="/commands" className="btn-secondary !px-6 !py-3 !text-sm">
-                <Terminal className="h-4 w-4" />
+                <Icon3D name="robot" size={18} />
                 <span>Danh Sách Lệnh</span>
               </Link>
             </div>
@@ -317,7 +317,7 @@ export default function HomePage() {
           <Reveal delay={120}>
             <div className="glass-panel-glow gradient-ring space-y-5 rounded-[2rem] p-8">
               <h3 className="flex items-center gap-2.5 border-b border-white/10 pb-4 text-lg font-bold text-white">
-                <Code2 className="h-5 w-5 text-mimi-green" />
+                <Icon3D name="robot" size={24} />
                 <span>Cam Kết Vận Hành</span>
               </h3>
               <ul className="space-y-4">
@@ -329,7 +329,7 @@ export default function HomePage() {
                 ].map(([t, d]) => (
                   <li key={t} className="flex items-start gap-3.5">
                     <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mimi-green/15 text-mimi-green">
-                      <Sparkles className="h-3.5 w-3.5" />
+                      <Icon3D name="sparkles" size={16} />
                     </span>
                     <div>
                       <p className="text-sm font-bold text-white">{t}</p>
@@ -497,7 +497,7 @@ export default function HomePage() {
                     rel="noopener noreferrer"
                     className="btn-primary !px-9 !py-4 !text-base"
                   >
-                    <Sparkles className="h-5 w-5" />
+                    <Icon3D name="sparkles" size={24} />
                     <span>Thêm Vào Discord Ngay</span>
                   </a>
                   <a
