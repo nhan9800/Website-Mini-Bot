@@ -136,9 +136,9 @@ export function TeamSection() {
             return (
               <Reveal key={member.id} delay={idx * 100}>
                 <div
-                  className={`${vipClass} ${borderHoverClass} group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 p-6 sm:p-8 transition-all duration-500`}
+                  className={`${vipClass} ${borderHoverClass} group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500`}
                 >
-                  {isFounder && <div className="vip-card-rgb-glow" />}
+                  {isFounder && <div className="vip-card-rgb-glow rounded-[2rem]" />}
                   <div
                     className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
                     style={{
