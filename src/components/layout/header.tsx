@@ -58,7 +58,8 @@ export function Header() {
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative h-11 w-11 rounded-2xl bg-gradient-brand p-[2px] shadow-glow transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105">
               <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#05060f]">
-                <Headphones className="h-6 w-6 text-mimi-green drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.webp" alt="Mimi Bot Logo" className="h-full w-full rounded-[14px] object-cover" />
               </div>
             </div>
             <div className="flex flex-col leading-tight">
