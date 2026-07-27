@@ -5,6 +5,8 @@ import { Flame, Copy, Check, TrendingUp } from 'lucide-react';
 import { Reveal } from '@/components/ui/reveal';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { Icon3D } from '@/components/ui/icon3d';
+import { usePlayerStore } from '@/lib/store/use-player-store';
+import { Play } from 'lucide-react';
 
 interface TrendingSong {
   rank: number;
@@ -12,6 +14,7 @@ interface TrendingSong {
   artist: string;
   artworkUrl: string | null;
   link: string | null;
+  previewUrl: string | null;
 }
 
 /**
@@ -22,6 +25,7 @@ export function TrendingChart() {
   const [songs, setSongs] = useState<TrendingSong[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [copiedRank, setCopiedRank] = useState<number | null>(null);
+  const { playTrack, track: currentTrack, isPlaying } = usePlayerStore();
 
   useEffect(() => {
     let cancelled = false;
@@ -138,8 +142,8 @@ export function TrendingChart() {
                             <p className="truncate text-sm font-bold text-white">{s.title}</p>
                             <p className="truncate text-xs text-gray-400">{s.artist}</p>
                           </div>
-                          {/* Equalizer hiện khi hover */}
-                          <div className="hidden h-6 items-end gap-0.5 group-hover:flex" aria-hidden>
+                          {/* Equalizer hiện khi hover hoặc đang phát */}
+                          <div className={`h-6 items-end gap-0.5 ${(isPlaying && currentTrack?.title === s.title) ? 'flex' : 'hidden group-hover:flex'}`} aria-hidden>
                             {[0, 1, 2].map((b) => (
                               <span
                                 key={b}
@@ -148,19 +152,44 @@ export function TrendingChart() {
                               />
                             ))}
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => copyPlayCommand(s)}
-                            className="shrink-0 rounded-xl border border-white/10 bg-white/5 p-2.5 text-gray-300 transition-colors hover:border-mimi-green/40 hover:text-mimi-green"
-                            title={`Copy lệnh: /play ${s.title}`}
-                            aria-label={`Copy lệnh phát bài ${s.title}`}
-                          >
-                            {copiedRank === s.rank ? (
-                              <Check className="h-4 w-4 text-mimi-green" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
+                          
+                          <div className="flex items-center gap-1 shrink-0">
+                            {s.previewUrl && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  playTrack({
+                                    title: s.title,
+                                    artist: s.artist,
+                                    cover: s.artworkUrl || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=200&h=200',
+                                    url: s.previewUrl!
+                                  });
+                                }}
+                                className={`rounded-xl border p-2.5 transition-colors ${
+                                  currentTrack?.title === s.title && isPlaying
+                                    ? 'border-mimi-green bg-mimi-green/20 text-mimi-green'
+                                    : 'border-white/10 bg-white/5 text-gray-300 hover:border-mimi-green/40 hover:text-mimi-green'
+                                }`}
+                                title={`Nghe thử ${s.title}`}
+                                aria-label={`Nghe thử ${s.title}`}
+                              >
+                                <Play className="h-4 w-4" />
+                              </button>
                             )}
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => copyPlayCommand(s)}
+                              className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-gray-300 transition-colors hover:border-mimi-green/40 hover:text-mimi-green"
+                              title={`Copy lệnh: /play ${s.title}`}
+                              aria-label={`Copy lệnh phát bài ${s.title}`}
+                            >
+                              {copiedRank === s.rank ? (
+                                <Check className="h-4 w-4 text-mimi-green" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
                         </li>
                       ))}
                     </ul>

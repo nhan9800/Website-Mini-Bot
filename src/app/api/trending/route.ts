@@ -11,6 +11,7 @@ interface TrendingSong {
   artist: string;
   artworkUrl: string | null;
   link: string | null;
+  previewUrl: string | null;
 }
 
 const FEED_URL = 'https://itunes.apple.com/vn/rss/topsongs/limit=10/json';
@@ -34,12 +35,18 @@ export async function GET() {
         ? biggest.replace(/\/\d+x\d+bb\./, '/400x400bb.')
         : null;
 
+      // iTunes RSS link can be an array
+      const links = Array.isArray(e.link) ? e.link : [e.link];
+      const preview = links.find((l: any) => l?.attributes?.title === 'Preview');
+      const pageLink = links.find((l: any) => l?.attributes?.rel === 'alternate');
+
       return {
         rank: i + 1,
         title: e['im:name']?.label ?? 'Không rõ',
         artist: e['im:artist']?.label ?? '',
         artworkUrl,
-        link: e.link?.attributes?.href ?? null,
+        link: pageLink?.attributes?.href ?? null,
+        previewUrl: preview?.attributes?.href ?? null,
       };
     });
 
