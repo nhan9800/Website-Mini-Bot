@@ -15,6 +15,7 @@ import {
   Users,
 } from 'lucide-react';
 import { env } from '@/lib/env';
+import { Icon3D } from '@/components/ui/icon3d';
 
 interface RecentGuild {
   id: string;
@@ -150,7 +151,7 @@ export default function DashboardSelectorPage() {
         {recent.length > 0 && (
           <div className="space-y-5">
             <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-              <Server className="h-5 w-5 text-mimi-violet" />
+              <Icon3D name="dashboard" size={28} />
               <span>Máy Chủ Đã Truy Cập Gần Đây</span>
             </h2>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
