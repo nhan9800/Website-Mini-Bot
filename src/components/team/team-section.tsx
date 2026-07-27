@@ -130,7 +130,7 @@ export function TeamSection() {
             return (
               <Reveal key={member.id} delay={idx * 100}>
                 <div
-                  className={`glass-panel card-lift group flex h-full items-center gap-5 rounded-3xl p-7 transition-all duration-500 ${borderHoverClass}`}
+                  className={`glass-panel card-lift group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 rounded-3xl p-5 sm:p-7 transition-all duration-500 ${borderHoverClass}`}
                 >
                   <div
                     className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
@@ -157,8 +157,8 @@ export function TeamSection() {
                     />
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                  <div className="space-y-2 sm:space-y-1">
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
                       <h3 className="text-lg font-bold text-white">{member.name}</h3>
                       <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-bold text-gray-400 border border-white/10">
                         <RoleIcon className={`h-2.5 w-2.5 ${badgeColorClass}`} />

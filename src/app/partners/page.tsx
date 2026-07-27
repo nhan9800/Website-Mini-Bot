@@ -58,9 +58,9 @@ export default function PartnersPage() {
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {partners.map((partner, idx) => (
               <Reveal key={partner.id} delay={idx * 100}>
-                <div className="glass-panel card-lift group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-8 text-center transition-all duration-500 hover:border-yellow-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.15)]">
+                <div className="glass-panel card-lift group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-6 sm:p-8 text-center transition-all duration-500 hover:border-yellow-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.15)]">
                   {/* Glowing background behind avatar */}
-                  <div className="absolute left-1/2 top-20 h-32 w-32 -translate-x-1/2 rounded-full bg-yellow-500/20 blur-[50px] transition-all duration-500 group-hover:bg-yellow-500/40" />
+                  <div className="absolute left-1/2 top-16 sm:top-20 h-32 w-32 -translate-x-1/2 rounded-full bg-yellow-500/20 blur-[50px] transition-all duration-500 group-hover:bg-yellow-500/40" />
                   
                   <div className="relative mb-6 h-28 w-28 shrink-0 overflow-hidden rounded-2xl border-[3px] border-yellow-500/50 shadow-[0_0_25px_rgba(234,179,8,0.2)] transition-transform duration-500 group-hover:scale-110 group-hover:border-yellow-400">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
