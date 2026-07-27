@@ -104,30 +104,3 @@ jobs:
           echo "Bản dựng đã nằm trên nhánh 'deploy'."
           echo "cPanel Nhân Hòa sẽ kéo về khi webhook kích hoạt (Git Version Control → nhánh deploy)."
           echo "Nếu chưa bật webhook, vào cPanel bấm 'Update from Remote' một lần."
-
-  verify:
-    name: Xác minh site đã lên bản mới
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
-    # Không để job này làm đỏ pipeline: cPanel kéo code là bước nằm ngoài GitHub,
-    # có thể chậm hoặc cần bấm tay. Ở đây chỉ báo trạng thái để biết mà xử lý.
-    continue-on-error: true
-    steps:
-      - name: Hỏi /api/version của site thật
-        run: |
-          SHORT="$(echo '${{ github.sha }}' | cut -c1-7)"
-          echo "Chờ https://mimibot.id.vn/api/version báo commit $SHORT ..."
-          for i in $(seq 1 20); do
-            sleep 15
-            BODY=$(curl -s -m 10 https://mimibot.id.vn/api/version || true)
-            echo "  lần $i: $BODY"
-            case "$BODY" in
-              *"\"shortCommit\":\"$SHORT\""*)
-                echo "✅ Site đang chạy commit $SHORT."
-                exit 0 ;;
-            esac
-          done
-          echo "⚠️ Sau 5 phút site vẫn chưa chạy commit $SHORT."
-          echo "   Bản dựng đã sẵn trên nhánh 'deploy' — việc còn lại là cPanel kéo về."
-          echo "   Kiểm tra: cPanel → Git Version Control → Update from Remote, và webhook trên GitHub."
-          exit 1

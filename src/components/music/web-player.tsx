@@ -41,24 +41,27 @@ export function WebPlayer() {
     }
   };
 
-  if (!track) return null;
+
 
   return (
     <>
       <audio
         ref={audioRef}
-        src={track.url}
+        src={track?.url || ""}
         onTimeUpdate={handleTimeUpdate}
         onEnded={() => setIsPlaying(false)}
       />
-      <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+      <AnimatePresence>
+        {track && isPlaying && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
         <div className="relative group overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_0_40px_rgba(30,215,96,0.15)] p-3 flex items-center gap-4">
           
           {/* Animated Glow Background */}
@@ -122,15 +125,37 @@ export function WebPlayer() {
 
             <div className="w-px h-8 bg-white/10 mx-1 hidden sm:block" />
 
-            <button 
-              onClick={() => setIsMuted(!isMuted)}
-              className="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full hidden sm:block"
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
+            <div className="hidden sm:flex items-center gap-1 group/volume relative">
+              <button 
+                onClick={() => setIsMuted(!isMuted)}
+                className="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+              >
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </button>
+              
+              <div className="w-0 overflow-hidden group-hover/volume:w-20 transition-all duration-300 ease-in-out flex items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  defaultValue="1"
+                  onChange={(e) => {
+                    if (audioRef.current) {
+                      const val = parseFloat(e.target.value);
+                      audioRef.current.volume = val;
+                      if (val > 0 && isMuted) setIsMuted(false);
+                      if (val === 0 && !isMuted) setIsMuted(true);
+                    }
+                  }}
+                  className="w-16 h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
