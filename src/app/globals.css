@@ -94,10 +94,24 @@
     pointer-events: none;
   }
 
+  @keyframes btn-gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   /* ── Nút chính ────────────────────────────────────────────────── */
   .btn-primary {
-    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-brand px-7 py-3.5 text-sm font-extrabold text-[#05060f] shadow-glow transition-all duration-300;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.55), 0 0 25px rgba(46, 204, 113, 0.4);
+    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold text-[#05060f] transition-all duration-300;
+    background: linear-gradient(135deg, #4df898 0%, #22D3EE 50%, #4df898 100%);
+    background-size: 200% 200%;
+    animation: btn-gradient-move 4s ease infinite;
+    border: 1.5px solid rgba(255, 255, 255, 0.65);
+    box-shadow:
+      0 4px 20px -2px rgba(46, 204, 113, 0.55),
+      0 0 35px -5px rgba(34, 211, 238, 0.45),
+      inset 0 1px 2px rgba(255, 255, 255, 0.95),
+      inset 0 -3px 4px rgba(0, 0, 0, 0.3);
   }
   .btn-primary::after {
     content: "";
@@ -106,7 +120,7 @@
     left: -100%;
     width: 60%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
     transform: skewX(-25deg);
     transition: left 0.65s ease;
   }
@@ -114,22 +128,32 @@
     left: 160%;
   }
   .btn-primary:hover {
-    @apply shadow-glow-lg;
     transform: translateY(-2.5px) scale(1.03);
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 38px rgba(46, 204, 113, 0.65);
+    border-color: rgba(255, 255, 255, 0.95);
+    box-shadow:
+      0 6px 25px rgba(46, 204, 113, 0.75),
+      0 0 45px rgba(34, 211, 238, 0.65),
+      inset 0 1px 3px rgba(255, 255, 255, 1),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.35);
   }
   .btn-primary:active {
     transform: scale(0.97);
   }
 
   .btn-secondary {
-    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] px-7 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all duration-300;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl border border-white/25 bg-white/[0.08] px-7 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all duration-300;
+    box-shadow:
+      0 4px 15px rgba(0, 0, 0, 0.35),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3),
+      inset 0 -3px 4px rgba(0, 0, 0, 0.35);
   }
   .btn-secondary:hover {
-    @apply border-white/30 bg-white/[0.14] text-white;
+    @apply border-mimi-cyan/60 bg-white/[0.16] text-white;
     transform: translateY(-2px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 28px rgba(0, 0, 0, 0.35);
+    box-shadow:
+      0 6px 25px rgba(34, 211, 238, 0.3),
+      inset 0 1px 3px rgba(255, 255, 255, 0.45),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.45);
   }
   .btn-secondary:active {
     transform: scale(0.97);
