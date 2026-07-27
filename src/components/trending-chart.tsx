@@ -19,7 +19,7 @@ interface TrendingSong {
 
 /**
  * BXH nhạc Việt Nam thời gian thực (iTunes VN — dữ liệu thật, cache 1h).
- * Mỗi bài có nút copy sẵn lệnh /play để đem qua Discord phát bằng Mimi.
+ * Mỗi bài có nút copy sẵn lệnh /play để đem qua Discord phát bằng MIMI.
  */
 export function TrendingChart() {
   const [songs, setSongs] = useState<TrendingSong[] | null>(null);
@@ -73,11 +73,11 @@ export function TrendingChart() {
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
               Bài Nào Đang <span className="text-gradient-mimi">Hot</span>,
               <br />
-              Mimi Phát Ngay
+              MIMI Phát Ngay
             </h2>
             <p className="mx-auto max-w-md text-base leading-relaxed text-gray-400 lg:mx-0">
               Top 10 ca khúc được nghe nhiều nhất Việt Nam lúc này. Bấm nút copy bên cạnh
-              bài hát, dán vào Discord là Mimi phát liền — không cần tìm link.
+              bài hát, dán vào Discord là MIMI phát liền — không cần tìm link.
             </p>
 
             {/* Đĩa vinyl 3D quay */}
@@ -206,7 +206,7 @@ export function TrendingChart() {
                   <p className="border-t border-white/10 px-2 pt-4 text-xs text-gray-500">
                     Mẹo: bấm <Copy className="inline h-3 w-3" /> để copy sẵn lệnh{' '}
                     <code className="text-mimi-green">/play</code>, dán vào kênh chat Discord là
-                    Mimi phát ngay bài đó.
+                    MIMI phát ngay bài đó.
                   </p>
                 </div>
               </TiltCard>

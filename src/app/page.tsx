@@ -83,7 +83,7 @@ const testimonials = [
   {
     name: 'Minh Khang',
     role: 'Chủ server Gaming 1.2K thành viên',
-    text: 'Chuyển từ bot nước ngoài sang Mimi vì tiếng Việt chuẩn và nút bấm tiện. Anh em trong server giờ toàn treo voice nghe nhạc cả ngày.',
+    text: 'Chuyển từ bot nước ngoài sang MIMI vì tiếng Việt chuẩn và nút bấm tiện. Anh em trong server giờ toàn treo voice nghe nhạc cả ngày.',
   },
   {
     name: 'Thảo Vy',
@@ -99,20 +99,20 @@ const testimonials = [
 
 const faqs = [
   {
-    q: 'Mimi có miễn phí không?',
+    q: 'MIMI có miễn phí không?',
     a: 'Có — toàn bộ tính năng nhạc, xác thực, chấm công và dashboard đều miễn phí. Không quảng cáo, không khóa tính năng sau paywall.',
   },
   {
     q: 'Làm sao để bắt đầu phát nhạc?',
-    a: 'Mời Mimi vào server, vào một kênh thoại rồi gõ /play kèm tên bài hoặc link YouTube. Điều khiển tiếp bằng nút bấm hoặc Dashboard web.',
+    a: 'Mời MIMI vào server, vào một kênh thoại rồi gõ /play kèm tên bài hoặc link YouTube. Điều khiển tiếp bằng nút bấm hoặc Dashboard web.',
   },
   {
-    q: 'Mimi có cần API key Spotify/Genius không?',
+    q: 'MIMI có cần API key Spotify/Genius không?',
     a: 'Không. Lời bài hát lấy từ lrclib.net, link Spotify được nhận diện tự động rồi tìm bản phát trên YouTube — không cần cấu hình gì thêm.',
   },
   {
     q: 'Dashboard web hoạt động thế nào?',
-    a: 'Web kết nối bot qua Internal API bảo mật bằng token. Bạn nhập ID server có Mimi là xem được bài đang phát, hàng chờ và chỉnh cấu hình ngay lập tức.',
+    a: 'Web kết nối bot qua Internal API bảo mật bằng token. Bạn nhập ID server có MIMI là xem được bài đang phát, hàng chờ và chỉnh cấu hình ngay lập tức.',
   },
   {
     q: 'Bot có ổn định không? Server đặt ở đâu?',
@@ -174,7 +174,7 @@ export default function HomePage() {
               className="btn-primary !px-9 !py-4 !text-base"
             >
               <Icon3D name="sparkles" size={20} />
-              <span>Mời Mimi Miễn Phí</span>
+              <span>Mời MIMI Miễn Phí</span>
             </a>
             <Link href="/dashboard" className="btn-secondary !px-9 !py-4 !text-base">
               <Icon3D name="dashboard" size={20} />
@@ -233,7 +233,7 @@ export default function HomePage() {
           <Reveal className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
               <Icon3D name="star" size={16} />
-              <span>Dịch vụ của Mimi</span>
+              <span>Dịch vụ của MIMI</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
               Một Bot — <span className="text-gradient-mimi">Bốn Trụ Cột</span>
@@ -284,7 +284,7 @@ export default function HomePage() {
           <Reveal className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-purple/30 bg-mimi-purple/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-violet">
               <Icon3D name="heart" size={16} />
-              <span>Về Mimi</span>
+              <span>Về MIMI</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
               Sinh Ra Từ Nhu Cầu Thật Của{' '}
@@ -292,7 +292,7 @@ export default function HomePage() {
             </h2>
             <div className="space-y-4 text-sm leading-relaxed text-gray-400 sm:text-base">
               <p>
-                Mimi bắt đầu từ một nhu cầu đơn giản: một bot nhạc tiếng Việt ổn định, không
+                MIMI bắt đầu từ một nhu cầu đơn giản: một bot nhạc tiếng Việt ổn định, không
                 phụ thuộc API trả phí, không chết giữa chừng. Từ đó, bot lớn dần thành hệ
                 sinh thái quản trị trọn vẹn cho server Discord.
               </p>
@@ -348,10 +348,10 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Cộng Đồng Nói Gì Về <span className="text-gradient-mimi">Mimi</span>?
+              Cộng Đồng Nói Gì Về <span className="text-gradient-mimi">MIMI</span>?
             </h2>
             <p className="text-gray-400">
-              Những trải nghiệm tiêu biểu từ các quản trị viên server đang dùng Mimi.
+              Những trải nghiệm tiêu biểu từ các quản trị viên server đang dùng MIMI.
             </p>
           </Reveal>
 
@@ -387,7 +387,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Đội Ngũ Đứng Sau <span className="text-gradient-mimi">Mimi</span>
+              Đội Ngũ Đứng Sau <span className="text-gradient-mimi">MIMI</span>
             </h2>
             <p className="text-gray-400">
               Dự án được phát triển và vận hành bởi cộng đồng, vì cộng đồng.
@@ -404,7 +404,7 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-white">nhan9800</h3>
                   <p className="text-sm text-mimi-green">Founder & Developer</p>
                   <p className="mt-1 text-xs leading-relaxed text-gray-400">
-                    Xây dựng toàn bộ bot core, Internal API và hệ sinh thái web của Mimi.
+                    Xây dựng toàn bộ bot core, Internal API và hệ sinh thái web của MIMI.
                   </p>
                 </div>
               </div>
@@ -415,7 +415,7 @@ export default function HomePage() {
                   <Icon3D name="robot" size={40} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Cộng Đồng Mimi</h3>
+                  <h3 className="text-lg font-bold text-white">Cộng Đồng MIMI</h3>
                   <p className="text-sm text-mimi-violet">Tester & Support</p>
                   <p className="mt-1 text-xs leading-relaxed text-gray-400">
                     Báo lỗi, góp ý tính năng và hỗ trợ thành viên mới mỗi ngày trên server
@@ -488,7 +488,7 @@ export default function HomePage() {
                   Sẵn Sàng Nâng Tầm <span className="text-gradient-mimi">Server Của Bạn</span>?
                 </h2>
                 <p className="mx-auto max-w-2xl text-lg text-gray-300">
-                  Chưa đầy 30 giây để mời Mimi — miễn phí, không cần thẻ, không quảng cáo.
+                  Chưa đầy 30 giây để mời MIMI — miễn phí, không cần thẻ, không quảng cáo.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
                   <a

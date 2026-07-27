@@ -66,7 +66,7 @@ export function Header() {
             </div>
             <div className="flex flex-col leading-tight">
               <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-white">
-                Mimi Bot
+                MIMI BOT
                 <span className="rounded-full border border-mimi-green/30 bg-mimi-green/15 px-2 py-0.5 text-[10px] font-bold text-mimi-green">
                   v2.2
                 </span>
@@ -108,7 +108,7 @@ export function Header() {
               className="btn-primary !px-5 !py-2.5"
             >
               <Sparkles className="h-4 w-4" />
-              <span>Mời Mimi</span>
+              <span>Mời MIMI</span>
             </a>
           </div>
 
@@ -153,7 +153,7 @@ export function Header() {
                 className="btn-primary w-full"
               >
                 <Sparkles className="h-4 w-4" />
-                <span>Mời Mimi Vào Server</span>
+                <span>Mời MIMI Vào Server</span>
               </a>
             </div>
           </div>
