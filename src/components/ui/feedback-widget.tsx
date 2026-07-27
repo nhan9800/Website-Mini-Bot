@@ -75,6 +75,9 @@ export function FeedbackWidget() {
 
   useEffect(() => {
     loadFeedbackStats();
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-mimi-feedback', handleOpen);
+    return () => window.removeEventListener('open-mimi-feedback', handleOpen);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
