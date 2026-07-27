@@ -9,6 +9,19 @@ export const metadata: Metadata = {
 
 const releases = [
   {
+    version: 'v2.3.0 — BXH LIVE, Role Discord Dev Team & Feedback Đồng Bộ',
+    date: '27/07/2026',
+    tag: 'Major Update',
+    icon: Sparkles,
+    items: [
+      'Bảng Xếp Hạng Nhạc Việt LIVE: Cấu hình 100% động theo thời gian thực (Server-Rendered on demand), loại bỏ cache tĩnh, có huy hiệu LIVE phát sáng và nút Làm Mới trực tiếp.',
+      'Tự động nhận diện Đội Ngũ Đứng Sau MIMI: Kết nối Internal API để đồng bộ Avatar thực tế, màu sắc Role và trạng thái hoạt động theo role được setup trên server Discord chính thức.',
+      'Hệ thống Đánh Giá & Phản Hồi Đồng Bộ (Feedback Widget): Nút floating nổi sang trọng trên toàn bộ mọi trang website, cho phép chấm điểm 1 - 5 sao và theo dõi đánh giá từ cộng đồng thời gian thực.',
+      'Đại tu toàn bộ hệ thống icon: Chuyển đổi từ icon emoji 3D sang icon 2D Lucide có hộp viền mờ phát sáng (glassmorphism glow) cực kỳ đẳng cấp trên Status, Dashboard, BXH và Trang Chủ.',
+      'Tích hợp cơ chế Smart Fallback an toàn 100% giúp website luôn mượt mà kể cả khi máy chủ bot đang khởi động lại hoặc chưa thiết lập cấu hình.',
+    ],
+  },
+  {
     version: 'v2.2.0 — Hero 3D & Khoá Truy Cập Dashboard',
     date: '26/07/2026',
     tag: 'Major Update',
@@ -79,27 +92,61 @@ export default function ChangelogPage() {
 
         {/* Timeline */}
         <div className="relative space-y-8 before:absolute before:bottom-8 before:left-[26px] before:top-8 before:hidden before:w-px before:bg-gradient-to-b before:from-mimi-green/50 before:via-mimi-purple/30 before:to-transparent sm:before:block">
-          {releases.map((rel) => {
+          {releases.map((rel, index) => {
             const Icon = rel.icon;
+            const isLatest = index === 0;
             return (
               <div key={rel.version} className="relative sm:pl-20">
-                <div className="absolute left-0 top-8 hidden h-[52px] w-[52px] items-center justify-center rounded-2xl border border-mimi-green/30 bg-[#0b0d1c] text-mimi-green shadow-glow sm:flex">
+                <div
+                  className={`absolute left-0 top-8 hidden h-[52px] w-[52px] items-center justify-center rounded-2xl border bg-[#0b0d1c] shadow-glow sm:flex ${
+                    isLatest
+                      ? 'border-mimi-green text-mimi-green shadow-[0_0_20px_rgba(46,204,113,0.5)]'
+                      : 'border-white/20 text-gray-400'
+                  }`}
+                >
                   <Icon className="h-6 w-6" />
                 </div>
-                <div className="glass-panel card-lift space-y-5 rounded-3xl p-8">
+                <div
+                  className={`glass-panel card-lift space-y-5 rounded-3xl p-8 transition-all duration-500 ${
+                    isLatest
+                      ? 'border-mimi-green/50 bg-mimi-green/[0.04] shadow-[0_0_35px_rgba(46,204,113,0.25)]'
+                      : 'hover:border-white/25'
+                  }`}
+                >
                   <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
                     <div className="space-y-1">
-                      <h2 className="text-xl font-bold text-white sm:text-2xl">{rel.version}</h2>
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <h2 className="text-xl font-bold text-white sm:text-2xl">{rel.version}</h2>
+                        {isLatest && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-mimi-green/40 bg-mimi-green/20 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-green shadow-[0_0_12px_rgba(46,204,113,0.3)]">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mimi-green opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-mimi-green"></span>
+                            </span>
+                            <span>MỚI NHẤT</span>
+                          </span>
+                        )}
+                      </div>
                       <p className="font-mono text-xs text-gray-400">Phát hành: {rel.date}</p>
                     </div>
-                    <span className="rounded-full bg-mimi-green/20 px-3 py-1 text-xs font-bold uppercase text-mimi-green">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${
+                        isLatest
+                          ? 'bg-mimi-green/20 text-mimi-green'
+                          : 'bg-white/10 text-gray-300'
+                      }`}
+                    >
                       {rel.tag}
                     </span>
                   </div>
                   <ul className="space-y-3 text-sm text-gray-300 sm:text-base">
                     {rel.items.map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-mimi-green" />
+                        <Sparkles
+                          className={`mt-0.5 h-4 w-4 shrink-0 ${
+                            isLatest ? 'text-mimi-green' : 'text-mimi-purple'
+                          }`}
+                        />
                         <span className="leading-relaxed">{item}</span>
                       </li>
                     ))}
