@@ -9,7 +9,7 @@ export const env = {
     process.env.NEXT_PUBLIC_DISCORD_SUPPORT_URL || 'https://discord.gg/KwHvTG2EmW',
   NEXT_PUBLIC_BOT_INVITE_URL:
     process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
-    'https://discord.com/oauth2/authorize?client_id=1327164993883832381&permissions=8&scope=bot%20applications.commands',
+    'https://discord.gg/KwHvTG2EmW',
   NEXT_PUBLIC_GITHUB_URL:
     process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/nhan9800/Website-Mini-Bot',
 };
