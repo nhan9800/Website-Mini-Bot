@@ -31,6 +31,7 @@ export function TeamSection() {
       status: 'online',
       description: 'Sáng lập hệ sinh thái MIMI, định hướng phát triển và kết nối cộng đồng yêu âm nhạc.',
       isDev: false,
+      group: 'core',
     },
     {
       id: '2',
@@ -42,6 +43,7 @@ export function TeamSection() {
       status: 'online',
       description: 'Phát triển kiến trúc Core Bot, hệ thống Internal API thời gian thực và Website MIMI.',
       isDev: true,
+      group: 'core',
     },
     {
       id: '3',
@@ -53,6 +55,7 @@ export function TeamSection() {
       status: 'online',
       description: 'Quản trị máy chủ, điều phối hoạt động sự kiện và hỗ trợ giải đáp thắc mắc của thành viên.',
       isDev: false,
+      group: 'admin',
     },
     {
       id: '4',
@@ -65,6 +68,7 @@ export function TeamSection() {
       description:
         'Báo cáo lỗi, đề xuất tính năng mới và cùng xây dựng môi trường âm nhạc sôi động trên Discord.',
       isDev: false,
+      group: 'community',
     },
   ]);
   const [source, setSource] = useState<string>('loading');
