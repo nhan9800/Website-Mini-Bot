@@ -30,6 +30,14 @@ const STAR_LABELS: Record<number, string> = {
   5: 'Đỉnh nóc kịch trần! 🤩🔥',
 };
 
+interface LinkedDiscordUser {
+  id: string;
+  username: string;
+  displayName: string;
+  avatar: string;
+  verified: boolean;
+}
+
 export function FeedbackWidget() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +49,12 @@ export function FeedbackWidget() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Trạng thái liên kết tài khoản Discord
+  const [linkedUser, setLinkedUser] = useState<LinkedDiscordUser | null>(null);
+  const [showLinkBox, setShowLinkBox] = useState(false);
+  const [discordInput, setDiscordInput] = useState('');
+  const [linking, setLinking] = useState(false);
 
   // Stats đồng bộ từ API
   const [avgStars, setAvgStars] = useState<number>(4.9);
@@ -75,10 +89,45 @@ export function FeedbackWidget() {
 
   useEffect(() => {
     loadFeedbackStats();
+    try {
+      const saved = localStorage.getItem('mimi_linked_discord_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setLinkedUser(parsed);
+        setUserName(`@${parsed.username} · ✔ Verified`);
+      }
+    } catch {}
     const handleOpen = () => setIsOpen(true);
     window.addEventListener('open-mimi-feedback', handleOpen);
     return () => window.removeEventListener('open-mimi-feedback', handleOpen);
   }, []);
+
+  const handleLinkDiscord = async () => {
+    if (!discordInput.trim()) return;
+    setLinking(true);
+    try {
+      const res = await fetch(`/api/user?q=${encodeURIComponent(discordInput.trim())}`);
+      const data = await res.json();
+      if (data?.ok && data.user) {
+        setLinkedUser(data.user);
+        setUserName(`@${data.user.username} · ✔ Verified`);
+        try {
+          localStorage.setItem('mimi_linked_discord_user', JSON.stringify(data.user));
+        } catch {}
+        setShowLinkBox(false);
+        setDiscordInput('');
+      }
+    } catch {}
+    setLinking(false);
+  };
+
+  const handleUnlink = () => {
+    setLinkedUser(null);
+    setUserName('');
+    try {
+      localStorage.removeItem('mimi_linked_discord_user');
+    } catch {}
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,6 +306,81 @@ export function FeedbackWidget() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Card liên kết tài khoản Discord */}
+                  {linkedUser ? (
+                    <div className="flex items-center justify-between rounded-2xl border border-mimi-green/30 bg-mimi-green/10 p-3 shadow-sm">
+                      <div className="flex items-center gap-2.5">
+                        <div className="relative h-9 w-9 overflow-hidden rounded-full border border-mimi-green">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={linkedUser.avatar || '/logo.webp'}
+                            alt={linkedUser.displayName}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-extrabold text-white flex items-center gap-1">
+                            {linkedUser.displayName}
+                            <span className="rounded-full bg-mimi-green/20 px-1.5 py-0.5 text-[9px] font-bold text-mimi-green">
+                              ✔ Discord Verified
+                            </span>
+                          </span>
+                          <span className="text-[10px] text-gray-400">@{linkedUser.username}</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleUnlink}
+                        className="text-[10px] font-semibold text-red-400 hover:underline"
+                      >
+                        Đổi acc
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 p-3.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-400">
+                            <User className="h-3.5 w-3.5" />
+                          </div>
+                          <span className="text-xs font-bold text-indigo-300">
+                            Liên Kết Tài Khoản Discord
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowLinkBox(!showLinkBox)}
+                          className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-[10px] font-extrabold text-indigo-300 transition-colors hover:bg-indigo-500/30"
+                        >
+                          {showLinkBox ? 'Đóng' : '🔗 Kết Nối Acc'}
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-gray-400 leading-relaxed">
+                        Kết nối ID hoặc Username Discord để hiển thị huy hiệu <strong className="text-indigo-300">✔ Verified Member</strong> cùng avatar thật khi đánh giá.
+                      </p>
+
+                      {showLinkBox && (
+                        <div className="mt-2 flex gap-2 pt-1">
+                          <input
+                            type="text"
+                            placeholder="Nhập Discord Tag/ID (VD: nhan9800)..."
+                            value={discordInput}
+                            onChange={(e) => setDiscordInput(e.target.value)}
+                            className="flex-1 rounded-xl border border-indigo-500/30 bg-[#05060f]/80 px-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:border-indigo-400 focus:outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleLinkDiscord}
+                            disabled={linking}
+                            className="rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-md transition-colors hover:bg-indigo-500 disabled:opacity-50"
+                          >
+                            {linking ? 'Đang xác thực...' : 'Xác Nhận'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Tên & Bình luận */}
                   <div className="grid grid-cols-1 gap-3">

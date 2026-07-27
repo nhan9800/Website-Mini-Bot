@@ -16,6 +16,7 @@ const releases = [
     items: [
       'Bảng Xếp Hạng Nhạc Việt LIVE: Cấu hình 100% động theo thời gian thực (Server-Rendered on demand), loại bỏ cache tĩnh, có huy hiệu LIVE phát sáng và nút Làm Mới trực tiếp.',
       'Mở rộng tự động nhận diện Đội Ngũ Đứng Sau MIMI: Thêm Founder Mimi, đặt vai trò nhan9800 là Core Developer theo đúng định hướng, tự động hiển thị toàn bộ các role Founder, Dev, Admin, Mod, Support từ server Discord theo thứ tự ưu tiên chuẩn.',
+      'Liên Kết Tài Khoản Discord Khi Đánh Giá (Discord Account Linking): Khách hàng có thể nhập Discord Tag hoặc ID để xác thực tài khoản trực tiếp qua Bot Core, hiển thị Avatar thật và huy hiệu ✔ Verified Member trên các bài đánh giá.',
       'Đại tu trải nghiệm Đánh Giá & Góp Ý (Feedback UI): Thêm nút Đánh Giá phát sáng trên Header Navigation Bar ở mọi trang và chuyên mục "Khách Hàng Nói Gì Về MIMI BOT" rực rỡ ngay Trang Chủ.',
       'Hệ thống Đánh Giá & Phản Hồi Đồng Bộ: Nút floating nổi sang trọng trên toàn bộ website, hỗ trợ chấm điểm 1 - 5 sao và theo dõi đánh giá từ cộng đồng thời gian thực.',
       'Đại tu toàn bộ hệ thống icon: Chuyển đổi từ icon emoji 3D sang icon 2D Lucide có hộp viền mờ phát sáng (glassmorphism glow) cực kỳ đẳng cấp trên Status, Dashboard, BXH và Trang Chủ.',
