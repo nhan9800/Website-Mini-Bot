@@ -107,37 +107,40 @@ export function TeamSection() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {team.filter(m => m.group === 'core').map((member, idx) => {
             const isFounder = member.role.toLowerCase().includes('founder');
-            
-            let borderHoverClass = 'hover:border-mimi-purple/60';
+            let borderHoverClass = 'hover-3d-tilt';
             let shadowGlowStyle = '0 0 25px rgba(139,92,246,0.3)';
             let RoleIcon = UserCheck;
             let badgeText = 'Role Discord';
             let badgeColorClass = 'text-mimi-green';
             let avatarRingClass = 'ring-white/10';
+            let vipClass = '';
+            let badgeBgClass = 'bg-white/5 border-white/10';
 
             if (isFounder) {
-              borderHoverClass = 'hover:border-[#ff6b81]';
+              vipClass = 'vip-card-rgb';
               shadowGlowStyle = '0 0 45px rgba(255,107,129,0.5)';
               RoleIcon = Crown;
               badgeText = 'Founder';
               badgeColorClass = 'text-[#ff6b81]';
+              badgeBgClass = 'bg-[#ff6b81]/10 border-[#ff6b81]/30 shadow-[0_0_15px_rgba(255,107,129,0.3)]';
               avatarRingClass = 'ring-[#ff6b81]/40';
             } else {
-              borderHoverClass = 'hover:border-[#00f2fe]';
-              shadowGlowStyle = '0 0 25px rgba(0,242,254,0.35)';
+              vipClass = 'vip-card-cyber';
+              shadowGlowStyle = '0 0 35px rgba(0,242,254,0.4)';
               RoleIcon = Code2;
               badgeText = 'System Dev';
               badgeColorClass = 'text-[#00f2fe]';
+              badgeBgClass = 'bg-[#00f2fe]/10 border-[#00f2fe]/30 shadow-[0_0_15px_rgba(0,242,254,0.3)]';
               avatarRingClass = 'ring-[#00f2fe]/30';
             }
 
             return (
               <Reveal key={member.id} delay={idx * 100}>
                 <div
-                  className={`glass-panel card-lift group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 rounded-3xl p-5 sm:p-7 transition-all duration-500 ${borderHoverClass}`}
+                  className={`${vipClass} ${borderHoverClass} group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 p-6 sm:p-8 transition-all duration-500`}
                 >
                   <div
-                    className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
+                    className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
                     style={{
                       borderColor: member.color || (isFounder ? '#ff6b81' : '#00f2fe'),
                       boxShadow: shadowGlowStyle,
@@ -161,11 +164,11 @@ export function TeamSection() {
                     />
                   </div>
 
-                  <div className="space-y-2 sm:space-y-1">
-                    <div className="flex flex-col sm:flex-row items-center gap-2">
-                      <h3 className="text-lg font-bold text-white">{member.name}</h3>
-                      <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-bold text-gray-400 border border-white/10">
-                        <RoleIcon className={`h-2.5 w-2.5 ${badgeColorClass}`} />
+                  <div className="space-y-3 sm:space-y-2">
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                      <h3 className="text-xl font-extrabold text-white tracking-wide">{member.name}</h3>
+                      <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider border ${badgeBgClass}`}>
+                        <RoleIcon className={`h-3.5 w-3.5 ${badgeColorClass}`} />
                         <span className={badgeColorClass}>{badgeText}</span>
                       </span>
                     </div>
@@ -196,8 +199,21 @@ export function TeamSection() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {team.filter(m => m.group === 'admin' || m.group === 'community').map((member, idx) => (
                 <Reveal key={member.id} delay={idx * 50}>
-                  <div className="glass-panel group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04]">
-                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/10">
+                  <div
+                    className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04]"
+                    style={{
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = member.color ? `${member.color}66` : 'rgba(255,255,255,0.2)';
+                      e.currentTarget.style.boxShadow = `0 10px 30px -10px ${member.color || 'rgba(255,255,255,0.3)'}`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/10 bg-black/20">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={member.avatar || '/logo.webp'}
@@ -208,15 +224,17 @@ export function TeamSection() {
                         }}
                       />
                       <span
-                        className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                        className={`absolute bottom-0 right-0 h-3 w-3 rounded-full ring-2 ring-black ${
                           STATUS_COLORS[member.status || 'online'] || 'bg-mimi-green'
                         }`}
                         title={STATUS_TITLES[member.status || 'online'] || 'Discord Member'}
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h4 className="truncate text-sm font-bold text-gray-200 group-hover:text-white">{member.name}</h4>
-                      <p className="truncate text-xs font-medium" style={{ color: member.color || '#9b59b6' }}>
+                      <h4 className="truncate text-sm font-bold text-gray-200 transition-colors group-hover:text-white">
+                        {member.name}
+                      </h4>
+                      <p className="truncate text-xs font-semibold tracking-wide" style={{ color: member.color || '#9b59b6' }}>
                         {member.role}
                       </p>
                     </div>

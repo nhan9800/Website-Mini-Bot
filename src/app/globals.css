@@ -312,6 +312,64 @@ input[type="range"].mimi-slider::-moz-range-thumb {
   box-shadow: 0 0 12px rgba(46, 204, 113, 0.6);
 }
 
+/* ── Team VIP Effects ────────────────────────────────────── */
+@keyframes bg-pan-rgb {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.vip-card-rgb {
+  position: relative;
+  background: #05060f;
+  background-clip: padding-box;
+  border: 3px solid transparent;
+}
+.vip-card-rgb::before, .vip-card-rgb::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff0055, #ffaa00, #00ff99, #00ccff, #9900ff, #ff0055, #ffaa00);
+  background-size: 200% auto;
+  animation: bg-pan-rgb 3s linear infinite;
+}
+.vip-card-rgb::after {
+  z-index: -2;
+  filter: blur(15px);
+  opacity: 0.6;
+}
+
+.vip-card-cyber {
+  position: relative;
+  background: #05060f;
+  background-clip: padding-box;
+  border: 3px solid transparent;
+}
+.vip-card-cyber::before, .vip-card-cyber::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00f2fe, #4facfe, #00f2fe, #4facfe);
+  background-size: 200% auto;
+  animation: bg-pan-rgb 4s linear infinite;
+}
+.vip-card-cyber::after {
+  z-index: -2;
+  filter: blur(15px);
+  opacity: 0.5;
+}
+
+.hover-3d-tilt {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.hover-3d-tilt:hover {
+  transform: perspective(1000px) rotateX(4deg) rotateY(-4deg) scale3d(1.02, 1.02, 1.02);
+  z-index: 10;
+}
+
 /* ── Tôn trọng người dùng giảm chuyển động ───────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
