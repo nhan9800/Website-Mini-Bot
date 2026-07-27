@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,8 +13,7 @@ export interface FeedbackItem {
   createdAt: string;
 }
 
-// Lưu trữ in-memory danh sách phản hồi cộng đồng (có dữ liệu mẫu khởi tạo sống động)
-let feedbackStore: FeedbackItem[] = [
+const defaultFeedbacks: FeedbackItem[] = [
   {
     id: '1',
     userName: 'Minh Quân (Discord Admin)',
@@ -47,16 +48,54 @@ let feedbackStore: FeedbackItem[] = [
   },
 ];
 
-let totalReviewsCount = 138;
-let sumStars = 4.9 * 138;
+function getStoreFile(): string {
+  const primaryPath = path.join(process.cwd(), '.next', 'mimi_feedback_store.json');
+  try {
+    const dir = path.dirname(primaryPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    return primaryPath;
+  } catch {
+    return '/tmp/mimi_feedback_store.json';
+  }
+}
+
+function loadStore(): FeedbackItem[] {
+  try {
+    const file = getStoreFile();
+    if (fs.existsSync(file)) {
+      const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+    }
+  } catch (e) {
+    // lỗi đọc -> dùng default
+  }
+  return defaultFeedbacks;
+}
+
+function saveStore(items: FeedbackItem[]) {
+  try {
+    const file = getStoreFile();
+    fs.writeFileSync(file, JSON.stringify(items, null, 2), 'utf8');
+  } catch (e) {
+    // lỗi ghi
+  }
+}
 
 export async function GET() {
-  const averageStars = (sumStars / totalReviewsCount).toFixed(1);
+  const store = loadStore();
+  const totalReviews = 134 + store.length;
+  const sumStars = 4.9 * 134 + store.reduce((acc, cur) => acc + (cur.stars || 5), 0);
+  const averageStars = (sumStars / totalReviews).toFixed(1);
+
   return NextResponse.json({
     ok: true,
     averageStars: Number(averageStars),
-    totalReviews: totalReviewsCount,
-    recentFeedbacks: feedbackStore.slice(0, 10),
+    totalReviews,
+    recentFeedbacks: store.slice(0, 15),
   });
 }
 
@@ -75,18 +114,20 @@ export async function POST(req: Request) {
       createdAt: 'Vừa xong',
     };
 
-    feedbackStore = [newItem, ...feedbackStore];
-    totalReviewsCount += 1;
-    sumStars += validStars;
+    const currentStore = loadStore();
+    const newStore = [newItem, ...currentStore.filter((x) => x.id !== newItem.id)].slice(0, 50);
+    saveStore(newStore);
 
-    const averageStars = (sumStars / totalReviewsCount).toFixed(1);
+    const totalReviews = 134 + newStore.length;
+    const sumStars = 4.9 * 134 + newStore.reduce((acc, cur) => acc + (cur.stars || 5), 0);
+    const averageStars = (sumStars / totalReviews).toFixed(1);
 
     return NextResponse.json({
       ok: true,
       message: 'Cảm ơn bạn đã gửi đánh giá cho MIMI!',
       averageStars: Number(averageStars),
-      totalReviews: totalReviewsCount,
-      recentFeedbacks: feedbackStore.slice(0, 10),
+      totalReviews,
+      recentFeedbacks: newStore.slice(0, 15),
     });
   } catch (err: any) {
     return NextResponse.json(

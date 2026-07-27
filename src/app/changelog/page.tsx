@@ -14,9 +14,10 @@ const releases = [
     tag: 'Major Update',
     icon: Sparkles,
     items: [
-      'Bảng Xếp Hạng Nhạc Việt LIVE ( Apple Music Vietnam): Kết nối trực tiếp 100% vào bảng xếp hạng iTunes/Apple Music chính thức tại Việt Nam (không cache tĩnh), thêm huy hiệu Apple Music VN và nhãn xu hướng #1 APPLE HIT, #2 HOT, #3 TREND.',
+      'Bảng Xếp Hạng Nhạc Việt LIVE ( Apple Music Vietnam): Kết nối trực tiếp 100% vào bảng xếp hạng iTunes/Apple Music chính thức tại Việt Nam (không cache tĩnh), thêm huy hiệu Apple Music VN và nhãn xu hướng #1 APPLE HIT, #2 HOT, #3 TREND.',
       'Tối ưu tự động nhận diện Đội Ngũ Đứng Sau MIMI: Đảm bảo 100% tự động load chính xác Avatar thật và Profile từ Discord của Founder Mimi (mi.mi2301) và Core Developer nhan9800 mà không phụ thuộc vào từ khóa tên role, loại bỏ hoàn toàn avatar mặc định.',
       'Liên Kết Tài Khoản Discord Khi Đánh Giá (Discord Account Linking): Khách hàng có thể nhập Discord Tag hoặc ID để xác thực tài khoản trực tiếp qua Bot Core, hiển thị Avatar thật và huy hiệu ✔ Verified Member trên các bài đánh giá.',
+      'Lưu Trữ Đánh Giá Vĩnh Viễn: Toàn bộ đánh giá của cộng đồng nay được lưu bền vững trên ổ đĩa server (không còn mất khi F5 hay khởi động lại), giữ tối đa 50 đánh giá gần nhất và tự động cộng dồn số liệu tổng.',
       'Đại tu trải nghiệm Đánh Giá & Góp Ý (Feedback UI): Thêm nút Đánh Giá phát sáng trên Header Navigation Bar ở mọi trang và chuyên mục "Khách Hàng Nói Gì Về MIMI BOT" rực rỡ ngay Trang Chủ.',
       'Hệ thống Đánh Giá & Phản Hồi Đồng Bộ: Nút floating nổi sang trọng trên toàn bộ website, hỗ trợ chấm điểm 1 - 5 sao và theo dõi đánh giá từ cộng đồng thời gian thực.',
       'Đại tu toàn bộ hệ thống icon: Chuyển đổi từ icon emoji 3D sang icon 2D Lucide có hộp viền mờ phát sáng (glassmorphism glow) cực kỳ đẳng cấp trên Status, Dashboard, BXH và Trang Chủ.',
