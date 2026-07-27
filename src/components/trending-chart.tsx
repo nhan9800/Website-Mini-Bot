@@ -83,8 +83,9 @@ export function TrendingChart() {
             {/* Đĩa vinyl 3D quay */}
             <div className="vinyl-stage mx-auto w-fit pt-4 lg:mx-0">
               <div className="vinyl-disc h-52 w-52 sm:h-64 sm:w-64">
-                <div className="vinyl-label">
-                  <Icon3D name="music" size={44} />
+                <div className="vinyl-label overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo.webp" alt="Mimi Logo" className="h-full w-full object-cover" />
                 </div>
               </div>
             </div>
