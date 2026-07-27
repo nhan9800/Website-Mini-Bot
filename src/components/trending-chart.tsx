@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Flame, Copy, Check, TrendingUp } from 'lucide-react';
+import { Flame, Copy, Check, TrendingUp, Music, Play, Pause } from 'lucide-react';
 import { Reveal } from '@/components/ui/reveal';
 import { TiltCard } from '@/components/ui/tilt-card';
-import { Icon3D } from '@/components/ui/icon3d';
 import { usePlayerStore } from '@/lib/store/use-player-store';
-import { Play, Pause } from 'lucide-react';
 
 interface TrendingSong {
   rank: number;
@@ -135,8 +133,8 @@ export function TrendingChart() {
                               className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md"
                             />
                           ) : (
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5">
-                              <Icon3D name="music" size={24} />
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm">
+                              <Music className="h-6 w-6" />
                             </div>
                           )}
                           <div className="min-w-0 flex-1">

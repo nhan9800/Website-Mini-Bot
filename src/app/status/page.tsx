@@ -12,10 +12,14 @@ import {
   Radio,
   AlertTriangle,
   Globe,
+  Rocket,
+  Clock,
+  Music,
+  Bot,
+  Sparkles,
 } from 'lucide-react';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
-import { Icon3D } from '@/components/ui/icon3d';
 
 function pingQuality(ping: number): { label: string; color: string } {
   if (ping < 0) return { label: 'Chưa có dữ liệu', color: 'text-gray-400' };
@@ -105,8 +109,8 @@ export default function StatusPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
                 Độ Trễ Gateway
               </span>
-              <div className="transition-transform duration-500 group-hover:animate-float">
-                <Icon3D name="rocket" size={48} className="drop-shadow-[0_10px_15px_rgba(46,204,113,0.3)]" />
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/30 bg-mimi-green/10 shadow-[0_0_20px_rgba(46,204,113,0.25)] transition-all duration-500 group-hover:scale-110 group-hover:border-mimi-green/50">
+                <Rocket className="h-8 w-8 text-mimi-green drop-shadow-[0_2px_8px_rgba(46,204,113,0.5)]" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 relative z-10">
@@ -131,8 +135,8 @@ export default function StatusPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
                 Thời Gian Hoạt Động
               </span>
-              <div className="transition-transform duration-500 group-hover:animate-float" style={{ animationDelay: '0.2s' }}>
-                <Icon3D name="clock" size={48} className="drop-shadow-[0_10px_15px_rgba(34,211,238,0.3)]" />
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-mimi-cyan/30 bg-mimi-cyan/10 shadow-[0_0_20px_rgba(34,211,238,0.25)] transition-all duration-500 group-hover:scale-110 group-hover:border-mimi-cyan/50">
+                <Clock className="h-8 w-8 text-mimi-cyan drop-shadow-[0_2px_8px_rgba(34,211,238,0.5)]" />
               </div>
             </div>
             <div className="font-mono text-3xl font-black leading-snug text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400 relative z-10">
@@ -147,8 +151,8 @@ export default function StatusPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
                 Máy Chủ Đang Phục Vụ
               </span>
-              <div className="transition-transform duration-500 group-hover:animate-float" style={{ animationDelay: '0.4s' }}>
-                <Icon3D name="robot" size={48} className="drop-shadow-[0_10px_15px_rgba(139,92,246,0.3)]" />
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-mimi-purple/30 bg-mimi-purple/15 shadow-[0_0_20px_rgba(139,92,246,0.25)] transition-all duration-500 group-hover:scale-110 group-hover:border-mimi-purple/50">
+                <Server className="h-8 w-8 text-mimi-purple drop-shadow-[0_2px_8px_rgba(139,92,246,0.5)]" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 relative z-10">
@@ -171,8 +175,8 @@ export default function StatusPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
                 Phiên Nghe Nhạc
               </span>
-              <div className="transition-transform duration-500 group-hover:animate-float" style={{ animationDelay: '0.6s' }}>
-                <Icon3D name="music" size={48} className="drop-shadow-[0_10px_15px_rgba(244,114,182,0.3)]" />
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-mimi-pink/30 bg-mimi-pink/10 shadow-[0_0_20px_rgba(244,114,182,0.25)] transition-all duration-500 group-hover:scale-110 group-hover:border-mimi-pink/50">
+                <Music className="h-8 w-8 text-mimi-pink drop-shadow-[0_2px_8px_rgba(244,114,182,0.5)]" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 relative z-10">
@@ -222,8 +226,8 @@ export default function StatusPage() {
               <tbody className="divide-y divide-white/5 text-sm">
                 <tr className="group hover:bg-white/[0.02] transition-colors">
                   <td className="flex items-center gap-3 px-4 py-5 font-bold text-white">
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:border-mimi-green/50 transition-colors">
-                      <Icon3D name="robot" size={24} />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-[0_0_12px_rgba(46,204,113,0.2)] group-hover:scale-105 group-hover:border-mimi-green/60 transition-all">
+                      <Bot className="h-5 w-5" />
                     </div>
                     <span>Bot Core (Discord Gateway)</span>
                   </td>
@@ -237,8 +241,8 @@ export default function StatusPage() {
                 </tr>
                 <tr className="group hover:bg-white/[0.02] transition-colors">
                   <td className="flex items-center gap-3 px-4 py-5 font-bold text-white">
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:border-mimi-cyan/50 transition-colors">
-                      <Icon3D name="shield" size={24} />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-mimi-cyan/30 bg-mimi-cyan/10 text-mimi-cyan shadow-[0_0_12px_rgba(34,211,238,0.2)] group-hover:scale-105 group-hover:border-mimi-cyan/60 transition-all">
+                      <ShieldCheck className="h-5 w-5" />
                     </div>
                     <span>Web Dashboard & API Proxy</span>
                   </td>
@@ -252,8 +256,8 @@ export default function StatusPage() {
                 </tr>
                 <tr className="group hover:bg-white/[0.02] transition-colors">
                   <td className="flex items-center gap-3 px-4 py-5 font-bold text-white">
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:border-mimi-purple/50 transition-colors">
-                      <Icon3D name="sparkles" size={24} />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-mimi-purple/30 bg-mimi-purple/15 text-mimi-violet shadow-[0_0_12px_rgba(139,92,246,0.2)] group-hover:scale-105 group-hover:border-mimi-purple/60 transition-all">
+                      <Zap className="h-5 w-5" />
                     </div>
                     <span>Internal API (Web ↔ Bot)</span>
                   </td>
