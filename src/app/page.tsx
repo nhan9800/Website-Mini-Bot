@@ -32,6 +32,7 @@ import { Reveal } from '@/components/ui/reveal';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { TrendingChart } from '@/components/trending-chart';
 import { TeamSection } from '@/components/team/team-section';
+import { CommunityReviewsSection } from '@/components/feedback/community-reviews-section';
 
 // Cảnh 3D WebGL nặng — chỉ tải ở client, trong lúc chờ hiện particles nhẹ.
 const Hero3D = dynamic(() => import('@/components/three/hero-3d'), {
@@ -389,6 +390,9 @@ export default function HomePage() {
 
       {/* ══ ĐỘI NGŨ ═══════════════════════════════════════════════ */}
       <TeamSection />
+
+      {/* ══ ĐÁNH GIÁ CỘNG ĐỒNG ═════════════════════════════════════ */}
+      <CommunityReviewsSection />
 
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
       <section id="faq" className="scroll-mt-24 py-24">

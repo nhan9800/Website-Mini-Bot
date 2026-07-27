@@ -13,6 +13,7 @@ import {
   Sparkles,
   Home,
   Headphones,
+  Star,
 } from 'lucide-react';
 import { env } from '@/lib/env';
 
@@ -99,6 +100,14 @@ export function Header() {
 
           {/* CTA desktop */}
           <div className="hidden items-center gap-3 lg:flex">
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-mimi-feedback'))}
+              className="group relative inline-flex items-center gap-2 rounded-full border border-yellow-400/50 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-yellow-500/15 px-4 py-2 text-sm font-bold text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.25)] transition-all duration-300 hover:border-yellow-400 hover:scale-105 hover:shadow-[0_0_30px_rgba(234,179,8,0.45)]"
+              title="Đánh giá & Góp ý cho MIMI"
+            >
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 animate-pulse" />
+              <span>Đánh Giá</span>
+            </button>
             <a
               href={env.NEXT_PUBLIC_BOT_INVITE_URL}
               target="_blank"
@@ -143,7 +152,18 @@ export function Header() {
                 </Link>
               );
             })}
-            <div className="mt-2 border-t border-white/10 pt-3">
+            <div className="mt-2 flex flex-col gap-2.5 border-t border-white/10 pt-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-mimi-feedback'));
+                }}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-yellow-400/40 bg-yellow-500/15 px-4 py-3 text-sm font-bold text-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.25)] transition-colors hover:bg-yellow-500/25"
+              >
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 animate-pulse" />
+                <span>⭐ Đánh Giá & Góp Ý MIMI</span>
+              </button>
               <a
                 href={env.NEXT_PUBLIC_BOT_INVITE_URL}
                 target="_blank"
