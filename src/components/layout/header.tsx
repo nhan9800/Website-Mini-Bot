@@ -16,8 +16,6 @@ import {
 } from 'lucide-react';
 import { env } from '@/lib/env';
 
-import { Icon3D, type Icon3DName } from '@/components/ui/icon3d';
-
 const navItems = [
   { href: '/', label: 'Trang Chủ', icon: Home },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },

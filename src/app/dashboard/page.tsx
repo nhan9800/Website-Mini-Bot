@@ -13,9 +13,9 @@ import {
   MousePointerClick,
   Trash2,
   Users,
+  LayoutDashboard,
 } from 'lucide-react';
 import { env } from '@/lib/env';
-import { Icon3D } from '@/components/ui/icon3d';
 
 interface RecentGuild {
   id: string;
@@ -150,8 +150,10 @@ export default function DashboardSelectorPage() {
         {/* ── Server gần đây ────────────────────────────────────── */}
         {recent.length > 0 && (
           <div className="space-y-5">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-              <Icon3D name="dashboard" size={28} />
+            <h2 className="flex items-center gap-2.5 text-lg font-bold text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-mimi-purple/30 bg-mimi-purple/10 text-mimi-violet shadow-[0_0_12px_rgba(139,92,246,0.2)]">
+                <LayoutDashboard className="h-5 w-5" />
+              </div>
               <span>Máy Chủ Đã Truy Cập Gần Đây</span>
             </h2>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
