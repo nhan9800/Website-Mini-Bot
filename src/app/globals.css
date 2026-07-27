@@ -357,6 +357,43 @@ input[type="range"].mimi-slider::-moz-range-thumb {
   opacity: 0.5;
   z-index: -3;
 }
+/* ── VIP Cyber (Dành riêng cho Dev) ───────────────────────── */
+.vip-card-cyber {
+  position: relative;
+  z-index: 1;
+}
+
+.vip-card-cyber::before {
+  content: "";
+  position: absolute;
+  inset: -2.5px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00f2fe, #4facfe, #00f2fe, #4facfe);
+  background-size: 200% auto;
+  animation: bg-pan-rgb 4s linear infinite;
+  z-index: -2;
+}
+
+.vip-card-cyber::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #080911;
+  z-index: -1;
+}
+
+.vip-card-cyber-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00f2fe, #4facfe, #00f2fe, #4facfe);
+  background-size: 200% auto;
+  animation: bg-pan-rgb 4s linear infinite;
+  filter: blur(35px); /* To hơn Founder 1 xíu để ảo hơn */
+  opacity: 0.6; /* Sáng hơn Founder 1 xíu */
+  z-index: -3;
+}
 
 .hover-3d-tilt {
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
