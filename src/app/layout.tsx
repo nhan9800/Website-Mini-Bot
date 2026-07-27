@@ -24,7 +24,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
   title: {
-    default: "Mimi — Bot Nhạc Discord & Quản Trị Cộng Đồng",
+    default: "Mimi Bot — Bot Nhạc Discord & Quản Trị Cộng Đồng",
     template: "%s · Mimi Bot",
   },
   description:
