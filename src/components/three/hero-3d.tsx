@@ -3,7 +3,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Sparkles } from '@react-three/drei';
+import { Float, Sparkles, RoundedBox } from '@react-three/drei';
 import { Particles } from '@/components/ui/particles';
 
 /* ────────────────────────────────────────────────────────────────
@@ -293,67 +293,76 @@ function EqualizerRing() {
 
 function EighthNotePair({ color }: { color: string }) {
   const mat = (
-    <meshStandardMaterial
+    <meshPhysicalMaterial
       color={color}
-      emissive={new THREE.Color(color)}
-      emissiveIntensity={0.5}
-      metalness={0.35}
-      roughness={0.3}
+      emissive={color}
+      emissiveIntensity={0.55}
+      metalness={0.1}
+      roughness={0.05}
+      clearcoat={1.0}
+      clearcoatRoughness={0.1}
+      transmission={0.7}
+      thickness={0.8}
+      ior={1.5}
     />
   );
   return (
     <group scale={0.55}>
       {/* 2 đầu nốt */}
       <mesh position={[0, 0, 0]} rotation={[0, 0, -0.45]} scale={[1, 0.68, 1]}>
-        <sphereGeometry args={[0.34, 24, 18]} />
+        <sphereGeometry args={[0.34, 32, 32]} />
         {mat}
       </mesh>
       <mesh position={[1.05, 0.16, 0]} rotation={[0, 0, -0.45]} scale={[1, 0.68, 1]}>
-        <sphereGeometry args={[0.34, 24, 18]} />
+        <sphereGeometry args={[0.34, 32, 32]} />
         {mat}
       </mesh>
       {/* 2 thân nốt */}
       <mesh position={[0.28, 0.75, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 1.5, 12]} />
+        <cylinderGeometry args={[0.045, 0.045, 1.5, 24]} />
         {mat}
       </mesh>
       <mesh position={[1.33, 0.91, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 1.5, 12]} />
+        <cylinderGeometry args={[0.045, 0.045, 1.5, 24]} />
         {mat}
       </mesh>
-      {/* thanh nối */}
-      <mesh position={[0.8, 1.57, 0]} rotation={[0, 0, 0.15]}>
-        <boxGeometry args={[1.28, 0.24, 0.1]} />
+      {/* thanh nối bo tròn */}
+      <RoundedBox args={[1.32, 0.22, 0.12]} radius={0.06} smoothness={8} position={[0.8, 1.57, 0]} rotation={[0, 0, 0.15]}>
         {mat}
-      </mesh>
+      </RoundedBox>
     </group>
   );
 }
 
 function SingleNote({ color }: { color: string }) {
   const mat = (
-    <meshStandardMaterial
+    <meshPhysicalMaterial
       color={color}
-      emissive={new THREE.Color(color)}
-      emissiveIntensity={0.5}
-      metalness={0.35}
-      roughness={0.3}
+      emissive={color}
+      emissiveIntensity={0.55}
+      metalness={0.1}
+      roughness={0.05}
+      clearcoat={1.0}
+      clearcoatRoughness={0.1}
+      transmission={0.7}
+      thickness={0.8}
+      ior={1.5}
     />
   );
   return (
     <group scale={0.5}>
       <mesh rotation={[0, 0, -0.45]} scale={[1, 0.68, 1]}>
-        <sphereGeometry args={[0.36, 24, 18]} />
+        <sphereGeometry args={[0.36, 32, 32]} />
         {mat}
       </mesh>
       <mesh position={[0.29, 0.8, 0]}>
-        <cylinderGeometry args={[0.055, 0.055, 1.6, 12]} />
+        <cylinderGeometry args={[0.05, 0.05, 1.6, 24]} />
         {mat}
       </mesh>
-      <mesh position={[0.52, 1.35, 0]} rotation={[0, 0, -0.7]}>
-        <boxGeometry args={[0.5, 0.16, 0.09]} />
+      {/* thanh cờ bo tròn */}
+      <RoundedBox args={[0.55, 0.18, 0.1]} radius={0.05} smoothness={8} position={[0.55, 1.35, 0]} rotation={[0, 0, -0.6]}>
         {mat}
-      </mesh>
+      </RoundedBox>
     </group>
   );
 }
