@@ -320,46 +320,42 @@ input[type="range"].mimi-slider::-moz-range-thumb {
 
 .vip-card-rgb {
   position: relative;
-  background: #05060f;
-  background-clip: padding-box;
-  border: 3px solid transparent;
+  z-index: 1;
 }
-.vip-card-rgb::before, .vip-card-rgb::after {
+
+/* Lớp viền Gradient phát sáng */
+.vip-card-rgb::before {
   content: "";
   position: absolute;
-  inset: -3px;
-  z-index: -1;
+  inset: -2.5px;
   border-radius: inherit;
   background: linear-gradient(90deg, #ff0055, #ffaa00, #00ff99, #00ccff, #9900ff, #ff0055, #ffaa00);
   background-size: 200% auto;
   animation: bg-pan-rgb 3s linear infinite;
-}
-.vip-card-rgb::after {
   z-index: -2;
-  filter: blur(15px);
-  opacity: 0.6;
 }
 
-.vip-card-cyber {
-  position: relative;
-  background: #05060f;
-  background-clip: padding-box;
-  border: 3px solid transparent;
-}
-.vip-card-cyber::before, .vip-card-cyber::after {
+/* Lớp nền đen che bên trong để chừa lại viền */
+.vip-card-rgb::after {
   content: "";
   position: absolute;
-  inset: -3px;
-  z-index: -1;
+  inset: 0;
   border-radius: inherit;
-  background: linear-gradient(90deg, #00f2fe, #4facfe, #00f2fe, #4facfe);
-  background-size: 200% auto;
-  animation: bg-pan-rgb 4s linear infinite;
+  background: #080911; /* Màu nền tiệp với nền web */
+  z-index: -1;
 }
-.vip-card-cyber::after {
-  z-index: -2;
-  filter: blur(15px);
+
+/* Hiệu ứng bóng (Glow) */
+.vip-card-rgb-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff0055, #ffaa00, #00ff99, #00ccff, #9900ff, #ff0055, #ffaa00);
+  background-size: 200% auto;
+  animation: bg-pan-rgb 3s linear infinite;
+  filter: blur(25px);
   opacity: 0.5;
+  z-index: -3;
 }
 
 .hover-3d-tilt {
