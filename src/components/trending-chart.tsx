@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Flame, Copy, Check, TrendingUp, Music, Play, Pause } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Flame, Copy, Check, TrendingUp, Music, Play, Pause, RefreshCw } from 'lucide-react';
 import { Reveal } from '@/components/ui/reveal';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { usePlayerStore } from '@/lib/store/use-player-store';
@@ -16,36 +16,42 @@ interface TrendingSong {
 }
 
 /**
- * BXH nhạc Việt Nam thời gian thực (iTunes VN — dữ liệu thật, cache 1h).
+ * BXH nhạc Việt Nam thời gian thực (LIVE Realtime - cập nhật liên tục).
  * Mỗi bài có nút copy sẵn lệnh /play để đem qua Discord phát bằng MIMI.
  */
 export function TrendingChart() {
   const [songs, setSongs] = useState<TrendingSong[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [copiedRank, setCopiedRank] = useState<number | null>(null);
   const { playTrack, track: currentTrack, isPlaying, setIsPlaying } = usePlayerStore();
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/trending', { cache: 'no-store' });
-        const data = await res.json();
-        if (!cancelled) {
-          if (res.ok && data?.ok && Array.isArray(data.songs) && data.songs.length) {
-            setSongs(data.songs);
-          } else {
-            setFailed(true);
-          }
-        }
-      } catch {
-        if (!cancelled) setFailed(true);
+  const fetchTrending = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/trending?t=${Date.now()}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (res.ok && data?.ok && Array.isArray(data.songs) && data.songs.length) {
+        setSongs(data.songs);
+        setFailed(false);
+        const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        setLastUpdated(timeStr);
+      } else {
+        setFailed(true);
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    } catch {
+      setFailed(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchTrending();
+    const timer = setInterval(fetchTrending, 45000);
+    return () => clearInterval(timer);
+  }, [fetchTrending]);
 
   const copyPlayCommand = async (song: TrendingSong) => {
     try {
@@ -94,14 +100,37 @@ export function TrendingChart() {
             <Reveal delay={120}>
               <TiltCard maxTilt={4}>
                 <div className="glass-panel-glow gradient-ring space-y-2 rounded-[2rem] p-5 sm:p-7">
-                  <div className="flex items-center justify-between border-b border-white/10 px-2 pb-4">
-                    <h3 className="flex items-center gap-2 text-lg font-bold text-white">
-                      <TrendingUp className="h-5 w-5 text-mimi-green" />
-                      <span>Top 10 Việt Nam</span>
-                    </h3>
-                    <span className="rounded-full bg-mimi-pink/15 px-3 py-1 text-xs font-semibold text-mimi-pink">
-                      iTunes Charts VN
-                    </span>
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-2 pb-4">
+                    <div className="flex items-center gap-2.5">
+                      <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+                        <TrendingUp className="h-5 w-5 text-mimi-green" />
+                        <span>Top 10 Nhạc Việt Thịnh Hành</span>
+                      </h3>
+                      <div className="inline-flex items-center gap-1.5 rounded-full border border-mimi-pink/40 bg-mimi-pink/15 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-pink shadow-[0_0_12px_rgba(244,114,182,0.3)]">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mimi-pink opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-mimi-pink"></span>
+                        </span>
+                        <span>LIVE</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {lastUpdated && (
+                        <span className="hidden text-xs font-medium text-gray-400 sm:inline">
+                          Cập nhật: {lastUpdated}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={fetchTrending}
+                        disabled={loading}
+                        title="Làm mới bảng xếp hạng LIVE"
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:border-mimi-green/40 hover:bg-mimi-green/10 hover:text-mimi-green transition-all disabled:opacity-50"
+                      >
+                        <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-mimi-green' : ''}`} />
+                        <span>Làm mới</span>
+                      </button>
+                    </div>
                   </div>
 
                   {!songs ? (
@@ -202,11 +231,17 @@ export function TrendingChart() {
                     </ul>
                   )}
 
-                  <p className="border-t border-white/10 px-2 pt-4 text-xs text-gray-500">
-                    Mẹo: bấm <Copy className="inline h-3 w-3" /> để copy sẵn lệnh{' '}
-                    <code className="text-mimi-green">/play</code>, dán vào kênh chat Discord là
-                    MIMI phát ngay bài đó.
-                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-white/10 px-2 pt-4 text-xs text-gray-500">
+                    <p>
+                      Mẹo: bấm <Copy className="inline h-3 w-3" /> để copy sẵn lệnh{' '}
+                      <code className="text-mimi-green">/play</code>, dán vào kênh chat Discord là
+                      MIMI phát ngay bài đó.
+                    </p>
+                    <p className="flex items-center gap-1.5 font-semibold text-mimi-pink shrink-0">
+                      <span className="h-1.5 w-1.5 rounded-full bg-mimi-pink animate-pulse" />
+                      <span>BXH trực tiếp — Tự động cập nhật</span>
+                    </p>
+                  </div>
                 </div>
               </TiltCard>
             </Reveal>
