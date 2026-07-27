@@ -77,9 +77,19 @@ export async function GET() {
     const result = await callMimiApi<{ ok: boolean; team: TeamMember[] }>('/internal/team');
 
     if (result.ok && result.data?.team && result.data.team.length > 0) {
+      // Đảm bảo tương thích ngược: tự động thêm group nếu bot chưa được restart
+      const teamWithGroup = result.data.team.map((m: any) => {
+        if (m.group) return m;
+        let group = 'community';
+        if (m.role.toLowerCase().includes('founder') || m.isDev) group = 'core';
+        else if (/admin|quản trị|manager|mod/i.test(m.role)) group = 'admin';
+        else if (/partner|đối tác/i.test(m.role)) group = 'partner';
+        return { ...m, group };
+      });
+
       return NextResponse.json({
         ok: true,
-        team: result.data.team,
+        team: teamWithGroup,
         source: 'discord_roles',
       });
     }
