@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Reveal } from '@/components/ui/reveal';
-import { ShieldCheck, UserCheck } from 'lucide-react';
+import { ShieldCheck, UserCheck, Crown, Code2 } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -101,13 +101,35 @@ export function TeamSection() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {team.map((member, idx) => {
-            const isPurple = member.color?.toLowerCase() === '#9b59b6' || !member.isDev;
-            const borderHoverClass = isPurple
-              ? 'hover:border-mimi-purple/60'
-              : 'hover:border-mimi-green/60';
-            const shadowGlowStyle = isPurple
-              ? '0 0 25px rgba(139,92,246,0.3)'
-              : '0 0 25px rgba(46,204,113,0.3)';
+            const isFounder = member.role.toLowerCase().includes('founder');
+            const isDev = member.isDev;
+            const isPurple = member.color?.toLowerCase() === '#9b59b6' || (!isDev && !isFounder);
+            
+            let borderHoverClass = 'hover:border-mimi-purple/60';
+            let shadowGlowStyle = '0 0 25px rgba(139,92,246,0.3)';
+            let RoleIcon = UserCheck;
+            let badgeText = 'Role Discord';
+            let badgeColorClass = 'text-mimi-green';
+            let avatarRingClass = 'ring-white/10';
+
+            if (isFounder) {
+              borderHoverClass = 'hover:border-[#ff6b81]';
+              shadowGlowStyle = '0 0 45px rgba(255,107,129,0.5)'; // Glow mạnh nhất cho Founder
+              RoleIcon = Crown;
+              badgeText = 'Founder';
+              badgeColorClass = 'text-[#ff6b81]';
+              avatarRingClass = 'ring-[#ff6b81]/40';
+            } else if (isDev) {
+              borderHoverClass = 'hover:border-[#00f2fe]';
+              shadowGlowStyle = '0 0 25px rgba(0,242,254,0.35)'; // Glow ngầu nhưng yếu hơn Founder
+              RoleIcon = Code2;
+              badgeText = 'System Dev';
+              badgeColorClass = 'text-[#00f2fe]';
+              avatarRingClass = 'ring-[#00f2fe]/30';
+            } else if (!isPurple) {
+              borderHoverClass = 'hover:border-mimi-green/60';
+              shadowGlowStyle = '0 0 25px rgba(46,204,113,0.3)';
+            }
 
             return (
               <Reveal key={member.id} delay={idx * 100}>
@@ -130,7 +152,7 @@ export function TeamSection() {
                         (e.target as HTMLImageElement).src = '/logo.webp';
                       }}
                     />
-                    <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />
+                    <div className={`absolute inset-0 rounded-2xl ring-1 ring-inset ${avatarRingClass}`} />
                     {/* Chấm trạng thái Discord */}
                     <span
                       className={`absolute bottom-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-2 ring-black ${
@@ -144,8 +166,8 @@ export function TeamSection() {
                     <div className="flex items-center gap-2">
                       <h3 className="text-lg font-bold text-white">{member.name}</h3>
                       <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-bold text-gray-400 border border-white/10">
-                        <UserCheck className="h-2.5 w-2.5 text-mimi-green" />
-                        <span>Role Discord</span>
+                        <RoleIcon className={`h-2.5 w-2.5 ${badgeColorClass}`} />
+                        <span className={isFounder ? 'text-[#ff6b81]' : (isDev ? 'text-[#00f2fe]' : '')}>{badgeText}</span>
                       </span>
                     </div>
                     <p
