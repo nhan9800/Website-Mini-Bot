@@ -12,7 +12,7 @@
       "static/chunks/fd9d1056-65122057374fba7a.js",
       "static/chunks/117-19e285c32aa8c27c.js",
       "static/chunks/main-app-9d958a945d2627f5.js",
-      "static/css/89e8954151a65d80.css",
+      "static/css/582a14c64f3d80fc.css",
       "static/chunks/216-9bbaaed25c8dd3a8.js",
       "static/chunks/552-ae12a0f9ccc8a2e0.js",
       "static/chunks/app/layout-1c51358ea346404f.js"
@@ -24,6 +24,14 @@
       "static/chunks/main-app-9d958a945d2627f5.js",
       "static/chunks/app/commands/page-8d98585ff4028462.js"
     ],
+    "/dashboard/[guildId]/page": [
+      "static/chunks/webpack-c56888e1bfc3097f.js",
+      "static/chunks/fd9d1056-65122057374fba7a.js",
+      "static/chunks/117-19e285c32aa8c27c.js",
+      "static/chunks/main-app-9d958a945d2627f5.js",
+      "static/chunks/216-9bbaaed25c8dd3a8.js",
+      "static/chunks/app/dashboard/[guildId]/page-da26119ef3e8736e.js"
+    ],
     "/dashboard/page": [
       "static/chunks/webpack-c56888e1bfc3097f.js",
       "static/chunks/fd9d1056-65122057374fba7a.js",
@@ -31,14 +39,6 @@
       "static/chunks/main-app-9d958a945d2627f5.js",
       "static/chunks/216-9bbaaed25c8dd3a8.js",
       "static/chunks/app/dashboard/page-d0c8be942f65046e.js"
-    ],
-    "/dashboard/[guildId]/page": [
-      "static/chunks/webpack-c56888e1bfc3097f.js",
-      "static/chunks/fd9d1056-65122057374fba7a.js",
-      "static/chunks/117-19e285c32aa8c27c.js",
-      "static/chunks/main-app-9d958a945d2627f5.js",
-      "static/chunks/216-9bbaaed25c8dd3a8.js",
-      "static/chunks/app/dashboard/[guildId]/page-29f12a4770086635.js"
     ],
     "/page": [
       "static/chunks/webpack-c56888e1bfc3097f.js",
@@ -54,7 +54,7 @@
       "static/chunks/fd9d1056-65122057374fba7a.js",
       "static/chunks/117-19e285c32aa8c27c.js",
       "static/chunks/main-app-9d958a945d2627f5.js",
-      "static/chunks/app/status/page-09e6da36180035f7.js"
+      "static/chunks/app/status/page-2bd740b664cbbe7b.js"
     ],
     "/support/page": [
       "static/chunks/webpack-c56888e1bfc3097f.js",
