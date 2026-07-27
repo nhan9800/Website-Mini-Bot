@@ -106,12 +106,17 @@ export function TrendingChart() {
                         <TrendingUp className="h-5 w-5 text-mimi-green" />
                         <span>Top 10 Nhạc Việt Thịnh Hành</span>
                       </h3>
-                      <div className="inline-flex items-center gap-1.5 rounded-full border border-mimi-pink/40 bg-mimi-pink/15 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-pink shadow-[0_0_12px_rgba(244,114,182,0.3)]">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mimi-pink opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-mimi-pink"></span>
-                        </span>
-                        <span>LIVE</span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-mimi-pink/40 bg-mimi-pink/15 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-pink shadow-[0_0_12px_rgba(244,114,182,0.3)]">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mimi-pink opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-mimi-pink"></span>
+                          </span>
+                          <span>LIVE</span>
+                        </div>
+                        <div className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold text-gray-300" title="Dữ liệu trực tiếp từ Apple Music / iTunes Chart Việt Nam">
+                          <span> Apple Music VN</span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -167,7 +172,24 @@ export function TrendingChart() {
                             </div>
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-bold text-white">{s.title}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="truncate text-sm font-bold text-white">{s.title}</p>
+                              {s.rank === 1 && (
+                                <span className="shrink-0 rounded-md bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/40 px-1.5 py-0.5 text-[9px] font-extrabold text-yellow-300">
+                                  #1 APPLE HIT
+                                </span>
+                              )}
+                              {s.rank === 2 && (
+                                <span className="shrink-0 rounded-md bg-gradient-to-r from-mimi-pink/20 to-rose-500/20 border border-mimi-pink/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-pink">
+                                  #2 HOT
+                                </span>
+                              )}
+                              {s.rank === 3 && (
+                                <span className="shrink-0 rounded-md bg-gradient-to-r from-mimi-cyan/20 to-blue-500/20 border border-mimi-cyan/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-cyan">
+                                  #3 TREND
+                                </span>
+                              )}
+                            </div>
                             <p className="truncate text-xs text-gray-400">{s.artist}</p>
                           </div>
                           {/* Equalizer hiện khi hover hoặc đang phát */}
@@ -237,10 +259,13 @@ export function TrendingChart() {
                       <code className="text-mimi-green">/play</code>, dán vào kênh chat Discord là
                       MIMI phát ngay bài đó.
                     </p>
-                    <p className="flex items-center gap-1.5 font-semibold text-mimi-pink shrink-0">
-                      <span className="h-1.5 w-1.5 rounded-full bg-mimi-pink animate-pulse" />
-                      <span>BXH trực tiếp — Tự động cập nhật</span>
-                    </p>
+                    <div className="flex flex-col items-end gap-0.5 shrink-0">
+                      <p className="flex items-center gap-1.5 font-semibold text-mimi-pink">
+                        <span className="h-1.5 w-1.5 rounded-full bg-mimi-pink animate-pulse" />
+                        <span>BXH thật • Apple Music Vietnam</span>
+                      </p>
+                      <span className="text-[10px] text-gray-400">Tự động đồng bộ theo giờ từ iTunes Chart</span>
+                    </div>
                   </div>
                 </div>
               </TiltCard>

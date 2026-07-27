@@ -14,7 +14,7 @@ const releases = [
     tag: 'Major Update',
     icon: Sparkles,
     items: [
-      'Bảng Xếp Hạng Nhạc Việt LIVE: Cấu hình 100% động theo thời gian thực (Server-Rendered on demand), loại bỏ cache tĩnh, có huy hiệu LIVE phát sáng và nút Làm Mới trực tiếp.',
+      'Bảng Xếp Hạng Nhạc Việt LIVE ( Apple Music Vietnam): Kết nối trực tiếp 100% vào bảng xếp hạng iTunes/Apple Music chính thức tại Việt Nam (không cache tĩnh), thêm huy hiệu Apple Music VN và nhãn xu hướng #1 APPLE HIT, #2 HOT, #3 TREND.',
       'Mở rộng tự động nhận diện Đội Ngũ Đứng Sau MIMI: Thêm Founder Mimi, đặt vai trò nhan9800 là Core Developer theo đúng định hướng, tự động hiển thị toàn bộ các role Founder, Dev, Admin, Mod, Support từ server Discord theo thứ tự ưu tiên chuẩn.',
       'Liên Kết Tài Khoản Discord Khi Đánh Giá (Discord Account Linking): Khách hàng có thể nhập Discord Tag hoặc ID để xác thực tài khoản trực tiếp qua Bot Core, hiển thị Avatar thật và huy hiệu ✔ Verified Member trên các bài đánh giá.',
       'Đại tu trải nghiệm Đánh Giá & Góp Ý (Feedback UI): Thêm nút Đánh Giá phát sáng trên Header Navigation Bar ở mọi trang và chuyên mục "Khách Hàng Nói Gì Về MIMI BOT" rực rỡ ngay Trang Chủ.',
