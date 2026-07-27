@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Heart, ExternalLink, Github, MessageSquare } from 'lucide-react';
+import { Heart, ExternalLink, Github, MessageSquare, Headphones } from 'lucide-react';
 import { env } from '@/lib/env';
 
 const exploreLinks = [
@@ -26,15 +26,7 @@ export function Footer() {
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-mimi-green/25 bg-mimi-green/10">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/logo.png"
-                  alt="Mimi Bot Logo"
-                  width={22}
-                  height={22}
-                  draggable={false}
-                  className="select-none"
-                />
+                <Headphones className="h-5 w-5 text-mimi-green drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
               </div>
               <span className="text-lg font-extrabold tracking-tight text-white">Mimi Bot</span>
             </Link>
