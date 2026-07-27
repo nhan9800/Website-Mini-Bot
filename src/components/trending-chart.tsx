@@ -6,7 +6,7 @@ import { Reveal } from '@/components/ui/reveal';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { Icon3D } from '@/components/ui/icon3d';
 import { usePlayerStore } from '@/lib/store/use-player-store';
-import { Play } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 
 interface TrendingSong {
   rank: number;
@@ -25,7 +25,7 @@ export function TrendingChart() {
   const [songs, setSongs] = useState<TrendingSong[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [copiedRank, setCopiedRank] = useState<number | null>(null);
-  const { playTrack, track: currentTrack, isPlaying } = usePlayerStore();
+  const { playTrack, track: currentTrack, isPlaying, setIsPlaying } = usePlayerStore();
 
   useEffect(() => {
     let cancelled = false;
@@ -158,12 +158,16 @@ export function TrendingChart() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  playTrack({
-                                    title: s.title,
-                                    artist: s.artist,
-                                    cover: s.artworkUrl || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=200&h=200',
-                                    url: s.previewUrl!
-                                  });
+                                  if (currentTrack?.title === s.title) {
+                                    setIsPlaying(!isPlaying);
+                                  } else {
+                                    playTrack({
+                                      title: s.title,
+                                      artist: s.artist,
+                                      cover: s.artworkUrl || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=200&h=200',
+                                      url: s.previewUrl!
+                                    });
+                                  }
                                 }}
                                 className={`rounded-xl border p-2.5 transition-colors ${
                                   currentTrack?.title === s.title && isPlaying
@@ -173,7 +177,11 @@ export function TrendingChart() {
                                 title={`Nghe thử ${s.title}`}
                                 aria-label={`Nghe thử ${s.title}`}
                               >
-                                <Play className="h-4 w-4" />
+                                {currentTrack?.title === s.title && isPlaying ? (
+                                  <Pause className="h-4 w-4" />
+                                ) : (
+                                  <Play className="h-4 w-4" />
+                                )}
                               </button>
                             )}
                             <button
