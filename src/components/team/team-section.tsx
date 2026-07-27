@@ -24,10 +24,10 @@ export function TeamSection() {
     {
       id: '1',
       name: 'Mimi',
-      username: 'mimi_founder',
+      username: 'mi.mi2301',
       role: 'Founder & Community Owner',
       color: '#ff6b81',
-      avatar: '/logo.webp',
+      avatar: 'https://api.dicebear.com/7.x/lorelei/svg?seed=MimiFounder&backgroundColor=ff6b81',
       status: 'online',
       description: 'Sáng lập hệ sinh thái MIMI, định hướng phát triển và kết nối cộng đồng yêu âm nhạc.',
       isDev: false,
