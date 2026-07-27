@@ -36,13 +36,13 @@ export default function PartnersPage() {
         <Reveal className="mx-auto mb-20 max-w-3xl space-y-4 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/40 bg-yellow-500/10 px-4 py-1.5 text-xs font-bold text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
             <Handshake className="h-4 w-4" />
-            <span>Mạng Lưới Đối Tác Chiến Lược</span>
+            <span>Cộng Đồng Sử Dụng Bot</span>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Đối Tác Của <span className="text-gradient-mimi">MIMI</span>
+            Đối Tác Sử Dụng <span className="text-gradient-mimi">MIMI</span>
           </h1>
           <p className="text-lg text-gray-400">
-            Những cá nhân và máy chủ đã đồng hành cùng MIMI xây dựng hệ sinh thái âm nhạc đa nền tảng tuyệt vời trên Discord.
+            Những cá nhân, quản trị viên và các máy chủ (như VTC Manager) đang tin dùng MIMI để xây dựng cộng đồng âm nhạc trên Discord.
           </p>
         </Reveal>
 
