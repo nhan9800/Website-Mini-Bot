@@ -1,1 +1,1 @@
-{"version":1,"functions":{"/api/commands":{},"/api/guilds/[guildId]/player":{},"/api/guilds/[guildId]/settings":{},"/api/status":{},"/api/trending":{},"/api/team":{},"/api/version":{},"/privacy":{},"/changelog":{},"/terms":{},"/api/feedback":{},"/api/user":{}}}
+{"version":1,"functions":{"/api/commands":{},"/api/guilds/[guildId]/player":{},"/api/feedback":{},"/api/status":{},"/api/guilds/[guildId]/settings":{},"/api/team":{},"/api/user":{},"/api/trending":{},"/api/version":{},"/changelog":{},"/terms":{},"/privacy":{}}}
