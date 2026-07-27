@@ -100,23 +100,23 @@ export function Header() {
           </nav>
 
           {/* CTA desktop */}
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-2 xl:gap-3 lg:flex shrink-0">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-mimi-feedback'))}
-              className="group relative inline-flex items-center gap-2 rounded-full border border-yellow-400/50 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-yellow-500/15 px-4 py-2 text-sm font-bold text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.25)] transition-all duration-300 hover:border-yellow-400 hover:scale-105 hover:shadow-[0_0_30px_rgba(234,179,8,0.45)]"
+              className="group relative inline-flex shrink-0 items-center gap-2 rounded-full border border-yellow-400/50 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-yellow-500/15 px-3 xl:px-4 py-2 text-sm font-bold text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.25)] transition-all duration-300 hover:border-yellow-400 hover:scale-105 hover:shadow-[0_0_30px_rgba(234,179,8,0.45)]"
               title="Đánh giá & Góp ý cho MIMI"
             >
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 animate-pulse" />
-              <span>Đánh Giá</span>
+              <Star className="h-4 w-4 shrink-0 fill-yellow-400 text-yellow-400 animate-pulse" />
+              <span className="whitespace-nowrap">Đánh Giá</span>
             </button>
             <a
               href={env.NEXT_PUBLIC_BOT_INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary !px-5 !py-2.5"
+              className="btn-primary shrink-0 !px-4 xl:!px-5 !py-2.5"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>Mời MIMI</span>
+              <Sparkles className="h-4 w-4 shrink-0" />
+              <span className="whitespace-nowrap">Mời MIMI</span>
             </a>
           </div>
 
