@@ -27,7 +27,7 @@ export function Footer() {
             <Link href="/" className="flex items-center gap-2.5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/logo.webp" alt="Mimi Bot Logo" className="h-9 w-9 object-cover rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
-              <span className="text-lg font-extrabold tracking-tight text-white">Mimi Bot</span>
+              <span className="text-lg font-extrabold tracking-tight text-white">MIMI BOT</span>
             </Link>
             <p className="text-sm leading-relaxed text-gray-400">
               Bot nhạc Discord dành cho cộng đồng Việt Nam — âm thanh chất lượng cao,
@@ -100,7 +100,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/10"
               >
-                <span>Mimi Support Server</span>
+                <span>MIMI Support Server</span>
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             </div>
@@ -109,11 +109,11 @@ export function Footer() {
 
         {/* Thanh dưới cùng */}
         <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-gray-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} Mimi Bot Ecosystem. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} MIMI BOT Ecosystem. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
             <span>Được phát triển với</span>
             <Heart className="h-3.5 w-3.5 fill-mimi-pink text-mimi-pink" />
-            <span>bởi cộng đồng Mimi</span>
+            <span>bởi cộng đồng MIMI</span>
           </p>
         </div>
       </div>
