@@ -86,14 +86,14 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 rounded-full px-3 xl:px-4 py-2 text-sm font-medium transition-all duration-200 ${
                     active
                       ? 'bg-gradient-brand font-semibold text-[#05060f] shadow-md shadow-mimi-green/25'
                       : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="whitespace-nowrap">{item.label}</span>
                 </Link>
               );
             })}
