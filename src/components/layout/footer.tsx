@@ -25,9 +25,8 @@ export function Footer() {
           {/* Thương hiệu */}
           <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-mimi-green/25 bg-mimi-green/10">
-                <Headphones className="h-5 w-5 text-mimi-green drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
-              </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.webp" alt="Mimi Bot Logo" className="h-9 w-9 object-cover rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
               <span className="text-lg font-extrabold tracking-tight text-white">Mimi Bot</span>
             </Link>
             <p className="text-sm leading-relaxed text-gray-400">
