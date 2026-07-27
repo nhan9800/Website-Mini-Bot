@@ -3,21 +3,19 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, SkipForward, SkipBack, Volume2, VolumeX } from "lucide-react";
+import { usePlayerStore } from "@/lib/store/use-player-store";
 
 export function WebPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { track, isPlaying, setIsPlaying, stop } = usePlayerStore();
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Fake song for demo since real bot connection needs WebSocket/Icecast
-  const demoSong = {
-    title: "Mimi's Lullaby (Demo)",
-    artist: "Mimi AI Audio",
-    cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=200&h=200",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // Royalty free demo audio
-  };
+  useEffect(() => {
+    // Reset progress when track changes
+    setProgress(0);
+  }, [track]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -43,11 +41,13 @@ export function WebPlayer() {
     }
   };
 
+  if (!track) return null;
+
   return (
     <>
       <audio
         ref={audioRef}
-        src={demoSong.url}
+        src={track.url}
         onTimeUpdate={handleTimeUpdate}
         onEnded={() => setIsPlaying(false)}
       />
@@ -67,7 +67,7 @@ export function WebPlayer() {
           {/* Vinyl Record */}
           <div className="relative z-10 w-16 h-16 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] shrink-0 bg-zinc-900 flex items-center justify-center">
             <motion.img 
-              src={demoSong.cover} 
+              src={track.cover} 
               alt="Cover" 
               className="w-14 h-14 rounded-full object-cover"
               animate={{ rotate: isPlaying ? 360 : 0 }}
@@ -81,13 +81,13 @@ export function WebPlayer() {
           <div className="relative z-10 flex-1 min-w-0">
             <motion.h3 
               className="text-white font-bold truncate text-sm sm:text-base drop-shadow-md"
-              animate={{ x: isHovered && demoSong.title.length > 20 ? -50 : 0 }}
+              animate={{ x: isHovered && track.title.length > 20 ? -50 : 0 }}
               transition={{ duration: 4, repeat: Infinity, repeatType: "mirror" }}
             >
-              {demoSong.title}
+              {track.title}
             </motion.h3>
             <p className="text-zinc-400 text-xs sm:text-sm truncate">
-              {demoSong.artist}
+              {track.artist}
             </p>
             
             {/* Progress Bar */}
