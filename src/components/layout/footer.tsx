@@ -33,26 +33,6 @@ export function Footer() {
               Bot nhạc Discord dành cho cộng đồng Việt Nam — âm thanh chất lượng cao,
               điều khiển bằng nút bấm hoặc dashboard web, quản trị minh bạch.
             </p>
-            <div className="flex items-center gap-3 pt-1">
-              <a
-                href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                aria-label="Máy chủ hỗ trợ Discord"
-              >
-                <MessageSquare className="h-4 w-4" />
-              </a>
-              <a
-                href={env.NEXT_PUBLIC_GITHUB_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                aria-label="Kho mã nguồn GitHub"
-              >
-                <Github className="h-4 w-4" />
-              </a>
-            </div>
           </div>
 
           {/* Khám phá */}
