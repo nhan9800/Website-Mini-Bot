@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { WebPlayer } from "@/components/music/web-player";
+import { FeedbackWidget } from "@/components/ui/feedback-widget";
 import { env } from "@/lib/env";
 
 // Be Vietnam Pro: bộ font thiết kế riêng cho tiếng Việt — dấu má chuẩn, đẹp ở mọi weight.
@@ -80,6 +81,7 @@ export default function RootLayout({
         <Header />
         <main className="relative z-10 pt-24 pb-32">{children}</main>
         <WebPlayer />
+        <FeedbackWidget />
         <Footer />
       </body>
     </html>

@@ -400,13 +400,25 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <Reveal>
-              <div className="glass-panel card-lift flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-green/40">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10 shadow-glow">
-                  <Rocket className="h-10 w-10 text-mimi-green" />
+              <div className="glass-panel card-lift group flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-green/50">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-mimi-green/40 bg-mimi-green/10 shadow-[0_0_25px_rgba(46,204,113,0.3)] transition-transform duration-500 group-hover:scale-105">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://github.com/nhan9800.png"
+                    alt="nhan9800"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />
+                  <span
+                    className="absolute bottom-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-mimi-green ring-2 ring-black"
+                    title="Online"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-black"></span>
+                  </span>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">nhan9800</h3>
-                  <p className="text-sm text-mimi-green">Founder & Developer</p>
+                  <p className="text-sm font-semibold text-mimi-green">Founder & Developer</p>
                   <p className="mt-1 text-xs leading-relaxed text-gray-400">
                     Xây dựng toàn bộ bot core, Internal API và hệ sinh thái web của MIMI.
                   </p>
@@ -414,13 +426,25 @@ export default function HomePage() {
               </div>
             </Reveal>
             <Reveal delay={100}>
-              <div className="glass-panel card-lift flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-purple/40">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-purple/30 bg-mimi-purple/15">
-                  <Bot className="h-10 w-10 text-mimi-purple" />
+              <div className="glass-panel card-lift group flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-purple/50">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-mimi-purple/40 bg-mimi-purple/15 shadow-[0_0_25px_rgba(139,92,246,0.3)] transition-transform duration-500 group-hover:scale-105">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/logo.webp"
+                    alt="Cộng Đồng MIMI"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />
+                  <span
+                    className="absolute bottom-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-mimi-purple ring-2 ring-black"
+                    title="Community Active"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-white"></span>
+                  </span>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">Cộng Đồng MIMI</h3>
-                  <p className="text-sm text-mimi-violet">Tester & Support</p>
+                  <p className="text-sm font-semibold text-mimi-violet">Tester & Support</p>
                   <p className="mt-1 text-xs leading-relaxed text-gray-400">
                     Báo lỗi, góp ý tính năng và hỗ trợ thành viên mới mỗi ngày trên server
                     Discord chính thức.
