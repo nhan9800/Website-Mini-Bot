@@ -1,9 +1,51 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Reveal } from '@/components/ui/reveal';
 import { ShieldCheck, UserCheck, Crown, Code2 } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Sphere, MeshDistortMaterial, OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
+
+function AnimatedCyberSphere() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += delta * 0.2;
+      meshRef.current.rotation.y += delta * 0.3;
+    }
+  });
+
+  return (
+    <Sphere ref={meshRef} args={[1, 64, 64]} scale={1.8}>
+      <MeshDistortMaterial
+        color="#00f2fe"
+        attach="material"
+        distort={0.4}
+        speed={2.5}
+        roughness={0.2}
+        metalness={0.8}
+        emissive="#00f2fe"
+        emissiveIntensity={0.6}
+        wireframe={true}
+      />
+    </Sphere>
+  );
+}
+
+function Dev3DBackground() {
+  return (
+    <div className="absolute right-0 top-0 h-full w-full sm:w-1/2 opacity-70 z-0 pointer-events-none mix-blend-screen overflow-hidden rounded-[2rem] mask-image-fade">
+      <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 10]} intensity={1} color="#4facfe" />
+        <AnimatedCyberSphere />
+        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+      </Canvas>
+    </div>
+  );
+}
 
 const STATUS_COLORS: Record<string, string> = {
   online: 'bg-mimi-green',
@@ -137,11 +179,15 @@ export function TeamSection() {
             return (
               <Reveal key={member.id} delay={idx * 100}>
                 <div
-                  className={`${vipClass} ${borderHoverClass} group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500`}
+                  className={`${vipClass} ${borderHoverClass} relative group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 overflow-hidden`}
                 >
                   {isFounder ? <div className="vip-card-rgb-glow rounded-[2rem]" /> : <div className="vip-card-cyber-glow rounded-[2rem]" />}
+                  
+                  {/* Chèn mô hình 3D lơ lửng cho Dev */}
+                  {!isFounder && <Dev3DBackground />}
+                  
                   <div
-                    className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
+                    className="relative z-10 h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
                     style={{
                       borderColor: member.color || (isFounder ? '#ff6b81' : '#00f2fe'),
                       boxShadow: shadowGlowStyle,
@@ -165,7 +211,7 @@ export function TeamSection() {
                     />
                   </div>
 
-                  <div className="space-y-3 sm:space-y-2">
+                  <div className="relative z-10 space-y-3 sm:space-y-2">
                     <div className="flex flex-col sm:flex-row items-center gap-3">
                       <h3 className="text-xl font-extrabold text-white tracking-wide">{member.name}</h3>
                       <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider border ${badgeBgClass}`}>
