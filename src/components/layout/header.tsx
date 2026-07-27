@@ -59,8 +59,8 @@ export function Header() {
               <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#05060f]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/icons/headphone.png"
-                  alt=""
+                  src="/logo.png"
+                  alt="Mimi Bot Logo"
                   width={26}
                   height={26}
                   draggable={false}
@@ -70,7 +70,7 @@ export function Header() {
             </div>
             <div className="flex flex-col leading-tight">
               <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-white">
-                Mimi
+                Mimi Bot
                 <span className="rounded-full border border-mimi-green/30 bg-mimi-green/15 px-2 py-0.5 text-[10px] font-bold text-mimi-green">
                   v2.2
                 </span>

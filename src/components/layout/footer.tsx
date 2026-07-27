@@ -28,15 +28,15 @@ export function Footer() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-mimi-green/25 bg-mimi-green/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/icons/headphone.png"
-                  alt=""
+                  src="/logo.png"
+                  alt="Mimi Bot Logo"
                   width={22}
                   height={22}
                   draggable={false}
                   className="select-none"
                 />
               </div>
-              <span className="text-lg font-extrabold tracking-tight text-white">Mimi</span>
+              <span className="text-lg font-extrabold tracking-tight text-white">Mimi Bot</span>
             </Link>
             <p className="text-sm leading-relaxed text-gray-400">
               Bot nhạc Discord dành cho cộng đồng Việt Nam — âm thanh chất lượng cao,
@@ -118,7 +118,7 @@ export function Footer() {
 
         {/* Thanh dưới cùng */}
         <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-gray-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} Mimi Ecosystem. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Mimi Bot Ecosystem. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
             <span>Được phát triển với</span>
             <Heart className="h-3.5 w-3.5 fill-mimi-pink text-mimi-pink" />
