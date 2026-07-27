@@ -17,6 +17,9 @@ import {
   Star,
   Code2,
   Heart,
+  Music,
+  Rocket,
+  Bot,
 } from 'lucide-react';
 import { env } from '@/lib/env';
 import { useBotStatus } from '@/lib/use-bot-status';
@@ -202,22 +205,22 @@ export default function HomePage() {
       <section className="border-y border-white/5 bg-white/[0.02] py-12">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
           <StatBlock
-            icon="robot"
+            icon={Bot}
             value={status ? formatCompact(status.guildCount) : '—'}
             label="Máy chủ đang phục vụ"
           />
           <StatBlock
-            icon="heart"
+            icon={Heart}
             value={status ? formatCompact(status.reachableUsers) : '—'}
             label="Thành viên tiếp cận"
           />
           <StatBlock
-            icon="music"
+            icon={Music}
             value={status ? String(status.activeVoiceSessions) : '—'}
             label="Phiên nhạc đang phát"
           />
           <StatBlock
-            icon="rocket"
+            icon={Rocket}
             value={status ? formatUptime(status.uptimeSeconds) : '—'}
             label="Thời gian hoạt động"
           />
@@ -521,17 +524,17 @@ export default function HomePage() {
 
 /** Khối số liệu lớn ở dải stats. */
 function StatBlock({
-  icon,
+  icon: Icon,
   value,
   label,
 }: {
-  icon: Icon3DName;
+  icon: React.ElementType;
   value: string;
   label: string;
 }) {
   return (
     <div className="flex flex-col items-center gap-2.5 text-center">
-      <Icon3D name={icon} size={40} />
+      <Icon className="h-10 w-10 text-mimi-green" />
       <span className="font-mono text-3xl font-extrabold text-white sm:text-4xl">{value}</span>
       <span className="text-xs uppercase tracking-wider text-gray-400">{label}</span>
     </div>

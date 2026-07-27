@@ -86,16 +86,18 @@ function makeLabelTexture() {
   grad.addColorStop(1, '#38bdf8');
   g.fillStyle = grad;
   g.fillRect(0, 0, 512, 512);
-  g.fillStyle = 'rgba(5, 6, 15, 0.92)';
-  g.font = '900 118px system-ui, sans-serif';
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText('MIMI', 256, 236);
-  g.font = '700 40px system-ui, sans-serif';
-  g.fillStyle = 'rgba(5, 6, 15, 0.65)';
-  g.fillText('DISCORD MUSIC', 256, 330);
+  
   const tex = new THREE.CanvasTexture(c);
   tex.anisotropy = 4;
+  
+  const img = new Image();
+  img.src = '/logo.webp';
+  img.onload = () => {
+    // Vẽ logo tròn trịa ở giữa đĩa
+    g.drawImage(img, 106, 106, 300, 300);
+    tex.needsUpdate = true;
+  };
+  
   return tex;
 }
 
