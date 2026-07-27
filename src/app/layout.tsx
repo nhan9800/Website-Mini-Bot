@@ -23,6 +23,11 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
+  icons: {
+    icon: '/logo.webp',
+    shortcut: '/logo.webp',
+    apple: '/logo.webp',
+  },
   title: {
     default: "Mimi Bot — Bot Nhạc Discord & Quản Trị Cộng Đồng",
     template: "%s · Mimi Bot",
