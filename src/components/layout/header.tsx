@@ -18,12 +18,12 @@ import { env } from '@/lib/env';
 
 import { Icon3D, type Icon3DName } from '@/components/ui/icon3d';
 
-const navItems: { href: string; label: string; icon: Icon3DName }[] = [
-  { href: '/', label: 'Trang Chủ', icon: 'sparkles' },
-  { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/commands', label: 'Lệnh', icon: 'robot' },
-  { href: '/status', label: 'Trạng Thái', icon: 'heart' },
-  { href: '/support', label: 'Hỗ Trợ', icon: 'shield' },
+const navItems = [
+  { href: '/', label: 'Trang Chủ', icon: Home },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/commands', label: 'Lệnh', icon: Terminal },
+  { href: '/status', label: 'Trạng Thái', icon: Activity },
+  { href: '/support', label: 'Hỗ Trợ', icon: LifeBuoy },
 ];
 
 export function Header() {
@@ -92,7 +92,7 @@ export function Header() {
                       : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <Icon3D name={item.icon} size={18} />
+                  <Icon className="h-4 w-4" />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -140,7 +140,7 @@ export function Header() {
                       : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <Icon3D name={item.icon} size={22} />
+                  <Icon className="h-5 w-5" />
                   <span>{item.label}</span>
                 </Link>
               );
