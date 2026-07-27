@@ -1,9 +1,9 @@
 /**
- * BXH nhạc Việt Nam — lấy từ RSS công khai của iTunes (không cần API key).
- * Cache 1 giờ phía server để không gọi Apple liên tục.
+ * BXH nhạc Việt Nam — lấy trực tiếp thời gian thực (LIVE realtime - không cache tĩnh).
  */
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface TrendingSong {
   rank: number;
@@ -18,9 +18,10 @@ const FEED_URL = 'https://itunes.apple.com/vn/rss/topsongs/limit=10/json';
 
 export async function GET() {
   try {
-    const res = await fetch(FEED_URL, {
-      next: { revalidate: 3600 },
-      headers: { Accept: 'application/json' },
+    // Luôn gọi mới nhất với tham số thời gian để chống cache trình duyệt/proxy
+    const res = await fetch(`${FEED_URL}?t=${Date.now()}`, {
+      cache: 'no-store',
+      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
     });
     if (!res.ok) throw new Error(`Apple RSS trả về ${res.status}`);
 
@@ -28,14 +29,12 @@ export async function GET() {
     const entries: any[] = data?.feed?.entry ?? [];
 
     const songs: TrendingSong[] = entries.map((e, i) => {
-      // Lấy artwork lớn nhất rồi nâng kích thước qua pattern URL của iTunes
       const images: any[] = e['im:image'] ?? [];
       const biggest = images[images.length - 1]?.label as string | undefined;
       const artworkUrl = biggest
         ? biggest.replace(/\/\d+x\d+bb\./, '/400x400bb.')
         : null;
 
-      // iTunes RSS link can be an array
       const links = Array.isArray(e.link) ? e.link : [e.link];
       const preview = links.find((l: any) => l?.attributes?.title === 'Preview');
       const pageLink = links.find((l: any) => l?.attributes?.rel === 'alternate');
@@ -51,8 +50,8 @@ export async function GET() {
     });
 
     return Response.json(
-      { ok: true, songs, updatedAt: data?.feed?.updated?.label ?? null },
-      { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600' } }
+      { ok: true, songs, updatedAt: new Date().toISOString() },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate' } }
     );
   } catch (err: any) {
     return Response.json(
@@ -61,3 +60,4 @@ export async function GET() {
     );
   }
 }
+
