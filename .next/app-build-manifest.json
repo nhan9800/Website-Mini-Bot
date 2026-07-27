@@ -24,14 +24,6 @@
       "static/chunks/main-app-9d958a945d2627f5.js",
       "static/chunks/app/commands/page-add62841acacfc7f.js"
     ],
-    "/dashboard/page": [
-      "static/chunks/webpack-ed211869a26e0fa1.js",
-      "static/chunks/fd9d1056-f42e3a44b4c14fe1.js",
-      "static/chunks/117-c40d4e704cd2d5a1.js",
-      "static/chunks/main-app-9d958a945d2627f5.js",
-      "static/chunks/216-c29323c26054be63.js",
-      "static/chunks/app/dashboard/page-367a82cfbaf366dd.js"
-    ],
     "/dashboard/[guildId]/page": [
       "static/chunks/webpack-ed211869a26e0fa1.js",
       "static/chunks/fd9d1056-f42e3a44b4c14fe1.js",
@@ -39,6 +31,14 @@
       "static/chunks/main-app-9d958a945d2627f5.js",
       "static/chunks/216-c29323c26054be63.js",
       "static/chunks/app/dashboard/[guildId]/page-b8303262386f1880.js"
+    ],
+    "/dashboard/page": [
+      "static/chunks/webpack-ed211869a26e0fa1.js",
+      "static/chunks/fd9d1056-f42e3a44b4c14fe1.js",
+      "static/chunks/117-c40d4e704cd2d5a1.js",
+      "static/chunks/main-app-9d958a945d2627f5.js",
+      "static/chunks/216-c29323c26054be63.js",
+      "static/chunks/app/dashboard/page-367a82cfbaf366dd.js"
     ],
     "/page": [
       "static/chunks/webpack-ed211869a26e0fa1.js",
