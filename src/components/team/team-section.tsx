@@ -125,6 +125,7 @@ export function TeamSection() {
               badgeBgClass = 'bg-[#ff6b81]/10 border-[#ff6b81]/30 shadow-[0_0_15px_rgba(255,107,129,0.3)]';
               avatarRingClass = 'ring-[#ff6b81]/40';
             } else {
+              vipClass = 'vip-card-cyber';
               shadowGlowStyle = '0 0 35px rgba(0,242,254,0.4)';
               RoleIcon = Code2;
               badgeText = 'System Dev';
@@ -138,7 +139,7 @@ export function TeamSection() {
                 <div
                   className={`${vipClass} ${borderHoverClass} group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500`}
                 >
-                  {isFounder && <div className="vip-card-rgb-glow rounded-[2rem]" />}
+                  {isFounder ? <div className="vip-card-rgb-glow rounded-[2rem]" /> : <div className="vip-card-cyber-glow rounded-[2rem]" />}
                   <div
                     className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
                     style={{
