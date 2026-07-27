@@ -81,11 +81,28 @@ export async function GET() {
       const teamWithGroup = result.data.team.map((m: any) => {
         if (m.group) return m;
         let group = 'community';
-        if (m.role.toLowerCase().includes('founder') || m.isDev) group = 'core';
-        else if (/admin|quản trị|manager|mod/i.test(m.role)) group = 'admin';
+        if (m.role.toLowerCase().includes('founder') || m.isDev || m.id === '1138315103821889566') group = 'core';
         else if (/partner|đối tác/i.test(m.role)) group = 'partner';
-        return { ...m, group };
+        else if (/admin|quản trị|manager|mod/i.test(m.role)) group = 'admin';
+        return { ...m, group, isDev: m.isDev || m.id === '1138315103821889566' };
       });
+
+      // Nếu Bot hoàn toàn bỏ quên Dev (do lỗi cache ở code cũ), tự động thêm Dev vào!
+      const hasDev = teamWithGroup.some((m: any) => m.isDev || m.id === '1138315103821889566');
+      if (!hasDev) {
+        teamWithGroup.push({
+          id: '1138315103821889566',
+          name: 'nhan9800',
+          username: 'nhan9800',
+          role: 'Core Developer',
+          color: '#2ecc71',
+          avatar: 'https://github.com/nhan9800.png',
+          status: 'online',
+          description: 'Phát triển kiến trúc Core Bot, hệ thống Internal API thời gian thực và Website MIMI.',
+          isDev: true,
+          group: 'core',
+        });
+      }
 
       return NextResponse.json({
         ok: true,
