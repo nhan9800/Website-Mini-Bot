@@ -9,6 +9,18 @@ export const metadata: Metadata = {
 
 const releases = [
   {
+    version: 'v2.4.0 — Tách Giao Diện Admin & Trang Đối Tác Riêng Biệt',
+    date: '27/07/2026',
+    tag: 'Feature Release',
+    icon: Sparkles,
+    items: [
+      'Phân tách khu vực Đội Ngũ (Team): Di chuyển toàn bộ dàn Admin/Support xuống một khu vực riêng biệt, thanh lịch hơn, nhường Spotlight (hào quang) lớn nhất cho Founder và Core Developer.',
+      'Đảm bảo 100% hiển thị Core Developer: Dù Discord Bot có chạy phiên bản cũ hay lỗi cache, API Website vẫn tự động nhận diện và gán đúng vị trí Core Developer cho ID 1138315103821889566.',
+      'Trang Cộng Đồng Sử Dụng Bot (Partners) mới toanh: Các thành viên và máy chủ đối tác (ví dụ: VTC Manager) nay đã có một không gian vinh danh riêng biệt với thẻ bài 3D mạ vàng cực kỳ sang trọng.',
+      'Sửa lỗi hiển thị rớt dòng (text-wrap) trên thanh Header Navigation khi duyệt web trên màn hình nhỏ hoặc có quá nhiều menu.',
+    ],
+  },
+  {
     version: 'v2.3.0 — BXH LIVE, Role Discord Dev Team & Feedback Đồng Bộ',
     date: '27/07/2026',
     tag: 'Major Update',
