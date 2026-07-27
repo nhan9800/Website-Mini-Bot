@@ -212,7 +212,7 @@ export default function HomePage() {
             label="Thành viên tiếp cận"
           />
           <StatBlock
-            icon="headphone"
+            icon="music"
             value={status ? String(status.activeVoiceSessions) : '—'}
             label="Phiên nhạc đang phát"
           />

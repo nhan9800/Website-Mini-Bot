@@ -172,7 +172,7 @@ export default function StatusPage() {
                 Phiên Nghe Nhạc
               </span>
               <div className="transition-transform duration-500 group-hover:animate-float" style={{ animationDelay: '0.6s' }}>
-                <Icon3D name="headphone" size={48} className="drop-shadow-[0_10px_15px_rgba(244,114,182,0.3)]" />
+                <Icon3D name="music" size={48} className="drop-shadow-[0_10px_15px_rgba(244,114,182,0.3)]" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 relative z-10">
