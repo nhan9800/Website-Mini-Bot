@@ -57,21 +57,21 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative h-11 w-11 rounded-2xl bg-gradient-brand p-[2px] shadow-glow transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105">
+          <Link href="/" className="group flex items-center gap-3 shrink-0">
+            <div className="relative h-11 w-11 shrink-0 rounded-2xl bg-gradient-brand p-[2px] shadow-glow transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105">
               <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#05060f]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/logo.webp" alt="Mimi Bot Logo" className="h-full w-full rounded-[14px] object-cover" />
               </div>
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-white">
+              <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-white whitespace-nowrap">
                 MIMI BOT
-                <span className="rounded-full border border-mimi-green/30 bg-mimi-green/15 px-2 py-0.5 text-[10px] font-bold text-mimi-green">
+                <span className="rounded-full border border-mimi-green/30 bg-mimi-green/15 px-2 py-0.5 text-[10px] font-bold text-mimi-green shrink-0">
                   v2.2
                 </span>
               </span>
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-gray-500">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-gray-500 whitespace-nowrap">
                 Music · Community
               </span>
             </div>
