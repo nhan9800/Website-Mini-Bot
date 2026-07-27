@@ -7,12 +7,12 @@
   "/status/page": "app/status/page.js",
   "/support/page": "app/support/page.js",
   "/api/commands/route": "app/api/commands/route.js",
-  "/api/status/route": "app/api/status/route.js",
-  "/api/guilds/[guildId]/settings/route": "app/api/guilds/[guildId]/settings/route.js",
   "/api/guilds/[guildId]/player/route": "app/api/guilds/[guildId]/player/route.js",
+  "/api/status/route": "app/api/status/route.js",
   "/api/trending/route": "app/api/trending/route.js",
+  "/privacy/page": "app/privacy/page.js",
   "/api/version/route": "app/api/version/route.js",
-  "/changelog/page": "app/changelog/page.js",
   "/terms/page": "app/terms/page.js",
-  "/privacy/page": "app/privacy/page.js"
+  "/changelog/page": "app/changelog/page.js",
+  "/api/guilds/[guildId]/settings/route": "app/api/guilds/[guildId]/settings/route.js"
 }
