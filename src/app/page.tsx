@@ -20,6 +20,8 @@ import {
   Music,
   Rocket,
   Bot,
+  Shield,
+  Wallet,
 } from 'lucide-react';
 import { env } from '@/lib/env';
 import { useBotStatus } from '@/lib/use-bot-status';
@@ -27,7 +29,6 @@ import { formatCompact, formatUptime } from '@/lib/format';
 import { Soundwave } from '@/components/ui/soundwave';
 import { Particles } from '@/components/ui/particles';
 import { Reveal } from '@/components/ui/reveal';
-import { Icon3D, type Icon3DName } from '@/components/ui/icon3d';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { TrendingChart } from '@/components/trending-chart';
 
@@ -40,7 +41,7 @@ const Hero3D = dynamic(() => import('@/components/three/hero-3d'), {
 /* ── Dữ liệu nội dung ─────────────────────────────────────────── */
 
 const services: {
-  icon: Icon3DName;
+  icon: React.ElementType;
   ring: string;
   hover: string;
   title: string;
@@ -48,32 +49,32 @@ const services: {
   bullets: string[];
 }[] = [
   {
-    icon: 'music',
-    ring: 'border-mimi-green/25 bg-mimi-green/10',
+    icon: Music,
+    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
     hover: 'hover:border-mimi-green/50',
     title: 'Bot Nhạc Chất Lượng Cao',
     desc: 'Phát nhạc YouTube âm thanh Opus HQ, hàng chờ thông minh, loop, autoplay, lời bài hát tức thì. Điều khiển bằng nút bấm ngay trong Discord.',
     bullets: ['Không cần API key', 'Ở lại kênh 24/7', 'Lyrics + TTS tiếng Việt'],
   },
   {
-    icon: 'shield',
-    ring: 'border-mimi-purple/25 bg-mimi-purple/10',
+    icon: Shield,
+    ring: 'border-mimi-purple/25 bg-mimi-purple/10 text-mimi-purple',
     hover: 'hover:border-mimi-purple/50',
     title: 'Xác Thực & An Ninh',
     desc: 'Hệ thống xác thực 24 giờ tự reset lúc 00:00 (UTC+7), quản lý role tự động, tùy chọn hủy xác thực khi thành viên bị mute.',
     bullets: ['Reset đúng giờ VN', 'Role tự động', 'Chống phá server'],
   },
   {
-    icon: 'money',
-    ring: 'border-mimi-cyan/25 bg-mimi-cyan/10',
+    icon: Wallet,
+    ring: 'border-mimi-cyan/25 bg-mimi-cyan/10 text-mimi-cyan',
     hover: 'hover:border-mimi-cyan/50',
     title: 'Chấm Công & Kinh Tế',
     desc: 'Check-in/check-out nhân sự độc lập, báo cáo tuần tự động. Giám sát Economy, cảnh báo Owner khi có thu nhập bất thường.',
     bullets: ['Báo cáo tự động', 'Cảnh báo gian lận', 'Quản lý minh bạch'],
   },
   {
-    icon: 'dashboard',
-    ring: 'border-mimi-amber/25 bg-mimi-amber/10',
+    icon: LayoutDashboard,
+    ring: 'border-mimi-amber/25 bg-mimi-amber/10 text-mimi-amber',
     hover: 'hover:border-mimi-amber/50',
     title: 'Dashboard Web Thời Gian Thực',
     desc: 'Xem bài đang phát, quản lý hàng chờ, chỉnh âm lượng và cấu hình bot ngay trên trình duyệt — đồng bộ trực tiếp với bot.',
@@ -176,11 +177,11 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="btn-primary !px-9 !py-4 !text-base"
             >
-              <Icon3D name="sparkles" size={20} />
+              <Sparkles className="h-5 w-5" />
               <span>Mời MIMI Miễn Phí</span>
             </a>
             <Link href="/dashboard" className="btn-secondary !px-9 !py-4 !text-base">
-              <Icon3D name="dashboard" size={20} />
+              <LayoutDashboard className="h-5 w-5" />
               <span>Mở Dashboard</span>
             </Link>
           </div>
@@ -235,7 +236,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
-              <Icon3D name="star" size={16} />
+              <Star className="h-4 w-4" />
               <span>Dịch vụ của MIMI</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
@@ -257,7 +258,7 @@ export default function HomePage() {
                         <div
                           className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border ${s.ring} transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-110`}
                         >
-                          <Icon3D name={s.icon} size={40} />
+                          <s.icon className="h-10 w-10" />
                         </div>
                         <h3 className="text-xl font-bold text-white">{s.title}</h3>
                       </div>
@@ -286,7 +287,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <Reveal className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-purple/30 bg-mimi-purple/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-violet">
-              <Icon3D name="heart" size={16} />
+              <Heart className="h-4 w-4" />
               <span>Về MIMI</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
@@ -307,11 +308,11 @@ export default function HomePage() {
             </div>
             <div className="flex flex-wrap gap-4 pt-2">
               <Link href="/status" className="btn-secondary !px-6 !py-3 !text-sm">
-                <Icon3D name="rocket" size={18} />
+                <Rocket className="h-[18px] w-[18px]" />
                 <span>Xem Trạng Thái Live</span>
               </Link>
               <Link href="/commands" className="btn-secondary !px-6 !py-3 !text-sm">
-                <Icon3D name="robot" size={18} />
+                <Bot className="h-[18px] w-[18px]" />
                 <span>Danh Sách Lệnh</span>
               </Link>
             </div>
@@ -320,7 +321,7 @@ export default function HomePage() {
           <Reveal delay={120}>
             <div className="glass-panel-glow gradient-ring space-y-5 rounded-[2rem] p-8">
               <h3 className="flex items-center gap-2.5 border-b border-white/10 pb-4 text-lg font-bold text-white">
-                <Icon3D name="robot" size={24} />
+                <Bot className="h-6 w-6" />
                 <span>Cam Kết Vận Hành</span>
               </h3>
               <ul className="space-y-4">
@@ -332,7 +333,7 @@ export default function HomePage() {
                 ].map(([t, d]) => (
                   <li key={t} className="flex items-start gap-3.5">
                     <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mimi-green/15 text-mimi-green">
-                      <Icon3D name="sparkles" size={16} />
+                      <Sparkles className="h-4 w-4" />
                     </span>
                     <div>
                       <p className="text-sm font-bold text-white">{t}</p>
@@ -401,7 +402,7 @@ export default function HomePage() {
             <Reveal>
               <div className="glass-panel card-lift flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-green/40">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10 shadow-glow">
-                  <Icon3D name="rocket" size={40} />
+                  <Rocket className="h-10 w-10 text-mimi-green" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">nhan9800</h3>
@@ -415,7 +416,7 @@ export default function HomePage() {
             <Reveal delay={100}>
               <div className="glass-panel card-lift flex h-full items-center gap-5 rounded-3xl p-7 hover:border-mimi-purple/40">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-mimi-purple/30 bg-mimi-purple/15">
-                  <Icon3D name="robot" size={40} />
+                  <Bot className="h-10 w-10 text-mimi-purple" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">Cộng Đồng MIMI</h3>
@@ -500,7 +501,7 @@ export default function HomePage() {
                     rel="noopener noreferrer"
                     className="btn-primary !px-9 !py-4 !text-base"
                   >
-                    <Icon3D name="sparkles" size={24} />
+                    <Sparkles className="h-6 w-6" />
                     <span>Thêm Vào Discord Ngay</span>
                   </a>
                   <a
