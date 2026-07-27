@@ -52,7 +52,7 @@ export function WebPlayer() {
         onEnded={() => setIsPlaying(false)}
       />
       <AnimatePresence>
-        {track && isPlaying && (
+        {track && (
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -133,7 +133,7 @@ export function WebPlayer() {
                 {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
               
-              <div className="w-0 overflow-hidden group-hover/volume:w-20 transition-all duration-300 ease-in-out flex items-center">
+              <div className="w-20 flex items-center">
                 <input
                   type="range"
                   min="0"
