@@ -197,7 +197,23 @@ export function TeamSection() {
             </Reveal>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {team.filter(m => m.group === 'admin' || m.group === 'community').map((member, idx) => (
+              {team
+                .filter(m => m.group === 'admin' || m.group === 'community')
+                .sort((a, b) => {
+                  const getWeight = (r: string) => {
+                    const lower = (r || '').toLowerCase();
+                    if (lower.includes('owner')) return 1;
+                    if (lower.includes('manager')) return 2;
+                    if (lower.includes('event')) return 3;
+                    if (lower.includes('staff')) return 4;
+                    return 5;
+                  };
+                  const weightA = getWeight(a.role);
+                  const weightB = getWeight(b.role);
+                  if (weightA !== weightB) return weightA - weightB;
+                  return (a.role || '').localeCompare(b.role || '');
+                })
+                .map((member, idx) => (
                 <Reveal key={member.id} delay={idx * 50}>
                   <div
                     className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04]"
