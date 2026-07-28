@@ -326,9 +326,15 @@ export function FeedbackWidget() {
                         <div className="flex flex-col">
                           <span className="text-xs font-extrabold text-white flex items-center gap-1">
                             {linkedUser.displayName}
-                            <span className="rounded-full bg-mimi-green/20 px-1.5 py-0.5 text-[9px] font-bold text-mimi-green">
-                              ✔ Discord Verified
-                            </span>
+                            <div className="group/badge relative flex items-center justify-center">
+                              <svg
+                                className="h-4 w-4 text-[#1d9bf0] drop-shadow-[0_0_3px_rgba(29,155,240,0.5)]"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.766 1.873 3.45-.013.18-.024.358-.024.55 0 2.21 1.71 3.998 3.918 3.998.505 0 .985-.09 1.435-.264 1.13 1.31 2.805 2.136 4.7 2.136 1.894 0 3.57-.826 4.7-2.136.45.174.93.264 1.436.264 2.21 0 3.918-1.792 3.918-4 0-.192-.01-.37-.024-.55 1.133-.684 1.873-1.99 1.873-3.45zm-11.233 4.6l-3.332-3.333 1.414-1.414 1.918 1.918 5.757-5.757 1.414 1.414-7.17 7.17z" />
+                              </svg>
+                            </div>
                           </span>
                           <span className="text-[10px] text-gray-400">@{linkedUser.username}</span>
                         </div>
