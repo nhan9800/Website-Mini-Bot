@@ -7,6 +7,8 @@ import { Star, MessageSquarePlus, X, Send, CheckCircle2, Sparkles, User, ThumbsU
 interface FeedbackItem {
   id: string;
   userName: string;
+  avatar?: string;
+  isVerified?: boolean;
   feature: string;
   stars: number;
   comment: string;
@@ -94,7 +96,7 @@ export function FeedbackWidget() {
       if (saved) {
         const parsed = JSON.parse(saved);
         setLinkedUser(parsed);
-        setUserName(`@${parsed.username} · ✔ Verified`);
+        setUserName(parsed.displayName || parsed.username);
       }
     } catch {}
     const handleOpen = () => setIsOpen(true);
@@ -110,7 +112,7 @@ export function FeedbackWidget() {
       const data = await res.json();
       if (data?.ok && data.user) {
         setLinkedUser(data.user);
-        setUserName(`@${data.user.username} · ✔ Verified`);
+        setUserName(data.user.displayName || data.user.username);
         try {
           localStorage.setItem('mimi_linked_discord_user', JSON.stringify(data.user));
         } catch {}
@@ -141,6 +143,8 @@ export function FeedbackWidget() {
           stars,
           comment: comment || 'MIMI quá tuyệt vời!',
           userName: userName || 'Thành viên MIMI',
+          avatar: linkedUser?.avatar || '',
+          isVerified: !!linkedUser,
         }),
       });
       const data = await res.json();
@@ -426,8 +430,23 @@ export function FeedbackWidget() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 font-bold text-xs text-white">
-                          <User className="h-3.5 w-3.5 text-mimi-green" />
-                          <span>{fb.userName}</span>
+                          {fb.avatar ? (
+                            <img src={fb.avatar} alt={fb.userName} className="h-5 w-5 rounded-full border border-white/20 object-cover" />
+                          ) : (
+                            <User className="h-3.5 w-3.5 text-mimi-green" />
+                          )}
+                          <span className="flex items-center gap-1">
+                            {fb.userName}
+                            {fb.isVerified && (
+                              <svg
+                                className="h-3.5 w-3.5 text-[#1d9bf0]"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.766 1.873 3.45-.013.18-.024.358-.024.55 0 2.21 1.71 3.998 3.918 3.998.505 0 .985-.09 1.435-.264 1.13 1.31 2.805 2.136 4.7 2.136 1.894 0 3.57-.826 4.7-2.136.45.174.93.264 1.436.264 2.21 0 3.918-1.792 3.918-4 0-.192-.01-.37-.024-.55 1.133-.684 1.873-1.99 1.873-3.45zm-11.233 4.6l-3.332-3.333 1.414-1.414 1.918 1.918 5.757-5.757 1.414 1.414-7.17 7.17z" />
+                              </svg>
+                            )}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1 text-yellow-400">
                           {Array.from({ length: fb.stars }).map((_, i) => (
