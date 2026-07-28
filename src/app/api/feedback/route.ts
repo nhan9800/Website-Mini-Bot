@@ -7,6 +7,8 @@ export const dynamic = 'force-dynamic';
 export interface FeedbackItem {
   id: string;
   userName: string;
+  avatar?: string;
+  isVerified?: boolean;
   feature: string;
   stars: number;
   comment: string;
@@ -16,7 +18,9 @@ export interface FeedbackItem {
 const defaultFeedbacks: FeedbackItem[] = [
   {
     id: '1',
-    userName: 'Minh Quân (Discord Admin)',
+    userName: 'Minh Quân',
+    avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+    isVerified: true,
     feature: 'Trình Phát Nhạc',
     stars: 5,
     comment: 'Tốc độ phát nhạc cực nhanh, không còn bị delay khi chuyển hiệu ứng hay đổi bài!',
@@ -102,12 +106,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { feature = 'Giao diện Website', stars = 5, comment = '', userName = 'Thành viên ẩn danh' } = body;
+    const { feature = 'Giao diện Website', stars = 5, comment = '', userName = 'Thành viên ẩn danh', avatar = '', isVerified = false } = body;
 
     const validStars = Math.max(1, Math.min(5, Number(stars) || 5));
     const newItem: FeedbackItem = {
       id: Date.now().toString(),
       userName: String(userName || 'Thành viên MIMI').trim().slice(0, 50),
+      avatar: String(avatar).trim(),
+      isVerified: Boolean(isVerified),
       feature: String(feature).slice(0, 50),
       stars: validStars,
       comment: String(comment || 'Tuyệt vời!').trim().slice(0, 300),

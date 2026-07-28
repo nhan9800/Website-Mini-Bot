@@ -7,6 +7,8 @@ import { Star, MessageSquarePlus, Sparkles, ThumbsUp, Quote } from 'lucide-react
 interface FeedbackItem {
   id: string;
   userName: string;
+  avatar?: string;
+  isVerified?: boolean;
   feature: string;
   stars: number;
   comment: string;
@@ -16,7 +18,9 @@ interface FeedbackItem {
 const DEFAULT_REVIEWS: FeedbackItem[] = [
   {
     id: '1',
-    userName: 'Minh Tuấn · Discord Guild Owner',
+    userName: 'Minh Tuấn',
+    avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+    isVerified: true,
     feature: 'Bảng Xếp Hạng LIVE',
     stars: 5,
     comment:
@@ -25,7 +29,9 @@ const DEFAULT_REVIEWS: FeedbackItem[] = [
   },
   {
     id: '2',
-    userName: 'Thảo My · Music Lover',
+    userName: 'Thảo My',
+    avatar: 'https://cdn.discordapp.com/embed/avatars/1.png',
+    isVerified: true,
     feature: 'Trình Phát Nhạc',
     stars: 5,
     comment:
@@ -34,7 +40,9 @@ const DEFAULT_REVIEWS: FeedbackItem[] = [
   },
   {
     id: '3',
-    userName: 'Hải Đăng · Admin Cộng Đồng',
+    userName: 'Hải Đăng',
+    avatar: 'https://cdn.discordapp.com/embed/avatars/2.png',
+    isVerified: false,
     feature: 'Dashboard Quản Trị',
     stars: 5,
     comment:
@@ -121,11 +129,36 @@ export function CommunityReviewsSection() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-                  <div>
-                    <h3 className="font-bold text-white">{rev.userName}</h3>
-                    <p className="text-xs font-semibold text-mimi-green">{rev.feature}</p>
+                  <div className="flex items-center gap-3">
+                    {rev.avatar && (
+                      <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-white/20 shadow-sm">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={rev.avatar} alt={rev.userName} className="h-full w-full object-cover" />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-bold text-white flex items-center gap-1.5">
+                        {rev.userName}
+                        {rev.isVerified && (
+                          <div className="group/badge relative flex items-center justify-center">
+                            <svg
+                              className="h-4 w-4 text-[#1d9bf0] drop-shadow-[0_0_3px_rgba(29,155,240,0.5)]"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                              aria-label="Verified"
+                            >
+                              <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.766 1.873 3.45-.013.18-.024.358-.024.55 0 2.21 1.71 3.998 3.918 3.998.505 0 .985-.09 1.435-.264 1.13 1.31 2.805 2.136 4.7 2.136 1.894 0 3.57-.826 4.7-2.136.45.174.93.264 1.436.264 2.21 0 3.918-1.792 3.918-4 0-.192-.01-.37-.024-.55 1.133-.684 1.873-1.99 1.873-3.45zm-11.233 4.6l-3.332-3.333 1.414-1.414 1.918 1.918 5.757-5.757 1.414 1.414-7.17 7.17z" />
+                            </svg>
+                            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-[10px] font-bold text-white opacity-0 transition-opacity group-hover/badge:opacity-100">
+                              Đã xác minh Discord
+                            </span>
+                          </div>
+                        )}
+                      </h3>
+                      <p className="text-xs font-semibold text-mimi-green">{rev.feature}</p>
+                    </div>
                   </div>
-                  <Quote className="h-7 w-7 text-white/10 group-hover:text-yellow-400/40 transition-colors" />
+                  <Quote className="h-7 w-7 flex-shrink-0 text-white/10 group-hover:text-yellow-400/40 transition-colors" />
                 </div>
               </div>
             </Reveal>
