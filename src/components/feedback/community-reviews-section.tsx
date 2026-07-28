@@ -166,15 +166,23 @@ export function CommunityReviewsSection() {
         </div>
 
         {/* Nút Call To Action nổi bật kêu gọi thành viên bấm đánh giá */}
-        <Reveal delay={300} className="mt-14 text-center">
+        <Reveal delay={300} className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-mimi-feedback'))}
             className="group relative inline-flex items-center gap-3 rounded-full border border-yellow-400 bg-gradient-to-r from-yellow-500/25 via-amber-500/20 to-yellow-500/25 px-8 py-4 text-base font-extrabold text-yellow-300 shadow-[0_0_35px_rgba(234,179,8,0.35)] transition-all duration-300 hover:scale-105 hover:border-yellow-300 hover:shadow-[0_0_50px_rgba(234,179,8,0.6)]"
           >
             <Star className="h-5 w-5 fill-yellow-400 text-yellow-400 animate-bounce" />
-            <span>Chấm Điểm & Góp Ý Cho MIMI Ngay</span>
+            <span>Chấm Điểm & Góp Ý</span>
             <Sparkles className="h-5 w-5 text-yellow-200" />
           </button>
+          
+          <a
+            href="/reviews"
+            className="group relative inline-flex items-center gap-3 rounded-full border border-mimi-green/50 bg-mimi-green/10 px-8 py-4 text-base font-extrabold text-mimi-green shadow-[0_0_30px_rgba(46,204,113,0.15)] transition-all duration-300 hover:scale-105 hover:bg-mimi-green/20 hover:shadow-[0_0_40px_rgba(46,204,113,0.3)]"
+          >
+            <MessageSquarePlus className="h-5 w-5" />
+            <span>Xem Tất Cả Đánh Giá</span>
+          </a>
         </Reveal>
       </div>
     </section>
