@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { Star, MessageSquarePlus, X, Send, CheckCircle2, Sparkles, User, ThumbsUp } from 'lucide-react';
 
 interface FeedbackItem {
@@ -52,12 +53,6 @@ export function FeedbackWidget() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Trạng thái liên kết tài khoản Discord
-  const [linkedUser, setLinkedUser] = useState<LinkedDiscordUser | null>(null);
-  const [showLinkBox, setShowLinkBox] = useState(false);
-  const [discordInput, setDiscordInput] = useState('');
-  const [linking, setLinking] = useState(false);
-
   // Stats đồng bộ từ API
   const [avgStars, setAvgStars] = useState<number>(4.9);
   const [totalReviews, setTotalReviews] = useState<number>(138);
@@ -91,45 +86,22 @@ export function FeedbackWidget() {
 
   useEffect(() => {
     loadFeedbackStats();
-    try {
-      const saved = localStorage.getItem('mimi_linked_discord_user');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setLinkedUser(parsed);
-        setUserName(parsed.displayName || parsed.username);
-      }
-    } catch {}
     const handleOpen = () => setIsOpen(true);
     window.addEventListener('open-mimi-feedback', handleOpen);
     return () => window.removeEventListener('open-mimi-feedback', handleOpen);
   }, []);
 
-  const handleLinkDiscord = async () => {
-    if (!discordInput.trim()) return;
-    setLinking(true);
-    try {
-      const res = await fetch(`/api/user?q=${encodeURIComponent(discordInput.trim())}`);
-      const data = await res.json();
-      if (data?.ok && data.user) {
-        setLinkedUser(data.user);
-        setUserName(data.user.displayName || data.user.username);
-        try {
-          localStorage.setItem('mimi_linked_discord_user', JSON.stringify(data.user));
-        } catch {}
-        setShowLinkBox(false);
-        setDiscordInput('');
-      }
-    } catch {}
-    setLinking(false);
-  };
+  const { data: session } = useSession();
+  const linkedUser = session?.user;
 
-  const handleUnlink = () => {
-    setLinkedUser(null);
-    setUserName('');
-    try {
-      localStorage.removeItem('mimi_linked_discord_user');
-    } catch {}
-  };
+  useEffect(() => {
+    if (linkedUser && !userName) {
+      setUserName(linkedUser.name || '');
+    }
+  }, [linkedUser, userName]);
+
+  const handleLinkDiscord = () => signIn('discord');
+  const handleUnlink = () => signOut();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -318,14 +290,14 @@ export function FeedbackWidget() {
                         <div className="relative h-9 w-9 overflow-hidden rounded-full border border-mimi-green">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={linkedUser.avatar || '/logo.webp'}
-                            alt={linkedUser.displayName}
+                            src={linkedUser.image || '/logo.webp'}
+                            alt={linkedUser.name || 'User'}
                             className="h-full w-full object-cover"
                           />
                         </div>
                         <div className="flex flex-col">
                           <span className="text-xs font-extrabold text-white flex items-center gap-1">
-                            {linkedUser.displayName}
+                            {linkedUser.name}
                             <div className="group/badge relative flex items-center justify-center">
                               <svg
                                 className="h-4 w-4 text-[#1d9bf0] drop-shadow-[0_0_3px_rgba(29,155,240,0.5)]"
@@ -336,7 +308,7 @@ export function FeedbackWidget() {
                               </svg>
                             </div>
                           </span>
-                          <span className="text-[10px] text-gray-400">@{linkedUser.username}</span>
+                          <span className="text-[10px] text-gray-400">Đã liên kết OAuth2</span>
                         </div>
                       </div>
                       <button
@@ -344,7 +316,7 @@ export function FeedbackWidget() {
                         onClick={handleUnlink}
                         className="text-[10px] font-semibold text-red-400 hover:underline"
                       >
-                        Đổi acc
+                        Đăng xuất
                       </button>
                     </div>
                   ) : (
@@ -360,35 +332,16 @@ export function FeedbackWidget() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => setShowLinkBox(!showLinkBox)}
-                          className="rounded-full bg-indigo-500/20 px-2.5 py-1 text-[10px] font-extrabold text-indigo-300 transition-colors hover:bg-indigo-500/30"
+                          onClick={handleLinkDiscord}
+                          className="flex items-center gap-1.5 rounded-full bg-[#5865F2] px-3 py-1.5 text-[10px] font-extrabold text-white shadow-md transition-all hover:bg-[#4752C4] hover:scale-105"
                         >
-                          {showLinkBox ? 'Đóng' : '🔗 Kết Nối Acc'}
+                          <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.3,46,96.19,53,91.13,65.69,84.69,65.69Z"/></svg>
+                          Đăng Nhập
                         </button>
                       </div>
                       <p className="text-[10px] text-gray-400 leading-relaxed">
-                        Kết nối ID hoặc Username Discord để hiển thị huy hiệu <strong className="text-indigo-300">✔ Verified Member</strong> cùng avatar thật khi đánh giá.
+                        Đăng nhập bằng tài khoản Discord thật để hiển thị huy hiệu <strong className="text-indigo-300">✔ Verified Member</strong> cùng avatar gốc khi đánh giá.
                       </p>
-
-                      {showLinkBox && (
-                        <div className="mt-2 flex gap-2 pt-1">
-                          <input
-                            type="text"
-                            placeholder="Nhập Discord Tag/ID (VD: nhan9800)..."
-                            value={discordInput}
-                            onChange={(e) => setDiscordInput(e.target.value)}
-                            className="flex-1 rounded-xl border border-indigo-500/30 bg-[#05060f]/80 px-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:border-indigo-400 focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleLinkDiscord}
-                            disabled={linking}
-                            className="rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-md transition-colors hover:bg-indigo-500 disabled:opacity-50"
-                          >
-                            {linking ? 'Đang xác thực...' : 'Xác Nhận'}
-                          </button>
-                        </div>
-                      )}
                     </div>
                   )}
 
