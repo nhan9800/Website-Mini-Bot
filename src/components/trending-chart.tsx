@@ -30,17 +30,39 @@ export function TrendingChart() {
   const fetchTrending = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/trending?t=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`https://itunes.apple.com/vn/rss/topsongs/limit=10/json?t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
-      if (res.ok && data?.ok && Array.isArray(data.songs) && data.songs.length) {
-        setSongs(data.songs);
+      const entries = data?.feed?.entry ?? [];
+      
+      if (res.ok && Array.isArray(entries) && entries.length) {
+        const parsedSongs: TrendingSong[] = entries.map((e: any, i: number) => {
+          const images = e['im:image'] ?? [];
+          const biggest = images[images.length - 1]?.label as string | undefined;
+          const artworkUrl = biggest ? biggest.replace(/\/\d+x\d+bb\./, '/400x400bb.') : null;
+          
+          const links = Array.isArray(e.link) ? e.link : [e.link];
+          const preview = links.find((l: any) => l?.attributes?.title === 'Preview');
+          const pageLink = links.find((l: any) => l?.attributes?.rel === 'alternate');
+
+          return {
+            rank: i + 1,
+            title: e['im:name']?.label ?? 'Không rõ',
+            artist: e['im:artist']?.label ?? '',
+            artworkUrl,
+            link: pageLink?.attributes?.href ?? null,
+            previewUrl: preview?.attributes?.href ?? null,
+          };
+        });
+        
+        setSongs(parsedSongs);
         setFailed(false);
         const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         setLastUpdated(timeStr);
       } else {
         setFailed(true);
       }
-    } catch {
+    } catch (e) {
+      console.error("Fetch trending error:", e);
       setFailed(true);
     } finally {
       setLoading(false);
