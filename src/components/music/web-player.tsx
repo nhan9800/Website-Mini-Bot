@@ -25,7 +25,7 @@ export function WebPlayer() {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, track]);
 
   useEffect(() => {
     if (audioRef.current) {
