@@ -165,6 +165,48 @@ export default function PricingPage() {
     }
   };
 
+  // Admin Duyệt Tiền & Cấp Key
+  const [adminGuildId, setAdminGuildId] = useState('');
+  const [adminPlan, setAdminPlan] = useState('1m');
+  const [adminSecret, setAdminSecret] = useState('');
+  const [adminNote, setAdminNote] = useState('');
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminResult, setAdminResult] = useState<any>(null);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+  const handleAdminAction = async (action: 'activate' | 'generate_key') => {
+    if (!adminSecret.trim()) {
+      alert('Vui lòng nhập Mã PIN / Secret bảo mật Admin.');
+      return;
+    }
+    if (action === 'activate' && !adminGuildId.trim()) {
+      alert('Vui lòng nhập Server ID cần kích hoạt.');
+      return;
+    }
+
+    setAdminLoading(true);
+    setAdminResult(null);
+    try {
+      const res = await fetch('/api/license/admin/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guildId: adminGuildId.trim(),
+          plan: adminPlan,
+          secret: adminSecret.trim(),
+          action,
+          note: adminNote.trim(),
+        }),
+      });
+      const data = await res.json();
+      setAdminResult(data);
+    } catch {
+      setAdminResult({ ok: false, error: 'Lỗi kết nối tới hệ thống Admin.' });
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
@@ -350,6 +392,135 @@ export default function PricingPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Admin Panel Duyệt Tiền & Cấp Key */}
+      <div className="mt-12 rounded-3xl border border-white/10 bg-[#070913] p-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400">
+              <Crown className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Dành Cho Quản Trị Viên (Admin MIMI)</h3>
+              <p className="text-xs text-gray-400">Xác nhận đã nhận tiền để kích hoạt Server trực tiếp hoặc cấp mã License Key mới</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowAdminPanel(!showAdminPanel)}
+            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 transition-colors"
+          >
+            {showAdminPanel ? 'Thu Gọn Bảng Admin ▲' : 'Mở Bảng Xác Nhận Admin ▼'}
+          </button>
+        </div>
+
+        {showAdminPanel && (
+          <div className="space-y-4 pt-2 border-t border-white/10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Server ID (Guild ID) cần xử lý:</label>
+                <input
+                  type="text"
+                  value={adminGuildId}
+                  onChange={(e) => setAdminGuildId(e.target.value)}
+                  placeholder="VD: 1476175503827144808..."
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-yellow-400 focus:outline-none font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Chọn Gói Bản Quyền:</label>
+                <select
+                  value={adminPlan}
+                  onChange={(e) => setAdminPlan(e.target.value)}
+                  className="w-full rounded-xl border border-white/10 bg-[#121422] px-4 py-2.5 text-sm text-white focus:border-yellow-400 focus:outline-none"
+                >
+                  <option value="1m">🌟 Gói 1 Tháng (50.000đ - 30 ngày)</option>
+                  <option value="3m">💎 Gói 3 Tháng (140.000đ - 90 ngày)</option>
+                  <option value="12m">👑 Gói 12 Tháng (390.000đ - 365 ngày)</option>
+                  <option value="permanent">♾️ Gói Vĩnh Viễn (Lifetime VIP)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Mã PIN / Secret Bảo Mật Admin:</label>
+                <input
+                  type="password"
+                  value={adminSecret}
+                  onChange={(e) => setAdminSecret(e.target.value)}
+                  placeholder="Nhập secret bảo mật của bot..."
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-yellow-400 focus:outline-none font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Ghi Chú Đơn Hàng / Tên Khách:</label>
+                <input
+                  type="text"
+                  value={adminNote}
+                  onChange={(e) => setAdminNote(e.target.value)}
+                  placeholder="VD: Khách VCB 50k bill..."
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-yellow-400 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <button
+                onClick={() => handleAdminAction('activate')}
+                disabled={adminLoading}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
+              >
+                {adminLoading ? 'Đang xử lý...' : '✅ Xác Nhận Đã Nhận Tiền & Kích Hoạt Server'}
+              </button>
+
+              <button
+                onClick={() => handleAdminAction('generate_key')}
+                disabled={adminLoading}
+                className="w-full py-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 text-yellow-400 font-bold text-sm transition-all flex items-center justify-center gap-2"
+              >
+                {adminLoading ? 'Đang tạo...' : '🔑 Tạo Mã License Key Mới'}
+              </button>
+            </div>
+
+            {adminResult && (
+              <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/10 text-sm">
+                {adminResult.ok ? (
+                  <div className="space-y-2 text-mimi-green">
+                    <div className="font-bold flex items-center gap-2 text-base">
+                      <CheckCircle2 className="h-5 w-5 text-mimi-green" />
+                      {adminResult.message || 'Thao tác thành công!'}
+                    </div>
+                    {adminResult.key && (
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-black/40 border border-mimi-green/30 mt-2">
+                        <span className="text-xs text-gray-400">Mã Key mới:</span>
+                        <code className="font-mono font-bold text-yellow-300 text-base flex-1">{adminResult.key}</code>
+                        <button
+                          onClick={() => copyToClipboard(adminResult.key, 'adminKey')}
+                          className="px-3 py-1.5 rounded-lg bg-yellow-500/20 text-yellow-400 text-xs font-bold hover:bg-yellow-500/30 flex items-center gap-1"
+                        >
+                          {copiedKey === 'adminKey' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                          Copy Key
+                        </button>
+                      </div>
+                    )}
+                    {adminResult.license && (
+                      <div className="text-xs text-gray-300 space-y-1">
+                        <div>Server ID: <b>{adminResult.license.guildId}</b></div>
+                        <div>Hạn mới: <b className="text-mimi-cyan">{adminResult.license.isPermanent ? 'Vĩnh Viễn' : new Date(adminResult.license.expiresTimestamp).toLocaleString('vi-VN')}</b> (+{adminResult.license.remainingDays} ngày)</div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-red-400 text-xs flex items-center gap-2">
+                    <span>❌ {adminResult.error || 'Thao tác thất bại.'}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Payment Modal */}

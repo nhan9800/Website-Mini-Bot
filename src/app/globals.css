@@ -213,8 +213,7 @@
 .vinyl-disc {
   position: relative;
   border-radius: 9999px;
-  transform: rotateX(18deg);
-  transform-style: preserve-3d;
+  will-change: transform;
   background:
     radial-gradient(circle at 50% 50%, #16181f 0%, #0a0b10 55%, #16181f 56%, #0a0b10 100%),
     repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 5px);
@@ -222,7 +221,7 @@
     0 30px 60px -20px rgba(0, 0, 0, 0.8),
     0 0 40px -8px rgba(46, 204, 113, 0.25),
     inset 0 0 60px rgba(0, 0, 0, 0.6);
-  animation: vinylSpin 6s linear infinite;
+  animation: vinylSpin 7s linear infinite !important;
 }
 
 /* Vệt sáng phản chiếu chạy trên mặt đĩa */
@@ -264,8 +263,8 @@
 }
 
 @keyframes vinylSpin {
-  from { transform: rotateX(18deg) rotateZ(0deg); }
-  to { transform: rotateX(18deg) rotateZ(360deg); }
+  0% { transform: perspective(1000px) rotateX(18deg) rotate(0deg); }
+  100% { transform: perspective(1000px) rotateX(18deg) rotate(360deg); }
 }
 
 /* ── Thanh cuộn ──────────────────────────────────────────────────── */
@@ -409,16 +408,3 @@ input[type="range"].mimi-slider::-moz-range-thumb {
   z-index: 10;
 }
 
-/* ── Tôn trọng người dùng giảm chuyển động ───────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-}
