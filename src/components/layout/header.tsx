@@ -14,11 +14,13 @@ import {
   Home,
   Headphones,
   Star,
+  Shield,
 } from 'lucide-react';
 import { env } from '@/lib/env';
 
 const navItems = [
   { href: '/', label: 'Trang Chủ', icon: Home },
+  { href: '/pricing', label: 'Bảng Giá & Key', icon: Shield },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/commands', label: 'Lệnh', icon: Terminal },
   { href: '/partners', label: 'Đối Tác', icon: Star },
