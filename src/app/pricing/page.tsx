@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Shield,
@@ -17,7 +17,8 @@ import {
   ArrowRight,
   ExternalLink,
   Flame,
-  Crown
+  Crown,
+  X
 } from 'lucide-react';
 import { env } from '@/lib/env';
 
@@ -108,6 +109,16 @@ export default function PricingPage() {
     setCopiedKey(keyName);
     setTimeout(() => setCopiedKey(null), 2000);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsModalOpen(false);
+    };
+    if (isModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen]);
 
   const handleOpenPayment = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -343,16 +354,24 @@ export default function PricingPage() {
 
       {/* Payment Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="relative w-full max-w-lg rounded-3xl border border-white/15 bg-[#0e111a] p-6 sm:p-8 shadow-2xl space-y-6">
+        <div
+          onClick={() => setIsModalOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-lg rounded-3xl border border-white/15 bg-[#0e111a] p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
+          >
+            {/* Nút X đóng nổi bật ở góc phải */}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-5 right-5 text-gray-400 hover:text-white text-xl font-bold"
+              className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-300 hover:bg-red-500/80 hover:text-white transition-all shadow-md"
+              aria-label="Đóng cửa sổ thanh toán"
             >
-              ✕
+              <X className="h-5 w-5" />
             </button>
 
-            <div className="text-center">
+            <div className="text-center pr-8 pl-8">
               <h3 className="text-2xl font-bold text-white">Thanh Toán {selectedPlan.name}</h3>
               <p className="text-sm text-mimi-green font-semibold mt-1">Số tiền: {selectedPlan.priceFormatted}</p>
             </div>
@@ -373,7 +392,7 @@ export default function PricingPage() {
             {/* QR Image */}
             <div className="rounded-2xl bg-white p-4 text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={vietQrUrl} alt="VietQR Vietcombank" className="mx-auto max-w-[220px] w-full rounded-lg" />
+              <img src={vietQrUrl} alt="VietQR Vietcombank" className="mx-auto max-w-[200px] w-full rounded-lg" />
               <div className="text-[11px] text-gray-600 font-bold mt-2">Quét mã bằng App Ngân hàng hoặc MoMo</div>
             </div>
 
@@ -412,6 +431,14 @@ export default function PricingPage() {
               ℹ️ <b>Sau khi chuyển khoản:</b> Vui lòng gửi bill cho Admin qua Discord để nhận Key kích hoạt hoặc hệ
               thống sẽ duyệt kích hoạt trực tiếp trong 1-3 phút.
             </div>
+
+            {/* Nút Đóng Cửa Sổ ở dưới đáy */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all"
+            >
+              ✕ Đóng Cửa Sổ
+            </button>
           </div>
         </div>
       )}
