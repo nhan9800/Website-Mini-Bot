@@ -87,7 +87,7 @@ const plans: Plan[] = [
 ];
 
 export default function PricingPage() {
-  const [selectedPlan, setSelectedPlan] = useState<Plan>(plans[1]);
+  const [selectedPlan, setSelectedPlan] = useState<Plan>((plans[1] || plans[0])!);
   const [serverGuildId, setServerGuildId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);

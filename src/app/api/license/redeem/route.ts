@@ -19,8 +19,7 @@ export async function POST(req: NextRequest) {
       error?: string;
     }>('/api/license/redeem', {
       method: 'POST',
-      body: JSON.stringify({ guildId, key }),
-      headers: { 'Content-Type': 'application/json' },
+      body: { guildId, key },
     });
     return toRouteResponse(result);
   } catch (err: any) {
