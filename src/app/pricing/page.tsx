@@ -138,22 +138,6 @@ export default function PricingPage() {
   const [redeemLoading, setRedeemLoading] = useState(false);
   const [redeemResult, setRedeemResult] = useState<any>(null);
 
-  const copyToClipboard = (text: string, keyName: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(keyName);
-    setTimeout(() => setCopiedKey(null), 2000);
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsModalOpen(false);
-    };
-    if (isModalOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen]);
-
   const handleOpenPayment = (plan: Plan) => {
     setSelectedPlan(plan);
     setIsModalOpen(true);
@@ -165,16 +149,44 @@ export default function PricingPage() {
     transferContent
   )}&accountName=DAO%20NGOC%20QUANG`;
 
+  const copyToClipboard = (text: string, keyName: string, label = 'Thông tin') => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(keyName);
+    showModal('success', 'Đã Sao Chép!', `${label} đã được lưu vào khay nhớ tạm: ${text}`, 'ĐÃ COPY');
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
+
   const handleCheckLicense = async () => {
-    if (!checkId.trim()) return;
+    if (!checkId.trim()) {
+      showModal('warning', 'Thiếu Server ID', 'Vui lòng nhập Server ID (HWID) để tra cứu hạn bản quyền.', 'YÊU CẦU');
+      return;
+    }
     setCheckLoading(true);
     setCheckResult(null);
     try {
       const res = await fetch(`/api/license/check?guildId=${encodeURIComponent(checkId.trim())}`);
       const data = await res.json();
       setCheckResult(data);
+      if (data.ok && data.license?.active) {
+        showModal(
+          'success',
+          'Bản Quyền Đang Hoạt Động!',
+          `Máy chủ ${checkId.trim()} đang kích hoạt gói ${data.license.planName}. Còn ${data.license.remainingDays} ngày bảo vệ 24/7.`,
+          'ĐANG BẢO VỆ'
+        );
+      } else if (data.ok && !data.license?.active) {
+        showModal(
+          'warning',
+          'Chưa Kích Hoạt / Hết Hạn',
+          `Máy chủ ${checkId.trim()} hiện chưa kích hoạt bản quyền MIMI SHIELD. Vui lòng mua Key hoặc gia hạn tại đây!`,
+          'CHƯA KÍCH HOẠT'
+        );
+      } else {
+        showModal('error', 'Không Thể Tra Cứu', data.error || 'Máy chủ bot không phản hồi.', 'LỖI TRA CỨU');
+      }
     } catch {
       setCheckResult({ ok: false, error: 'Không thể kết nối đến máy chủ bot.' });
+      showModal('error', 'Lỗi Kết Nối', 'Không thể kết nối tới hệ thống tra cứu bản quyền.', 'LỖI KẾT NỐI');
     } finally {
       setCheckLoading(false);
     }
