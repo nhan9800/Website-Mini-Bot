@@ -33,19 +33,6 @@ function useWebGLSupport() {
   return supported;
 }
 
-/** Người dùng bật "giảm chuyển động" thì chỉ render 1 khung hình tĩnh. */
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduced(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-  return reduced;
-}
-
 /* ── Texture vẽ thủ công (không tải file ngoài) ────────────────── */
 
 /** Mặt đĩa vinyl: rãnh đồng tâm + phản chiếu nhẹ. */
@@ -75,7 +62,7 @@ function makeVinylTexture() {
   return tex;
 }
 
-/** Nhãn giữa đĩa: gradient thương hiệu + chữ MIMI. */
+/** Nhãn giữa đĩa: gradient thương hiệu + logo MIMI. */
 function makeLabelTexture() {
   const c = document.createElement('canvas');
   c.width = c.height = 512;
@@ -86,18 +73,17 @@ function makeLabelTexture() {
   grad.addColorStop(1, '#38bdf8');
   g.fillStyle = grad;
   g.fillRect(0, 0, 512, 512);
-  
+
   const tex = new THREE.CanvasTexture(c);
   tex.anisotropy = 4;
-  
+
   const img = new Image();
   img.src = '/logo.webp';
   img.onload = () => {
-    // Vẽ logo tròn trịa ở giữa đĩa
     g.drawImage(img, 106, 106, 300, 300);
     tex.needsUpdate = true;
   };
-  
+
   return tex;
 }
 
@@ -134,11 +120,11 @@ function VinylTurntable() {
     [vinylTex, labelTex, glowTex]
   );
 
-  useFrame((state, dt) => {
-    const t = state.clock.elapsedTime;
-    if (discRef.current) discRef.current.rotation.y += dt * 0.85;
-    if (ringRef.current) ringRef.current.rotation.z = t * 0.22;
-    if (ring2Ref.current) ring2Ref.current.rotation.z = -t * 0.16;
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (discRef.current) discRef.current.rotation.y = t * 0.95;
+    if (ringRef.current) ringRef.current.rotation.z = t * 0.25;
+    if (ring2Ref.current) ring2Ref.current.rotation.z = -t * 0.18;
   });
 
   return (
@@ -244,8 +230,6 @@ function EqualizerRing() {
     });
   }, []);
 
-  // useLayoutEffect + material.needsUpdate: buộc three biên dịch lại shader
-  // với USE_INSTANCING_COLOR — gán màu sau khi material đã compile sẽ bị bỏ qua.
   useLayoutEffect(() => {
     const mesh = meshRef.current;
     if (!mesh) return;
@@ -257,13 +241,12 @@ function EqualizerRing() {
   useFrame((state) => {
     const mesh = meshRef.current;
     if (!mesh) return;
-    const t = state.clock.elapsedTime;
+    const t = state.clock.getElapsedTime();
     for (let i = 0; i < BAR_COUNT; i++) {
       const angle = (i / BAR_COUNT) * Math.PI * 2;
-      // 2 sóng chồng nhau cho chuyển động hữu cơ như nhạc thật
       const wave =
-        Math.sin(t * 2.3 + i * 0.55) * 0.5 +
-        Math.sin(t * 3.7 + i * 1.3) * 0.28 +
+        Math.sin(t * 2.5 + i * 0.55) * 0.5 +
+        Math.sin(t * 3.8 + i * 1.3) * 0.28 +
         0.78;
       const h = 0.25 + Math.max(0.06, wave) * 0.85;
       dummy.position.set(
@@ -308,7 +291,6 @@ function EighthNotePair({ color }: { color: string }) {
   );
   return (
     <group scale={0.55}>
-      {/* 2 đầu nốt */}
       <mesh position={[0, 0, 0]} rotation={[0, 0, -0.45]} scale={[1, 0.68, 1]}>
         <sphereGeometry args={[0.34, 32, 32]} />
         {mat}
@@ -317,7 +299,6 @@ function EighthNotePair({ color }: { color: string }) {
         <sphereGeometry args={[0.34, 32, 32]} />
         {mat}
       </mesh>
-      {/* 2 thân nốt */}
       <mesh position={[0.28, 0.75, 0]}>
         <cylinderGeometry args={[0.045, 0.045, 1.5, 24]} />
         {mat}
@@ -326,7 +307,6 @@ function EighthNotePair({ color }: { color: string }) {
         <cylinderGeometry args={[0.045, 0.045, 1.5, 24]} />
         {mat}
       </mesh>
-      {/* thanh nối bo tròn */}
       <RoundedBox args={[1.32, 0.22, 0.12]} radius={0.06} smoothness={8} position={[0.8, 1.57, 0]} rotation={[0, 0, 0.15]}>
         {mat}
       </RoundedBox>
@@ -359,7 +339,6 @@ function SingleNote({ color }: { color: string }) {
         <cylinderGeometry args={[0.05, 0.05, 1.6, 24]} />
         {mat}
       </mesh>
-      {/* thanh cờ bo tròn */}
       <RoundedBox args={[0.55, 0.18, 0.1]} radius={0.05} smoothness={8} position={[0.55, 1.35, 0]} rotation={[0, 0, -0.6]}>
         {mat}
       </RoundedBox>
@@ -394,11 +373,10 @@ function FloatingNotes() {
 
 /* ── Camera parallax theo chuột + scale responsive ─────────────── */
 
-function Rig({ reduced }: { reduced: boolean }) {
+function Rig() {
   const { camera } = useThree();
   useFrame((state, dt) => {
-    if (reduced) return;
-    const k = Math.min(1, dt * 2.2);
+    const k = Math.min(1, (dt || 0.016) * 2.5);
     camera.position.x += (state.pointer.x * 0.85 - camera.position.x) * k;
     camera.position.y += (2.1 - state.pointer.y * 0.55 - camera.position.y) * k;
     camera.lookAt(0, 0.15, 0);
@@ -425,37 +403,23 @@ function ResponsiveGroup({ children }: { children: React.ReactNode }) {
 
 export default function Hero3D() {
   const webgl = useWebGLSupport();
-  const reduced = useReducedMotion();
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(true);
-
-  // Cuộn qua khỏi hero thì ngừng hẳn vòng render — đỡ tốn pin/CPU ở phần dưới trang.
-  useEffect(() => {
-    const el = hostRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver((entries) => setVisible(entries[0]?.isIntersecting ?? true), {
-      threshold: 0.01,
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [webgl]);
 
   // Chưa xác định xong / không có WebGL → dùng nền particles cũ
   if (webgl !== true) return <Particles />;
 
   return (
-    <div ref={hostRef} className="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 2.1, 7.6], fov: 42 }}
-        dpr={[1, 1.75]}
+        dpr={[1, 2]}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-        frameloop={reduced || !visible ? 'demand' : 'always'}
+        frameloop="always"
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[5, 4, 5]} intensity={40} color={MIMI_GREEN} />
-        <pointLight position={[-5, 3, -2]} intensity={34} color={MIMI_PURPLE} />
-        <pointLight position={[0, 6, 2]} intensity={26} color={MIMI_CYAN} />
+        <ambientLight intensity={0.65} />
+        <pointLight position={[5, 4, 5]} intensity={45} color={MIMI_GREEN} />
+        <pointLight position={[-5, 3, -2]} intensity={38} color={MIMI_PURPLE} />
+        <pointLight position={[0, 6, 2]} intensity={30} color={MIMI_CYAN} />
 
         <ResponsiveGroup>
           <VinylTurntable />
@@ -465,7 +429,7 @@ export default function Hero3D() {
           <Sparkles count={60} scale={[13, 7, 8]} size={1.8} speed={0.22} opacity={0.4} color="#c4b5fd" />
         </ResponsiveGroup>
 
-        <Rig reduced={reduced} />
+        <Rig />
       </Canvas>
     </div>
   );

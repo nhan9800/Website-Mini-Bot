@@ -190,7 +190,7 @@ export default function HomePage() {
 
           {/* Sóng nhạc trang trí */}
           <div className="mx-auto max-w-md animate-fade-up pt-4 delay-300ms">
-            <Soundwave playing={online || loading} className="!h-12 !border-white/10 !bg-black/30" />
+            <Soundwave playing={true} className="!h-12 !border-white/10 !bg-black/30" />
           </div>
         </div>
 
