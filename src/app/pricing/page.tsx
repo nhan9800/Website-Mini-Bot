@@ -21,6 +21,7 @@ import {
   X
 } from 'lucide-react';
 import { env } from '@/lib/env';
+import { TiltCard } from '@/components/ui/tilt-card';
 
 interface Plan {
   id: string;
@@ -227,60 +228,61 @@ export default function PricingPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 items-stretch">
         {plans.map((p) => {
           return (
-            <div
-              key={p.id}
-              className={`relative flex flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
-                p.popular
-                  ? 'border-2 border-mimi-green bg-[#0e1322] shadow-[0_0_40px_rgba(46,204,113,0.2)] md:-translate-y-2'
-                  : p.vip
-                  ? 'border-2 border-yellow-400/80 bg-[#161320] shadow-[0_0_40px_rgba(234,179,8,0.2)]'
-                  : 'border border-white/10 bg-[#0a0c16] hover:border-white/20'
-              }`}
-            >
-              {p.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-mimi-green to-mimi-cyan px-4 py-1 text-xs font-black uppercase text-[#05060f] shadow-md">
-                  🔥 PHỔ BIẾN NHẤT
-                </div>
-              )}
-              {p.vip && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-1 text-xs font-black uppercase text-black shadow-md">
-                  👑 VIP TIẾT KIỆM 210K
-                </div>
-              )}
-
-              <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{p.badge}</div>
-                <h3 className="text-2xl font-bold text-white mb-2">{p.name}</h3>
-                <div className="flex items-baseline gap-1 my-4">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">{p.priceFormatted}</span>
-                </div>
-                {p.save && <div className="text-xs font-bold text-mimi-green mb-3">{p.save}</div>}
-                <div className="text-sm text-gray-400 pb-6 border-b border-white/10">{p.duration}</div>
-
-                <ul className="space-y-3.5 my-6">
-                  {p.features.map((feat, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
-                      <CheckCircle2 className="h-4 w-4 text-mimi-green shrink-0 mt-0.5" />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                onClick={() => handleOpenPayment(p)}
-                className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+            <TiltCard key={p.id} maxTilt={6} className="h-full rounded-3xl">
+              <div
+                className={`relative flex h-full flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
                   p.popular
-                    ? 'bg-gradient-brand text-[#05060f] shadow-lg shadow-mimi-green/20 hover:scale-[1.02]'
+                    ? 'border-2 border-mimi-green bg-[#0e1322] shadow-[0_0_40px_rgba(46,204,113,0.2)] md:-translate-y-2'
                     : p.vip
-                    ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-400/20 hover:scale-[1.02]'
-                    : 'bg-white/10 text-white hover:bg-white/15'
+                    ? 'border-2 border-yellow-400/80 bg-[#161320] shadow-[0_0_40px_rgba(234,179,8,0.2)]'
+                    : 'border border-white/10 bg-[#0a0c16] hover:border-white/20'
                 }`}
               >
-                <Zap className="h-4 w-4" />
-                Mua Gói {p.name.split(' ')[1]}
-              </button>
-            </div>
+                {p.popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-mimi-green to-mimi-cyan px-4 py-1 text-xs font-black uppercase text-[#05060f] shadow-md">
+                    🔥 PHỔ BIẾN NHẤT
+                  </div>
+                )}
+                {p.vip && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-1 text-xs font-black uppercase text-black shadow-md">
+                    👑 VIP TIẾT KIỆM 210K
+                  </div>
+                )}
+
+                <div>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{p.badge}</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">{p.name}</h3>
+                  <div className="flex items-baseline gap-1 my-4">
+                    <span className="text-4xl sm:text-5xl font-extrabold text-white">{p.priceFormatted}</span>
+                  </div>
+                  {p.save && <div className="text-xs font-bold text-mimi-green mb-3">{p.save}</div>}
+                  <div className="text-sm text-gray-400 pb-6 border-b border-white/10">{p.duration}</div>
+
+                  <ul className="space-y-3.5 my-6">
+                    {p.features.map((feat, idx) => (
+                      <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
+                        <CheckCircle2 className="h-4 w-4 text-mimi-green shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  onClick={() => handleOpenPayment(p)}
+                  className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                    p.popular
+                      ? 'bg-gradient-brand text-[#05060f] shadow-lg shadow-mimi-green/20 hover:scale-[1.02] active:scale-[0.98]'
+                      : p.vip
+                      ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-400/20 hover:scale-[1.02] active:scale-[0.98]'
+                      : 'bg-white/10 text-white hover:bg-white/15 active:scale-[0.98]'
+                  }`}
+                >
+                  <Zap className="h-4 w-4" />
+                  Mua Gói {p.name.split(' ')[1]}
+                </button>
+              </div>
+            </TiltCard>
           );
         })}
       </div>
