@@ -7,6 +7,7 @@ import { WebPlayer } from "@/components/music/web-player";
 import { FeedbackWidget } from "@/components/ui/feedback-widget";
 import { env } from "@/lib/env";
 import { AuthProvider } from "@/components/layout/auth-provider";
+import { NotificationProvider } from "@/components/ui/notification-provider";
 
 // Be Vietnam Pro: bộ font thiết kế riêng cho tiếng Việt — dấu má chuẩn, đẹp ở mọi weight.
 const beVietnam = Be_Vietnam_Pro({
@@ -77,14 +78,16 @@ export default function RootLayout({
     <html lang="vi" className={`${beVietnam.variable} ${jetbrains.variable}`}>
       <body className="min-h-screen bg-background font-sans text-gray-100 antialiased">
         <AuthProvider>
-          {/* Nền aurora + lưới chấm cố định phía sau toàn trang */}
-          <div className="mimi-aurora" aria-hidden />
-          <div className="mimi-grid" aria-hidden />
-          <Header />
-          <main className="relative z-10 pt-24 pb-32">{children}</main>
-          <WebPlayer />
-          <FeedbackWidget />
-          <Footer />
+          <NotificationProvider>
+            {/* Nền aurora + lưới chấm cố định phía sau toàn trang */}
+            <div className="mimi-aurora" aria-hidden />
+            <div className="mimi-grid" aria-hidden />
+            <Header />
+            <main className="relative z-10 pt-24 pb-32">{children}</main>
+            <WebPlayer />
+            <FeedbackWidget />
+            <Footer />
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>
