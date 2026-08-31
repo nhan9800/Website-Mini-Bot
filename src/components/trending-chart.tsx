@@ -171,10 +171,10 @@ export function TrendingChart() {
                       {songs.map((s) => (
                         <li
                           key={s.rank}
-                          className="group flex items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-all hover:border-white/10 hover:bg-white/[0.05]"
+                          className="group flex items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-all duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
                         >
                           <span
-                            className={`w-8 shrink-0 text-center font-mono text-lg font-black ${
+                            className={`w-8 shrink-0 text-center font-mono text-lg font-black transition-transform duration-300 group-hover:scale-110 ${
                               s.rank <= 3 ? 'text-gradient-mimi' : 'text-gray-500'
                             }`}
                           >
@@ -186,10 +186,10 @@ export function TrendingChart() {
                               src={s.artworkUrl}
                               alt=""
                               loading="lazy"
-                              className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md"
+                              className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md transition-transform duration-300 group-hover:scale-108 group-hover:rotate-2"
                             />
                           ) : (
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm transition-transform duration-300 group-hover:scale-108">
                               <Music className="h-6 w-6" />
                             </div>
                           )}
