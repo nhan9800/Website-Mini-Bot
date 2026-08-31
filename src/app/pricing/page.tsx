@@ -225,10 +225,10 @@ export default function PricingPage() {
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-4 mb-20 items-stretch overflow-visible">
         {plans.map((p) => {
           return (
-            <TiltCard key={p.id} maxTilt={6} className="h-full rounded-3xl">
+            <TiltCard key={p.id} maxTilt={6} className="h-full rounded-3xl overflow-visible">
               <div
                 className={`relative flex h-full flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
                   p.popular
@@ -239,12 +239,12 @@ export default function PricingPage() {
                 }`}
               >
                 {p.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-mimi-green to-mimi-cyan px-4 py-1 text-xs font-black uppercase text-[#05060f] shadow-md">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 rounded-full bg-gradient-to-r from-mimi-green to-mimi-cyan px-4 py-1 text-xs font-black uppercase text-[#05060f] shadow-lg shadow-mimi-green/30 whitespace-nowrap">
                     🔥 PHỔ BIẾN NHẤT
                   </div>
                 )}
                 {p.vip && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-1 text-xs font-black uppercase text-black shadow-md">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-1 text-xs font-black uppercase text-black shadow-lg shadow-yellow-500/30 whitespace-nowrap">
                     👑 VIP TIẾT KIỆM 210K
                   </div>
                 )}

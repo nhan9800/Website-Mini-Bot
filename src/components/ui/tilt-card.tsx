@@ -14,6 +14,7 @@ interface TiltCardProps {
 /**
  * Card nghiêng 3D theo con trỏ chuột (perspective + rotateX/rotateY)
  * tích hợp hiệu ứng Spotlight Glow theo vị trí chuột siêu mượt mà.
+ * overflow-visible để không làm cắt các badge/thẻ nổi phía trên.
  */
 export function TiltCard({
   children,
@@ -55,22 +56,24 @@ export function TiltCard({
       onMouseMove={handleMove}
       onMouseEnter={() => setCoords((prev) => ({ ...prev, opacity: 1 }))}
       onMouseLeave={reset}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative overflow-visible ${className}`}
       style={{
         transition: 'transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.22s ease',
         willChange: 'transform',
       }}
     >
       {spotlight && (
-        <div
-          className="pointer-events-none absolute -inset-px rounded-[inherit] transition-opacity duration-300 z-10"
-          style={{
-            opacity: coords.opacity,
-            background: `radial-gradient(420px circle at ${coords.x}px ${coords.y}px, rgba(46, 204, 113, 0.16), rgba(34, 211, 238, 0.08), transparent 75%)`,
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] z-0">
+          <div
+            className="absolute -inset-px transition-opacity duration-300"
+            style={{
+              opacity: coords.opacity,
+              background: `radial-gradient(420px circle at ${coords.x}px ${coords.y}px, rgba(46, 204, 113, 0.16), rgba(34, 211, 238, 0.08), transparent 75%)`,
+            }}
+          />
+        </div>
       )}
-      {children}
+      <div className="relative z-10 h-full">{children}</div>
     </div>
   );
 }
