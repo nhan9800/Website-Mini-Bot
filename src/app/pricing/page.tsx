@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { env } from '@/lib/env';
 import { TiltCard } from '@/components/ui/tilt-card';
+import { StatusModal } from '@/components/ui/status-modal';
 
 interface Plan {
   id: string;
@@ -94,6 +95,38 @@ export default function PricingPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
+  // Status Modal Thông Báo Cyberpunk (Thay Alert Trình Duyệt)
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'warning' | 'error' | 'info';
+    title: string;
+    description: string | React.ReactNode;
+    badge?: string;
+    confirmText?: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    description: '',
+  });
+
+  const showModal = (
+    type: 'success' | 'warning' | 'error' | 'info',
+    title: string,
+    description: string | React.ReactNode,
+    badge?: string,
+    confirmText?: string
+  ) => {
+    setModalState({
+      isOpen: true,
+      type,
+      title,
+      description,
+      badge,
+      confirmText,
+    });
+  };
+
   // Tra cứu HWID
   const [checkId, setCheckId] = useState('');
   const [checkLoading, setCheckLoading] = useState(false);
@@ -148,7 +181,15 @@ export default function PricingPage() {
   };
 
   const handleRedeemKey = async () => {
-    if (!redeemGuildId.trim() || !redeemKey.trim()) return;
+    if (!redeemGuildId.trim()) {
+      showModal('warning', 'Thiếu Server ID', 'Vui lòng nhập Server ID (HWID) cần kích hoạt bản quyền.', 'YÊU CẦU THÔNG TIN');
+      return;
+    }
+    if (!redeemKey.trim()) {
+      showModal('warning', 'Thiếu Mã License Key', 'Vui lòng nhập mã License Key dạng MIMI-SHIELD-XXXX-XXXX.', 'YÊU CẦU THÔNG TIN');
+      return;
+    }
+
     setRedeemLoading(true);
     setRedeemResult(null);
     try {
@@ -159,8 +200,24 @@ export default function PricingPage() {
       });
       const data = await res.json();
       setRedeemResult(data);
+      if (data.ok) {
+        showModal(
+          'success',
+          'Kích Hoạt Bản Quyền Thành Công!',
+          `Chúc mừng bạn! Máy chủ ${redeemGuildId.trim()} đã được kích hoạt thành công gói ${data.planName || 'MIMI SHIELD'} (+${data.daysAdded || 30} ngày).`,
+          'KÍCH HOẠT HỢP LỆ'
+        );
+      } else {
+        showModal(
+          'error',
+          'Kích Hoạt Thất Bại',
+          data.error || 'Mã License Key không tồn tại hoặc đã qua sử dụng.',
+          'MÃ KEY KHÔNG HỢP LỆ'
+        );
+      }
     } catch {
       setRedeemResult({ ok: false, error: 'Lỗi kích hoạt mã key.' });
+      showModal('error', 'Lỗi Kết Nối', 'Không thể kết nối tới máy chủ kích hoạt bản quyền.', 'LỖI HỆ THỐNG');
     } finally {
       setRedeemLoading(false);
     }
@@ -177,11 +234,21 @@ export default function PricingPage() {
 
   const handleAdminAction = async (action: 'activate' | 'generate_key') => {
     if (!adminSecret.trim()) {
-      alert('Vui lòng nhập Mã PIN / Secret bảo mật Admin.');
+      showModal(
+        'warning',
+        'Yêu Cầu Mã PIN Admin',
+        'Vui lòng nhập Mã PIN / Secret bảo mật Admin để xác thực quyền quản trị.',
+        'CẦN XÁC THỰC'
+      );
       return;
     }
     if (action === 'activate' && !adminGuildId.trim()) {
-      alert('Vui lòng nhập Server ID cần kích hoạt.');
+      showModal(
+        'warning',
+        'Thiếu Server ID (HWID)',
+        'Vui lòng nhập Server ID (Guild ID) cần kích hoạt bản quyền trực tiếp.',
+        'THIẾU THÔNG TIN'
+      );
       return;
     }
 
@@ -201,8 +268,34 @@ export default function PricingPage() {
       });
       const data = await res.json();
       setAdminResult(data);
+
+      if (data.ok) {
+        if (action === 'generate_key') {
+          showModal(
+            'success',
+            'Tạo Key Mới Thành Công!',
+            `Đã tạo thành công mã License Key cho gói ${data.planName || adminPlan}: ${data.key}`,
+            'ĐÃ TẠO KEY'
+          );
+        } else {
+          showModal(
+            'success',
+            'Kích Hoạt Server Thành Công!',
+            `Đã duyệt thanh toán và kích hoạt thành công cho Server ID: ${adminGuildId.trim()}!`,
+            'HOÀN TẤT DUYỆT'
+          );
+        }
+      } else {
+        showModal(
+          'error',
+          'Thao Tác Thất Bại',
+          data.error || 'Mã xác thực Admin không chính xác hoặc có lỗi xảy ra.',
+          'LỖI XÁC THỰC'
+        );
+      }
     } catch {
       setAdminResult({ ok: false, error: 'Lỗi kết nối tới hệ thống Admin.' });
+      showModal('error', 'Lỗi Kết Nối', 'Không thể gửi yêu cầu xác nhận tới hệ thống Admin.', 'LỖI HỆ THỐNG');
     } finally {
       setAdminLoading(false);
     }
