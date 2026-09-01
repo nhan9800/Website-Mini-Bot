@@ -327,6 +327,30 @@ export default function PricingPage() {
         <p className="text-base sm:text-lg text-gray-400">
           Kích hoạt dễ dàng theo Server ID (HWID), tự động gia hạn cộng dồn thời gian và bảo vệ toàn diện 24/7.
         </p>
+
+        {/* Quick Invite Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <a
+            href="https://discord.com/oauth2/authorize?client_id=1539527939723497473&permissions=8&integration_type=0&scope=bot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition-all hover:scale-105"
+          >
+            <Shield className="h-4 w-4" />
+            Mời MIMI SHIELD (Vệ Sĩ Anti-Raid)
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+          <a
+            href="https://discord.com/oauth2/authorize?client_id=1516603522584416376&permissions=8&integration_type=0&scope=bot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-xs transition-all hover:scale-105"
+          >
+            <Sparkles className="h-4 w-4 text-mimi-green" />
+            Mời MIMI BOT (Nghe Nhạc 100% Free)
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
       </div>
 
       {/* Pricing Cards */}
@@ -652,6 +676,26 @@ export default function PricingPage() {
             <div className="text-center pr-8 pl-8">
               <h3 className="text-2xl font-bold text-white">Thanh Toán {selectedPlan.name}</h3>
               <p className="text-sm text-mimi-green font-semibold mt-1">Số tiền: {selectedPlan.priceFormatted}</p>
+            </div>
+
+            {/* Nút Mời Bot Anti-Raid Gắn Qua Thanh Toán */}
+            <div className="rounded-2xl border border-mimi-cyan/40 bg-gradient-to-r from-mimi-cyan/15 via-blue-500/10 to-mimi-cyan/15 p-4 text-center space-y-2.5 shadow-inner">
+              <div className="text-xs font-black text-mimi-cyan flex items-center justify-center gap-1.5 uppercase tracking-wide">
+                <Shield className="h-4 w-4" /> BƯỚC 1: MỜI MIMI SHIELD VÀO MÁY CHỦ
+              </div>
+              <p className="text-[11px] text-gray-300 leading-relaxed">
+                Máy chủ cần có mặt MIMI SHIELD BOT để hệ thống tự động kích hoạt bảo vệ 24/7 ngay khi nhận Key.
+              </p>
+              <a
+                href="https://discord.com/oauth2/authorize?client_id=1539527939723497473&permissions=8&integration_type=0&scope=bot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black text-xs shadow-lg shadow-cyan-500/30 hover:scale-[1.01] active:scale-[0.98] transition-all"
+              >
+                <Bot className="h-4 w-4" />
+                MỜI MIMI SHIELD BOT VÀO SERVER NGAY
+                <ExternalLink className="h-4 w-4" />
+              </a>
             </div>
 
             <div>
