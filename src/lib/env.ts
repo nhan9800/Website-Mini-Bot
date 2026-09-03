@@ -6,7 +6,7 @@
 export const env = {
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://mimibot.id.vn',
   NEXT_PUBLIC_DISCORD_SUPPORT_URL:
-    process.env.NEXT_PUBLIC_DISCORD_SUPPORT_URL || 'https://discord.gg/vibestore',
+    process.env.NEXT_PUBLIC_DISCORD_SUPPORT_URL || 'https://discord.gg/gBUHY3qph2',
   NEXT_PUBLIC_MIMI_BOT_INVITE_URL:
     process.env.NEXT_PUBLIC_MIMI_BOT_INVITE_URL ||
     'https://discord.com/oauth2/authorize?client_id=1516603522584416376&permissions=8&integration_type=0&scope=bot',
