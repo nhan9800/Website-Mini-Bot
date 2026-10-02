@@ -79,7 +79,7 @@ export function StatusModal({
       ringColor: 'border-rose-500/30 bg-rose-500/10 text-rose-400',
       glowColor: 'shadow-[0_0_35px_rgba(244,63,94,0.25)]',
       btnClass:
-        'bg-gradient-to-r from-rose-500 to-red-600 text-white hover:from-rose-400 hover:to-red-500 shadow-[0_0_20px_rgba(244,63,94,0.35)]',
+        'bg-rose-700 text-on-color hover:bg-rose-800',
       iconColor: 'text-rose-400',
     },
     info: {

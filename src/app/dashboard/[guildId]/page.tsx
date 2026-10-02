@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import {
   Music,
   Play,
@@ -49,12 +50,8 @@ function rememberGuild(guild: GuildSettingsResponse['guild']) {
   } catch {}
 }
 
-export default function GuildDashboardPage({
-  params,
-}: {
-  params: { guildId: string };
-}) {
-  const { guildId } = params;
+export default function GuildDashboardPage() {
+  const { guildId } = useParams<{ guildId: string }>();
   const [activeTab, setActiveTab] = useState<'player' | 'settings'>('player');
 
   // Khoá truy cập server này: lấy từ `?key=` trên link do lệnh /dashboard phát ra,
@@ -623,15 +620,15 @@ export default function GuildDashboardPage({
                 {/* Toggle: unverifyOnMute */}
                 <ToggleRow
                   label="Hủy xác thực khi bị mute"
-                  desc="Thành viên bị mute trong kênh thoại sẽ tự động mất role Đã Xác Thực."
+                  desc="Khi bot xử lý mute, thành viên sẽ được gỡ vai trò Đã Xác Thực theo cấu hình."
                   checked={unverifyOnMute}
                   onChange={setUnverifyOnMute}
                 />
 
                 {/* Toggle: verifyDailyMode */}
                 <ToggleRow
-                  label="Chế độ xác thực 24 giờ"
-                  desc="Reset trạng thái xác thực của toàn bộ thành viên vào 00:00 mỗi ngày (UTC+7)."
+                  label="Lưu danh sách xác thực"
+                  desc="Ghi nhận thành viên đã xác thực. Bản hiện tại không tự đặt lại hằng ngày; quản trị viên chủ động yêu cầu xác thực lại."
                   checked={verifyDailyMode}
                   onChange={setVerifyDailyMode}
                 />

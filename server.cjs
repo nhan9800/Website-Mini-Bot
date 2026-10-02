@@ -23,7 +23,7 @@ app
         console.error('[MimiWeb Error] Lỗi xử lý request:', err);
         res.statusCode = 500;
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        res.end(JSON.stringify({ error: 'Internal Server Error', message: err.message }));
+        res.end(JSON.stringify({ error: 'Không xử lý được yêu cầu. Hãy thử lại sau.' }));
       });
     });
 

@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           <h1 className="text-3xl font-extrabold text-white sm:text-4xl">
             Chính Sách Bảo Mật
           </h1>
-          <p className="text-sm text-gray-400">Cập nhật lần cuối: Tháng 7 năm 2026</p>
+          <p className="text-sm text-gray-400">Cập nhật lần cuối: Tháng 10 năm 2026</p>
         </div>
 
         <div className="glass-panel space-y-8 rounded-3xl p-8 text-sm leading-relaxed text-gray-300 sm:p-10 sm:text-base">
@@ -29,17 +29,23 @@ export default function PrivacyPage() {
               <span>1. Dữ Liệu Chúng Tôi Thu Thập</span>
             </h2>
             <p>
-              Mimi chỉ thu thập những dữ liệu tối thiểu cần thiết để vận hành các tính năng
-              trong máy chủ Discord của bạn:
+              Mimi xử lý dữ liệu theo những tính năng bạn sử dụng trong Discord và trên website:
             </p>
             <ul className="list-disc space-y-1.5 pl-6 text-gray-400">
               <li>ID máy chủ (Guild ID) và cấu hình bot: prefix, chế độ xác thực, cờ thiết lập module.</li>
               <li>ID người dùng (User ID) phục vụ số dư Economy và dữ liệu chấm công.</li>
               <li>ID kênh thoại/kênh văn bản dùng cho thông báo và phát nhạc.</li>
+              <li>Nội dung lời nhắc, ticket, nhật ký và dữ liệu hồ sơ theo tính năng được sử dụng.</li>
+              <li>Tên, ảnh đại diện, điểm số và nội dung đánh giá gửi qua website.</li>
             </ul>
             <p className="text-gray-400">
-              Mimi <strong className="text-white">không</strong> đọc hay lưu nội dung tin nhắn riêng tư,
-              không thu thập email, mật khẩu hay bất kỳ thông tin định danh ngoài Discord.
+              Bot xử lý tin nhắn bạn gửi trực tiếp cho Mimi. Khi tính năng chuyển tiếp hỗ trợ được bật,
+              nội dung DM, thông tin người gửi và liên kết tệp đính kèm có thể được gửi đến chủ bot.
+              Tin nhắn nhắc tên bot trong máy chủ cũng có thể được chuyển tiếp theo cấu hình.
+            </p>
+            <p className="text-gray-400">
+              Khi đăng nhập bằng Discord, website nhận thông tin tài khoản do Discord cung cấp,
+              gồm ID, tên, ảnh đại diện và email nếu có. Website không yêu cầu nhập mật khẩu Discord.
             </p>
           </section>
 

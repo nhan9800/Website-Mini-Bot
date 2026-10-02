@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { Star, X, Send, CheckCircle2, User, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 
 interface FeedbackItem {
   id: string;
@@ -33,6 +34,17 @@ const STAR_LABELS: Record<number, string> = {
   5: 'Tuyệt đỉnh 🤩',
 };
 
+function avatarSource(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const source = value.trim();
+  if (!source) return undefined;
+  if (source.startsWith('/') && !source.startsWith('//')) return source;
+  try {
+    const url = new URL(source);
+    return ['https:', 'http:'].includes(url.protocol) ? source : undefined;
+  } catch { return undefined; }
+}
+
 export function FeedbackWidget() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -44,9 +56,10 @@ export function FeedbackWidget() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const [avgStars, setAvgStars] = useState<number>(4.9);
-  const [totalReviews, setTotalReviews] = useState<number>(138);
+  const [avgStars, setAvgStars] = useState<number | null>(null);
+  const [totalReviews, setTotalReviews] = useState<number | null>(null);
   const [recentFeedbacks, setRecentFeedbacks] = useState<FeedbackItem[]>([]);
 
   useEffect(() => {
@@ -61,8 +74,8 @@ export function FeedbackWidget() {
       const res = await fetch('/api/feedback', { cache: 'no-store' });
       const data = await res.json();
       if (data?.ok) {
-        setAvgStars(data.averageStars || 4.9);
-        setTotalReviews(data.totalReviews || 138);
+        setAvgStars(data.averageStars ?? null);
+        setTotalReviews(data.totalReviews ?? 0);
         setRecentFeedbacks(data.recentFeedbacks || []);
       }
     } catch {}
@@ -77,6 +90,7 @@ export function FeedbackWidget() {
 
   const { data: session } = useSession();
   const linkedUser = session?.user;
+  const linkedAvatar = avatarSource(linkedUser?.image);
 
   useEffect(() => {
     if (linkedUser && !userName) {
@@ -90,6 +104,7 @@ export function FeedbackWidget() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setSubmitError('');
     try {
       const res = await fetch('/api/feedback', {
         method: 'POST',
@@ -97,7 +112,7 @@ export function FeedbackWidget() {
         body: JSON.stringify({
           feature: selectedFeature,
           stars,
-          comment: comment || 'MIMI quá tuyệt vời!',
+          comment,
           userName: linkedUser ? linkedUser.name : (userName || 'Thành viên Ẩn danh'),
           avatar: linkedUser?.image || '',
           isVerified: !!linkedUser,
@@ -105,18 +120,17 @@ export function FeedbackWidget() {
       });
       const data = await res.json();
       if (data?.ok) {
-        setAvgStars(data.averageStars || avgStars);
-        setTotalReviews(data.totalReviews || totalReviews);
+        setAvgStars(data.averageStars ?? null);
+        setTotalReviews(data.totalReviews ?? 0);
         setRecentFeedbacks(data.recentFeedbacks || recentFeedbacks);
         setSubmitted(true);
         setTimeout(() => {
           setSubmitted(false);
           setComment('');
         }, 3000);
-      }
+      } else setSubmitError(typeof data?.error === 'string' ? data.error : 'Không lưu được đánh giá. Hãy thử lại.');
     } catch {
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
+      setSubmitError('Không kết nối được với máy chủ. Đánh giá chưa được gửi.');
     } finally {
       setLoading(false);
     }
@@ -131,14 +145,14 @@ export function FeedbackWidget() {
             setIsOpen(true);
             loadFeedbackStats();
           }}
-          className="group relative flex items-center gap-2 rounded-full border border-mimi-green/40 bg-gray-950/90 px-4 py-2.5 text-xs font-bold text-white shadow-[0_0_25px_rgba(46,204,113,0.3)] backdrop-blur-md transition-all hover:scale-105 hover:border-mimi-green hover:shadow-[0_0_35px_rgba(46,204,113,0.5)]"
+          className="group relative flex items-center gap-2 rounded-full border border-mimi-green/40 bg-surface px-4 py-2.5 text-xs font-bold text-white shadow-[0_0_25px_rgba(46,204,113,0.3)] backdrop-blur-md transition-all hover:scale-105 hover:border-mimi-green hover:shadow-[0_0_35px_rgba(46,204,113,0.5)]"
         >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mimi-green/20 text-mimi-green group-hover:scale-110 transition-transform">
             <Star className="h-3.5 w-3.5 fill-mimi-green text-mimi-green" />
           </span>
           <span>Đánh Giá</span>
           <span className="rounded-full bg-mimi-green/20 px-2 py-0.5 font-mono text-[11px] font-extrabold text-mimi-green">
-            {avgStars}★
+            {avgStars === null ? 'Chưa có điểm' : `${avgStars}★`}
           </span>
         </button>
       </div>
@@ -155,6 +169,7 @@ export function FeedbackWidget() {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
+                aria-label="Đóng bảng đánh giá"
                 className="rounded-full bg-white/5 p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
               >
                 <X className="h-4 w-4" />
@@ -184,7 +199,7 @@ export function FeedbackWidget() {
                       : 'text-gray-500 hover:text-gray-300'
                   }`}
                 >
-                  Cộng Đồng ({totalReviews})
+                  Cộng Đồng ({totalReviews ?? '—'})
                 </button>
               </div>
 
@@ -212,10 +227,12 @@ export function FeedbackWidget() {
                           <button
                             key={s}
                             type="button"
+                            aria-label={`${s} sao`}
+                            aria-pressed={stars === s}
                             onClick={() => setStars(s)}
                             onMouseEnter={() => setHoverStar(s)}
                             onMouseLeave={() => setHoverStar(null)}
-                            className="transition-transform hover:scale-110 focus:outline-none"
+                            className="transition-transform hover:scale-110"
                           >
                             <Star
                               className={`h-6 w-6 transition-colors ${
@@ -256,7 +273,7 @@ export function FeedbackWidget() {
                         <button
                           type="button"
                           onClick={handleLinkDiscord}
-                          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] py-2.5 text-xs font-bold text-white transition-all hover:bg-[#4752C4] shadow-sm"
+                          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] py-2.5 text-xs font-bold text-on-color transition-all hover:bg-[#4752C4] shadow-sm"
                         >
                           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.3,46,96.19,53,91.13,65.69,84.69,65.69Z"/></svg>
                           Đăng nhập bằng Discord
@@ -277,11 +294,11 @@ export function FeedbackWidget() {
                     ) : (
                       <div className="flex items-center justify-between rounded-xl border border-mimi-green/20 bg-mimi-green/5 p-2.5">
                         <div className="flex items-center gap-2.5">
-                          <img
-                            src={linkedUser.image || '/logo.webp'}
+                          {linkedAvatar ? <Image width={32} height={32}
+                            src={linkedAvatar}
                             alt={linkedUser.name || 'User'}
                             className="h-8 w-8 rounded-full border border-mimi-green/30 object-cover"
-                          />
+                          /> : <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5" aria-hidden="true"><User className="h-4 w-4 text-gray-400" /></span>}
                           <div className="flex flex-col">
                             <span className="text-sm font-bold text-white flex items-center gap-1">
                               {linkedUser.name}
@@ -305,10 +322,11 @@ export function FeedbackWidget() {
                       className="w-full resize-none rounded-xl border border-white/10 bg-white/5 p-3.5 text-sm text-white placeholder:text-gray-600 focus:border-white/30 focus:outline-none transition-colors"
                     />
 
+                    {submitError && <p role="alert" className="text-xs text-red-400">{submitError}</p>}
                     {/* Submit */}
                     <button
                       type="submit"
-                      disabled={loading || (!linkedUser && !userName.trim() && !comment.trim())}
+                      disabled={loading || !comment.trim()}
                       className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-extrabold text-black shadow-lg transition-all hover:bg-gray-200 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 mt-2"
                     >
                       <Send className="h-4 w-4" />
@@ -325,8 +343,8 @@ export function FeedbackWidget() {
                       <div key={fb.id} className="rounded-2xl border border-white/5 bg-white/[0.02] p-3.5 space-y-2.5 transition-colors hover:bg-white/[0.04]">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            {fb.avatar ? (
-                              <img src={fb.avatar} alt={fb.userName} className="h-6 w-6 rounded-full border border-white/10 object-cover" />
+                            {avatarSource(fb.avatar) ? (
+                              <Image width={24} height={24} src={avatarSource(fb.avatar)!} alt={fb.userName} className="h-6 w-6 rounded-full border border-white/10 object-cover" />
                             ) : (
                               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/5">
                                 <User className="h-3 w-3 text-gray-400" />

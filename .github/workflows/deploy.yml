@@ -31,19 +31,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Cài Node 20
+      - name: Cài Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Cài dependencies
         run: npm ci --no-audit --no-fund
 
       - name: Kiểm tra kiểu TypeScript
-        # Chặn sớm ở đây, vì next.config bật ignoreBuildErrors nên `next build`
-        # sẽ không tự dừng khi có lỗi kiểu.
+        # Chặn lỗi kiểu sớm; build cũng kiểm tra TypeScript và ESLint.
         run: npx tsc --noEmit
+
+      - name: Kiểm tra ESLint
+        run: npm run lint
+
+      - name: Kiểm tra API và dữ liệu ngoại tuyến
+        run: npm test
 
       - name: Build Next.js
         env:

@@ -1,183 +1,112 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  Terminal,
-  Activity,
-  LifeBuoy,
-  Menu,
-  X,
-  Sparkles,
-  Home,
-  Headphones,
-  Star,
-  Shield,
-} from 'lucide-react';
+import { Activity, ArrowUpRight, LayoutDashboard, LifeBuoy, Menu, Terminal, Users, X } from 'lucide-react';
 import { env } from '@/lib/env';
+import { websiteVersion } from '@/lib/release-info';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const navItems = [
-  { href: '/', label: 'Trang Chủ', icon: Home },
-  { href: '/pricing', label: 'Bảng Giá & Key', icon: Shield },
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/', label: 'Trang chủ' },
   { href: '/commands', label: 'Lệnh', icon: Terminal },
-  { href: '/partners', label: 'Đối Tác', icon: Star },
-  { href: '/status', label: 'Trạng Thái', icon: Activity },
-  { href: '/support', label: 'Hỗ Trợ', icon: LifeBuoy },
+  { href: '/partners', label: 'Cộng đồng', icon: Users },
+  { href: '/status', label: 'Trạng thái', icon: Activity },
+  { href: '/support', label: 'Hỗ trợ', icon: LifeBuoy },
 ];
 
 export function Header() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const mobileNav = useRef<HTMLElement>(null);
+
+  useEffect(() => setMobileMenuOpen(false), [pathname]);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 16);
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (!mobileMenuOpen) return;
+    mobileNav.current?.querySelector<HTMLAnchorElement>('a')?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setMobileMenuOpen(false);
+      menuButton.current?.focus();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [mobileMenuOpen]);
 
-  // Đóng menu mobile khi chuyển trang
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
-
-  const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+  const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'border-b border-white/10 bg-[#05060f]/85 py-3 shadow-lg shadow-black/40 backdrop-blur-xl'
-          : 'bg-transparent py-5'
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
-          <Link href="/" className="group flex items-center gap-3 shrink-0">
-            <div className="relative h-11 w-11 shrink-0 rounded-2xl bg-gradient-brand p-[2px] shadow-glow transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105">
-              <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-[#05060f]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.webp" alt="Mimi Bot Logo" className="h-full w-full rounded-[14px] object-cover" />
-              </div>
-            </div>
-            <div className="flex flex-col leading-tight">
-              <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-white whitespace-nowrap">
-                MIMI BOT
-                <span className="rounded-full border border-mimi-green/30 bg-mimi-green/15 px-2 py-0.5 text-[10px] font-bold text-mimi-green shrink-0">
-                  v2.2
-                </span>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-surface backdrop-blur-xl">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between gap-5">
+          <div className="flex shrink-0 items-center gap-3">
+            <ThemeToggle />
+            <Link href="/" className="flex items-center gap-3" aria-label="Mimi — trang chủ">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.webp" alt="" width={42} height={42} className="rounded-xl border border-white/10" />
+              <span className="flex flex-col">
+                <span className="text-xl font-extrabold tracking-tight text-white">Mimi<span className="text-mimi-green">.</span></span>
+                <span className="text-[10px] font-medium tracking-[0.12em] text-gray-500">NHẠC & CỘNG ĐỒNG</span>
               </span>
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-gray-500 whitespace-nowrap">
-                Music · Community
-              </span>
-            </div>
-          </Link>
+            </Link>
+            <Link href="/changelog" title="Xem bản cập nhật website" className="hidden rounded-md border border-mimi-green/20 bg-mimi-green/[0.06] px-2 py-1 font-mono text-[10px] text-mimi-green sm:block">
+              v{websiteVersion}
+            </Link>
+          </div>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-[#0b0d1c]/80 p-1.5 shadow-inner backdrop-blur-md lg:flex">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-2 rounded-full px-3 xl:px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                    active
-                      ? 'bg-gradient-brand font-semibold text-[#05060f] shadow-md shadow-mimi-green/25'
-                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span className="whitespace-nowrap">{item.label}</span>
-                </Link>
-              );
-            })}
+          <nav aria-label="Điều hướng chính" className="hidden items-center gap-1 xl:flex">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}
+                className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive(item.href) ? 'bg-white/[0.06] text-mimi-green' : 'text-gray-400 hover:bg-white/[0.04] hover:text-white'}`}>
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* CTA desktop */}
-          <div className="hidden items-center gap-2 xl:gap-3 lg:flex shrink-0">
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('open-mimi-feedback'))}
-              className="group relative inline-flex shrink-0 items-center gap-2 rounded-full border border-yellow-400/50 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-yellow-500/15 px-3 xl:px-4 py-2 text-sm font-bold text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.25)] transition-all duration-300 hover:border-yellow-400 hover:scale-105 hover:shadow-[0_0_30px_rgba(234,179,8,0.45)]"
-              title="Đánh giá & Góp ý cho MIMI"
-            >
-              <Star className="h-4 w-4 shrink-0 fill-yellow-400 text-yellow-400 animate-pulse" />
-              <span className="whitespace-nowrap">Đánh Giá</span>
-            </button>
-            <a
-              href={env.NEXT_PUBLIC_BOT_INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary shrink-0 !px-4 xl:!px-5 !py-2.5"
-            >
-              <Sparkles className="h-4 w-4 shrink-0" />
-              <span className="whitespace-nowrap">Mời MIMI</span>
+          <div className="flex shrink-0 items-center gap-3">
+            <Link href="/dashboard" className="hidden items-center gap-2 rounded-lg border border-white/15 px-3.5 py-2.5 text-sm font-medium text-gray-200 transition-colors hover:border-mimi-green/40 hover:text-white xl:inline-flex">
+              <LayoutDashboard size={16} /> Dashboard
+            </Link>
+            <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
+              className="hidden items-center gap-2 rounded-lg bg-mimi-green px-4 py-2.5 text-sm font-bold text-[#071510] transition-colors hover:bg-mimi-green-bright sm:inline-flex">
+              Mời Mimi <ArrowUpRight size={16} />
             </a>
+            <button ref={menuButton} type="button" onClick={() => setMobileMenuOpen((open) => !open)}
+              className="rounded-lg border border-white/15 p-2.5 text-gray-200 xl:hidden"
+              aria-label={mobileMenuOpen ? 'Đóng menu điều hướng' : 'Mở menu điều hướng'}
+              aria-controls="mimi-mobile-navigation" aria-expanded={mobileMenuOpen}>
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
-
-          {/* Nút menu mobile */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-gray-300 transition-colors hover:text-white lg:hidden"
-            aria-label="Mở menu điều hướng"
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </div>
 
-        {/* Menu mobile */}
         {mobileMenuOpen && (
-          <div className="glass-panel-glow mt-4 flex animate-fade-up flex-col gap-1.5 rounded-3xl p-4 lg:hidden">
+          <nav ref={mobileNav} id="mimi-mobile-navigation" aria-label="Điều hướng di động"
+            className="max-h-[calc(100dvh-80px)] overflow-y-auto border-t border-white/10 pb-5 pt-3 xl:hidden">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const active = isActive(item.href);
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors ${
-                    active
-                      ? 'bg-gradient-brand font-semibold text-[#05060f]'
-                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
+                <Link key={item.href} href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm ${isActive(item.href) ? 'bg-mimi-green/[0.08] text-mimi-green' : 'text-gray-300 hover:bg-white/5'}`}>
+                  {Icon ? <Icon size={17} /> : <span className="w-[17px]" aria-hidden />} {item.label}
                 </Link>
               );
             })}
-            <div className="mt-2 flex flex-col gap-2.5 border-t border-white/10 pt-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  window.dispatchEvent(new CustomEvent('open-mimi-feedback'));
-                }}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-yellow-400/40 bg-yellow-500/15 px-4 py-3 text-sm font-bold text-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.25)] transition-colors hover:bg-yellow-500/25"
-              >
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 animate-pulse" />
-                <span>⭐ Đánh Giá & Góp Ý MIMI</span>
-              </button>
-              <a
-                href={env.NEXT_PUBLIC_BOT_INVITE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary w-full"
-              >
-                <Sparkles className="h-4 w-4" />
-                <span>Mời MIMI Vào Server</span>
-              </a>
+            <div className="mt-2 grid grid-cols-2 gap-2 border-t border-white/10 pt-3">
+              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="rounded-lg bg-white/5 px-3 py-3 text-sm text-gray-200">Dashboard</Link>
+              <Link href="/changelog" onClick={() => setMobileMenuOpen(false)} className="rounded-lg bg-white/5 px-3 py-3 text-sm text-gray-200">Cập nhật · v{websiteVersion}</Link>
+              <Link href="/reviews" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm text-gray-400">Đánh giá</Link>
+              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm text-gray-400">Mimi Shield</Link>
             </div>
-          </div>
+            <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)} className="mt-3 flex items-center justify-between rounded-lg bg-mimi-green px-4 py-3 text-sm font-bold text-[#071510] sm:hidden">
+              Mời Mimi miễn phí <ArrowUpRight size={18} />
+            </a>
+          </nav>
         )}
       </div>
     </header>

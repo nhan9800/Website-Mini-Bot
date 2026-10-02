@@ -17,23 +17,27 @@ import { env } from '@/lib/env';
 const faqs = [
   {
     q: 'Làm thế nào để phát nhạc với Mimi?',
-    a: 'Tham gia một kênh thoại (Voice Channel) rồi gõ lệnh /play kèm tên bài hát hoặc link YouTube. Mimi sẽ vào kênh và phát ngay — điều khiển tiếp bằng nút bấm trong tin nhắn hoặc qua Dashboard web.',
+    a: 'Tham gia một kênh thoại (Voice Channel) rồi gõ lệnh /play kèm tên bài hát hoặc link YouTube. Khi tải được nguồn nhạc, Mimi sẽ vào kênh và phát. Điều khiển tiếp bằng nút bấm trong tin nhắn hoặc qua dashboard web.',
   },
   {
     q: 'Mimi có cần API key Spotify hay Genius không?',
     a: 'Không. Mimi hoạt động hoàn toàn không cần key bên thứ ba: lời bài hát lấy từ lrclib.net, link Spotify được nhận diện qua oEmbed rồi tìm bài tương ứng trên YouTube.',
   },
   {
-    q: 'Hệ thống xác thực 24 giờ hoạt động như thế nào?',
-    a: 'Khi bật chế độ xác thực 24h, vào đúng 00:00 giờ Việt Nam (UTC+7) mỗi ngày, Mimi tự động reset trạng thái xác thực của thành viên. Thành viên chỉ cần bấm nút xác thực một lần để tiếp tục sử dụng kênh.',
+    q: 'Hệ thống xác thực thành viên hoạt động như thế nào?',
+    a: 'Quản trị viên dùng /setupverify để chọn kênh, vai trò và các tùy chọn xác thực. Thành viên bấm nút để nhận vai trò. Việc đặt lại xác thực phụ thuộc cấu hình máy chủ, không mặc định áp dụng chu kỳ 24 giờ cho mọi server. Vai trò của bot cần cao hơn vai trò xác thực để gán hoặc gỡ.',
   },
   {
     q: 'Tôi muốn đổi prefix của bot thì làm sao?',
-    a: 'Mở Dashboard web, nhập ID server của bạn, sang tab "Cấu Hình" và đổi Prefix (1–5 ký tự) rồi bấm Lưu. Thay đổi có hiệu lực ngay lập tức.',
+    a: 'Người có quyền Quản Lý Máy Chủ dùng /dashboard trong Discord để nhận liên kết và khóa truy cập. Mở đúng server cùng khóa còn hiệu lực, sang tab "Cấu Hình", đổi Prefix (1–5 ký tự) rồi bấm Lưu. Chỉ nhập Guild ID chưa đủ để mở các chức năng quản trị.',
   },
   {
     q: 'Vì sao bot báo lỗi khi tải nhạc (403)?',
-    a: 'Đôi khi YouTube chặn tạm thời — Mimi sẽ tự thử lại bằng client khác. Nếu vẫn lỗi kéo dài, hãy báo trong server hỗ trợ để đội ngũ cập nhật trình tải nhạc trên máy chủ.',
+    a: 'YouTube có thể chặn yêu cầu tải tạm thời. Nếu lỗi kéo dài, hãy gửi lệnh đã dùng, link bài hát và thời điểm xảy ra lỗi trong server hỗ trợ để đội ngũ kiểm tra.',
+  },
+  {
+    q: 'Tôi có phải mua key để dùng Mimi nhạc không?',
+    a: 'Không. Mimi nhạc và cộng đồng miễn phí, không cần key trả phí cho nhạc, autoplay, cấp độ hay minigame. Trang Bảng Giá & Key dành cho bot Mimi Shield anti-raid riêng.',
   },
   {
     q: 'Cảnh báo Economy 5.000.000 xu là gì?',
@@ -66,49 +70,66 @@ export default function SupportPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="min-h-screen py-14">
+    <div className="min-h-screen py-12">
       <div className="mx-auto max-w-5xl space-y-14 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="mx-auto max-w-3xl space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
+        <div className="max-w-3xl space-y-4">
+          <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <LifeBuoy className="h-3.5 w-3.5" />
             <span>Trung tâm hỗ trợ</span>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Chúng Tôi Luôn <span className="text-gradient-mimi">Sẵn Sàng Giúp Đỡ</span>
+            Bắt đầu cùng <span className="text-mimi-green">Mimi</span>
           </h1>
           <p className="text-base text-gray-400 sm:text-lg">
-            Xem câu hỏi thường gặp bên dưới, hoặc vào thẳng server Discord hỗ trợ để được
-            giải đáp trực tiếp.
+            Tìm hướng dẫn, báo lỗi và gặp cộng đồng Mimi tại máy chủ hỗ trợ chính thức.
           </p>
         </div>
 
         {/* ── CTA Discord ───────────────────────────────────────── */}
-        <div className="glass-panel-glow gradient-ring relative overflow-hidden rounded-[2rem] p-8 text-center sm:p-12">
-          <div className="pointer-events-none absolute -left-14 -top-14 h-56 w-56 rounded-full bg-mimi-green/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-14 -right-14 h-56 w-56 rounded-full bg-mimi-purple/10 blur-3xl" />
-          <div className="relative space-y-6">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-brand text-[#05060f] shadow-glow">
-              <MessageSquare className="h-8 w-8" />
+        <div className="grid grid-cols-1 gap-8 rounded-2xl border border-mimi-green/25 bg-mimi-green/[0.035] p-6 sm:p-9 md:grid-cols-[1.1fr_1fr]">
+          <div className="space-y-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-mimi-green/10 text-mimi-green">
+              <MessageSquare className="h-6 w-6" />
             </div>
             <div className="space-y-2">
               <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
-                Máy Chủ Hỗ Trợ Chính Thức
+                Mimi • Cộng đồng & Hỗ trợ
               </h2>
-              <p className="mx-auto max-w-2xl text-sm text-gray-300 sm:text-base">
-                Báo lỗi, yêu cầu tính năng mới hoặc giao lưu cùng cộng đồng người dùng Mimi.
+              <p className="text-sm leading-relaxed text-gray-300">
+                Máy chủ chính đã được sắp xếp lại với khu bắt đầu, phòng nhạc, ticket và bộ emoji Mimi.
               </p>
             </div>
             <a
               href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary !px-8 !py-4 !text-base"
+              className="btn-primary !px-6 !py-3 !text-sm"
             >
-              <span>Tham Gia Server Hỗ Trợ</span>
+              <span>Tham gia cộng đồng</span>
               <ExternalLink className="h-5 w-5" />
             </a>
           </div>
+          <ol className="space-y-5 text-sm">
+            {[
+              ['Đọc nội quy và xác thực', 'Vào khu Bắt đầu, đọc nội quy rồi bấm xác thực để mở khu cộng đồng.'],
+              ['Tìm đúng phòng', 'Dùng kênh yêu cầu nhạc để nghe cùng mọi người; mở ticket khi cần hỗ trợ.'],
+              ['Xem hướng dẫn trong Discord', 'Hướng dẫn máy chủ và bộ emoji có sẵn để bạn tra cứu khi cần.'],
+            ].map(([title, description], index) => (
+              <li key={title} className="flex items-start gap-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-mimi-green/25 font-mono text-xs text-mimi-green">{index + 1}</span>
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-white">{title}</h3>
+                  <p className="leading-relaxed text-gray-400">{description}</p>
+                </div>
+              </li>
+            ))}
+            <li className="pl-10">
+              <a href="https://discord.com/channels/1517068246493429852/1555605739949531137" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-mimi-green underline-offset-4 hover:underline">
+                Mở hướng dẫn máy chủ <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </li>
+          </ol>
         </div>
 
         {/* ── Liên kết nhanh ────────────────────────────────────── */}
@@ -119,10 +140,10 @@ export default function SupportPage() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="glass-panel card-lift group flex items-center gap-4 rounded-3xl p-6 hover:border-mimi-green/40"
+                className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition-colors hover:border-mimi-green/40"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10 text-mimi-green transition-transform group-hover:scale-110">
-                  <Icon className="h-6 w-6" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mimi-green/10 text-mimi-green">
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white">{l.title}</h3>
@@ -135,14 +156,14 @@ export default function SupportPage() {
 
         {/* ── FAQ accordion ─────────────────────────────────────── */}
         <div className="space-y-6">
-          <h2 className="text-center text-2xl font-bold text-white">Câu Hỏi Thường Gặp</h2>
+          <h2 className="text-2xl font-bold text-white">Câu hỏi thường gặp</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => {
               const open = openIndex === i;
               return (
                 <div
                   key={i}
-                  className={`glass-panel overflow-hidden rounded-3xl transition-colors ${
+                  className={`overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] transition-colors ${
                     open ? 'border-mimi-green/30' : 'hover:border-white/20'
                   }`}
                 >

@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#05060f",
-        surface: "#0b0d1c",
-        border: "rgba(255, 255, 255, 0.08)",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        border: "var(--border)",
         mimi: {
           green: "#2ECC71",
           "green-bright": "#3EE586",

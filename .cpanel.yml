@@ -1,34 +1,23 @@
 ---
-# cPanel Git Version Control chạy các bước này sau mỗi lần kéo code về.
-#
-# Giả định: Repository Path TRÙNG với Application Root (khuyến nghị — clone thẳng
-# repo vào thư mục ứng dụng). Nhờ vậy không cần chép file đi đâu, cũng không có
-# đường dẫn nào ghi cứng để mà đặt sai.
-#
-# NHÁNH PHẢI CHECKOUT LÀ `deploy`, KHÔNG phải `main`:
-#   - `main`   chỉ có mã nguồn, không có .next → site lỗi 500.
-#   - `deploy` do GitHub Actions dựng sẵn, đã kèm .next build xong.
-#
-# TUYỆT ĐỐI KHÔNG thêm `npm run build`: host giới hạn 2GB RAM (LVE), next build
-# sẽ bị kill giữa chừng và làm hỏng luôn bản .next đang chạy.
-#
-# Mỗi task chạy trong một shell RIÊNG — biến ở dòng trước không còn hiệu lực ở
-# dòng sau, và `npm` chỉ có trong PATH sau khi activate nodevenv. Vì vậy mỗi
-# dòng phải tự chứa đủ những gì nó cần.
+# cPanel checks out the prebuilt deploy branch into Application Root.
+# Keep .env.local and data/ untracked. Build on CI, never on the 2GB host.
+# Legacy .next/mimi_feedback_store.json must be backed up/migrated BEFORE
+# removing or replacing .next; an untracked legacy file survives a normal pull.
 deployment:
   tasks:
-    # Chốt chặn: thiếu .next nghĩa là đang ở nhầm nhánh. Dừng hẳn thay vì restart,
-    # để bản đang chạy không bị thay bằng một bản hỏng.
     - >-
       test -f "$(pwd)/.next/BUILD_ID" ||
-      { echo "HUY DEPLOY: thieu .next/BUILD_ID - dang checkout nham nhanh main?"; exit 1; }
-
-    # `npm ci` thay vì `npm install`: không ghi lại package-lock.json, nhờ vậy cây
-    # git luôn sạch và lần kéo sau không vướng "local changes would be overwritten".
+      { echo "HUY DEPLOY: thieu .next/BUILD_ID - phai checkout nhanh deploy"; exit 1; }
     - >-
-      APP="$(pwd)"; APPNAME="$(basename "$APP")";
-      VENV=$(ls -d "$HOME"/nodevenv/"$APPNAME"/*/bin/activate 2>/dev/null | head -1);
-      test -n "$VENV" || { echo "Khong tim thay nodevenv cho $APPNAME"; exit 1; };
-      . "$VENV" && cd "$APP" && npm ci --omit=dev --no-audit --no-fund
-
+      APP="$(pwd)"; APPNAME="$(basename "$APP")"; VENV="";
+      for CANDIDATE in "$HOME"/nodevenv/"$APPNAME"/*/bin/activate; do
+        test -f "$CANDIDATE" || continue;
+        if ( . "$CANDIDATE" && node -e "const [major,minor]=process.versions.node.split('.').map(Number); if(major<22||(major===22&&minor<12)) process.exit(1)" ); then
+          VENV="$CANDIDATE"; break;
+        fi;
+      done;
+      test -n "$VENV" || { echo "HUY DEPLOY: can nodevenv Node >=22.12.0 cho $APPNAME"; exit 1; };
+      . "$VENV" && cd "$APP" &&
+      npm ci --omit=dev --no-audit --no-fund &&
+      node scripts/migrate-feedback.cjs
     - mkdir -p "$(pwd)/tmp" && touch "$(pwd)/tmp/restart.txt" && echo "DEPLOY XONG"

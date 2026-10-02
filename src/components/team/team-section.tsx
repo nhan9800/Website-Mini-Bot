@@ -4,7 +4,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Reveal } from '@/components/ui/reveal';
 import { ShieldCheck, UserCheck, Crown, Code2 } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
+import { SafeCanvas } from '@/components/three/safe-canvas';
 import { Sphere, MeshDistortMaterial, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -37,12 +38,12 @@ function AnimatedCyberSphere() {
 function Dev3DBackground() {
   return (
     <div className="absolute right-0 top-0 h-full w-full sm:w-1/2 opacity-70 z-0 pointer-events-none mix-blend-screen overflow-hidden rounded-[2rem] mask-image-fade">
-      <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
+      <SafeCanvas camera={{ position: [0, 0, 4], fov: 45 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} color="#4facfe" />
         <AnimatedCyberSphere />
         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
-      </Canvas>
+      </SafeCanvas>
     </div>
   );
 }
@@ -52,6 +53,7 @@ const STATUS_COLORS: Record<string, string> = {
   idle: 'bg-yellow-400',
   dnd: 'bg-red-500',
   offline: 'bg-gray-500',
+  unknown: 'bg-gray-500',
 };
 
 const STATUS_TITLES: Record<string, string> = {
@@ -59,60 +61,11 @@ const STATUS_TITLES: Record<string, string> = {
   idle: 'Đang vắng mặt',
   dnd: 'Đang bận (Do Not Disturb)',
   offline: 'Ngoại tuyến',
+  unknown: 'Chưa có trạng thái Discord',
 };
 
 export function TeamSection() {
-  const [team, setTeam] = useState<TeamMember[]>([
-    {
-      id: '1',
-      name: 'Mimi',
-      username: 'mi.mi2301',
-      role: 'Founder & Community Owner',
-      color: '#ff6b81',
-      avatar: 'https://api.dicebear.com/7.x/lorelei/svg?seed=MimiFounder&backgroundColor=ff6b81',
-      status: 'online',
-      description: 'Sáng lập hệ sinh thái MIMI, định hướng phát triển và kết nối cộng đồng yêu âm nhạc.',
-      isDev: false,
-      group: 'core',
-    },
-    {
-      id: '2',
-      name: 'nhan9800',
-      username: 'nhan9800',
-      role: 'Core Developer',
-      color: '#2ecc71',
-      avatar: 'https://github.com/nhan9800.png',
-      status: 'online',
-      description: 'Phát triển kiến trúc Core Bot, hệ thống Internal API thời gian thực và Website MIMI.',
-      isDev: true,
-      group: 'core',
-    },
-    {
-      id: '3',
-      name: 'Mimi Admin Team',
-      username: 'mimi_admin',
-      role: 'Community Admin',
-      color: '#3498db',
-      avatar: '/logo.webp',
-      status: 'online',
-      description: 'Quản trị máy chủ, điều phối hoạt động sự kiện và hỗ trợ giải đáp thắc mắc của thành viên.',
-      isDev: false,
-      group: 'admin',
-    },
-    {
-      id: '4',
-      name: 'Cộng Đồng MIMI',
-      username: 'mimi_community',
-      role: 'Tester & Support',
-      color: '#9b59b6',
-      avatar: '/logo.webp',
-      status: 'online',
-      description:
-        'Báo cáo lỗi, đề xuất tính năng mới và cùng xây dựng môi trường âm nhạc sôi động trên Discord.',
-      isDev: false,
-      group: 'community',
-    },
-  ]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
   const [source, setSource] = useState<string>('loading');
 
   useEffect(() => {
@@ -120,11 +73,14 @@ export function TeamSection() {
       try {
         const res = await fetch('/api/team', { cache: 'no-store' });
         const data = await res.json();
-        if (data?.ok && data.team && data.team.length > 0) {
+        if (res.ok && data?.ok && Array.isArray(data.team)) {
           setTeam(data.team);
           setSource(data.source || 'discord_roles');
+        } else {
+          setTeam([]);
+          setSource('unavailable');
         }
-      } catch {}
+      } catch { setTeam([]); setSource('unavailable'); }
     }
     loadTeam();
   }, []);
@@ -144,6 +100,12 @@ export function TeamSection() {
             Danh sách thành viên được tự động đồng bộ từ Role trong server Discord chính thức của MIMI.
           </p>
         </Reveal>
+
+        {team.length === 0 && (
+          <p role="status" className="text-center text-sm text-gray-400">
+            {source === 'loading' ? 'Đang tải đội ngũ từ Discord…' : source === 'unavailable' ? 'Chưa kết nối được với Discord để tải đội ngũ.' : 'Chưa có thành viên đội ngũ được cấu hình.'}
+          </p>
+        )}
 
         {/* --- CORE TEAM --- */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -205,9 +167,9 @@ export function TeamSection() {
                     <div className={`absolute inset-0 rounded-2xl ring-1 ring-inset ${avatarRingClass}`} />
                     <span
                       className={`absolute bottom-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-2 ring-black ${
-                        STATUS_COLORS[member.status || 'online'] || 'bg-mimi-green'
+                        STATUS_COLORS[member.status || 'unknown'] || 'bg-gray-500'
                       }`}
-                      title={STATUS_TITLES[member.status || 'online'] || 'Discord Member'}
+                      title={STATUS_TITLES[member.status || 'unknown'] || 'Chưa có trạng thái Discord'}
                     />
                   </div>
 
@@ -288,9 +250,9 @@ export function TeamSection() {
                       />
                       <span
                         className={`absolute bottom-0 right-0 h-3 w-3 rounded-full ring-2 ring-black ${
-                          STATUS_COLORS[member.status || 'online'] || 'bg-mimi-green'
+                          STATUS_COLORS[member.status || 'unknown'] || 'bg-gray-500'
                         }`}
-                        title={STATUS_TITLES[member.status || 'online'] || 'Discord Member'}
+                        title={STATUS_TITLES[member.status || 'unknown'] || 'Chưa có trạng thái Discord'}
                       />
                     </div>
                     <div className="min-w-0 flex-1">

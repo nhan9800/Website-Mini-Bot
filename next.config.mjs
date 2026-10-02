@@ -2,15 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  // Web được BUILD SẴN ở máy dev/CI rồi commit thư mục .next lên Git.
+  // Web được build ở máy dev/CI, artifact .next được chuyển lên hosting.
   // Trên cPanel Nhân Hòa KHÔNG chạy `next build` nữa (2GB RAM sẽ bị OOM Killed),
-  // chỉ cần `git pull` + restart Passenger.
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // cPanel pull artifact, npm ci và migration trước khi restart Passenger.
   images: {
     // Hosting shared không nên gánh image optimizer (tốn CPU/RAM) — ảnh ngoài
     // (avatar Discord, thumbnail YouTube) trả về nguyên gốc.
@@ -22,7 +16,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    // Giữ build đơn luồng để vẫn build khẩn cấp được ngay trên host nếu bất khả kháng.
+    // Giữ build đơn luồng để giảm RAM ở máy dev/CI; hosting nhận artifact đã build.
     // LƯU Ý: KHÔNG bật memoryBasedWorkersCount — nó đọc RAM của cả máy chủ vật lý
     // (không phải hạn mức LVE 2GB) nên sẽ spawn nhiều worker và gây OOM Killed.
     cpus: 1,

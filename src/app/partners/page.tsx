@@ -8,24 +8,32 @@ import type { TeamMember } from '@/app/api/team/route';
 export default function PartnersPage() {
   const [partners, setPartners] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     async function loadTeam() {
       try {
-        const res = await fetch('/api/team', { cache: 'no-store' });
+        const res = await fetch('/api/team', { cache: 'no-store', signal: controller.signal });
         const data = await res.json();
-        if (data?.ok && data.team && data.team.length > 0) {
+        if (!controller.signal.aborted && res.ok && data?.ok && Array.isArray(data.team)) {
           const partnerList = data.team.filter((m: TeamMember) => m.group === 'partner');
           setPartners(partnerList);
+        } else if (!controller.signal.aborted) {
+          setUnavailable(true);
         }
-      } catch {}
-      setLoading(false);
+      } catch {
+        if (!controller.signal.aborted) setUnavailable(true);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
     }
     loadTeam();
+    return () => controller.abort();
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#050505] pt-32 pb-24 selection:bg-mimi-primary/30">
+    <div className="min-h-screen pt-12 pb-24">
       {/* Background Effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 blur-[120px]" />
@@ -34,15 +42,15 @@ export default function PartnersPage() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto mb-20 max-w-3xl space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/40 bg-yellow-500/10 px-4 py-1.5 text-xs font-bold text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+          <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <Handshake className="h-4 w-4" />
             <span>Cộng Đồng Sử Dụng Bot</span>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Đối Tác Sử Dụng <span className="text-gradient-mimi">MIMI</span>
+            Cộng đồng và <span className="text-mimi-green">đối tác Mimi</span>
           </h1>
           <p className="text-lg text-gray-400">
-            Những cá nhân, quản trị viên và các máy chủ (như VTC Manager) đang tin dùng MIMI để xây dựng cộng đồng âm nhạc trên Discord.
+            Danh sách cá nhân và cộng đồng đối tác được cung cấp từ dữ liệu đội ngũ Mimi.
           </p>
         </Reveal>
 
@@ -52,7 +60,7 @@ export default function PartnersPage() {
           </div>
         ) : partners.length === 0 ? (
           <div className="flex h-40 flex-col items-center justify-center space-y-4 rounded-3xl border border-white/5 bg-white/[0.02]">
-            <p className="text-gray-400">Chưa có đối tác nào được hiển thị.</p>
+            <p role="status" className="text-gray-400">{unavailable ? 'Chưa tải được danh sách đối tác. Hãy thử lại sau.' : 'Chưa có đối tác nào được hiển thị.'}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">

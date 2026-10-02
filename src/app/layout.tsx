@@ -32,11 +32,11 @@ export const metadata: Metadata = {
     apple: '/logo.webp',
   },
   title: {
-    default: "MIMI BOT — Bot Nhạc Discord & Quản Trị Cộng Đồng",
+    default: "MIMI BOT · Bot Nhạc Discord & Quản Trị Cộng Đồng",
     template: "%s · MIMI BOT",
   },
   description:
-    "Mời MIMI vào máy chủ Discord để nghe nhạc chất lượng cao từ YouTube, điều khiển bằng nút bấm hoặc dashboard web, kèm hệ thống xác thực 24h, chấm công và giám sát kinh tế.",
+    "Mimi nhạc và cộng đồng miễn phí cho máy chủ Discord: nghe nhạc, hàng chờ, xác thực theo cấu hình, cấp độ và dashboard dùng khóa truy cập. Mimi Shield là bot anti-raid riêng.",
   keywords: [
     "Discord bot",
     "music bot",
@@ -51,13 +51,13 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     url: env.NEXT_PUBLIC_SITE_URL,
     siteName: "MIMI BOT",
-    title: "MIMI — Bot Nhạc Discord & Quản Trị Cộng Đồng",
+    title: "MIMI · Bot Nhạc Discord & Quản Trị Cộng Đồng",
     description:
-      "Nghe nhạc Discord chất lượng cao, điều khiển bằng nút bấm hoặc dashboard web thời gian thực.",
+      "Bot nhạc và cộng đồng tiếng Việt miễn phí. Nghe nhạc, quản lý hàng chờ và dùng dashboard theo quyền máy chủ.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MIMI — Bot Nhạc Discord",
+    title: "MIMI · Bot Nhạc Discord",
     description: "Biến voice channel Discord thành không gian âm nhạc sống động.",
   },
   robots: { index: true, follow: true },
