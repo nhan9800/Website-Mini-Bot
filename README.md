@@ -37,6 +37,12 @@ Trang Lệnh dùng danh mục trực tiếp khi API trả dữ liệu; khi chưa
 
 ## Hosting cPanel
 
+Pull request chạy workflow **Kiểm tra và đóng gói website** để tạo gói Linux
+`mimi-website-2.5.0.tar.gz` và checksum, sau typecheck/lint/test/audit/build.
+Gói không chứa dependency đã cài, cache build, cấu hình riêng hoặc dữ liệu đánh giá.
+Workflow này chỉ tạo artifact để kiểm tra; không đẩy nhánh `deploy` hoặc restart host.
+Chỉ đưa gói lên hosting sau khi xác nhận Node phù hợp và sao lưu/migrate dữ liệu cũ.
+
 Workflow dùng Node.js 22 và dựng artifact trên GitHub Actions. Hosting phải chọn nodevenv Node.js 22.12+ trước khi cập nhật; `.cpanel.yml` từ chối runtime cũ, chạy `npm ci` và migration trước khi yêu cầu Passenger khởi động lại. Không build trên host giới hạn RAM.
 
 Giữ `.env.local`, `data/` và kho `MIMI_FEEDBACK_STORE` ngoài artifact. Trước lần cập nhật đầu tiên từ bản cũ, sao lưu rồi chạy migration khi `.next` cũ còn nguyên. Task cPanel sau pull chỉ chuyển được kho cũ nếu file `.next/mimi_feedback_store.json` vẫn còn; task đó không thể phục hồi file đã bị xoá hoặc bị deployment ghi đè.

@@ -1,0 +1,68 @@
+name: Kiểm tra và đóng gói website
+
+# Tạo gói Linux để kiểm tra trước khi nâng cấp hosting cPanel.
+# Workflow này không đổi nhánh deploy và không khởi động lại website.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm audit
+      - name: Build trên Linux
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_BUILD_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          NEXT_PUBLIC_BUILD_BRANCH: ${{ github.head_ref || github.ref_name }}
+          NEXT_PUBLIC_BUILD_RUN: ${{ github.run_number }}
+        run: |
+          export NEXT_PUBLIC_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          npm run build
+          test -s .next/BUILD_ID
+      - name: Đóng gói không chứa cấu hình hoặc dữ liệu runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGE="$(mktemp -d)"
+          git archive HEAD | tar -xf - -C "$STAGE"
+          mkdir "$STAGE/.next"
+          tar -C .next --exclude='./cache' --exclude='./mimi_feedback_store.json' -cf - . | tar -xf - -C "$STAGE/.next"
+          test -s "$STAGE/.next/BUILD_ID"
+          tar -czf "$RUNNER_TEMP/mimi-website-2.5.0.tar.gz" -C "$STAGE" .
+          cd "$RUNNER_TEMP"
+          tar -tzf mimi-website-2.5.0.tar.gz > mimi-website-files.txt
+          if grep -Eq '^\./(\.env($|\.(local|production|development|test|production\.local|development\.local|test\.local)$)|data(/|$)|node_modules(/|$)|\.next/cache(/|$)|\.next/mimi_feedback_store\.json$)' mimi-website-files.txt; then
+            echo 'Gói chứa dữ liệu không được triển khai.' >&2
+            exit 1
+          fi
+          sha256sum mimi-website-2.5.0.tar.gz > mimi-website-2.5.0.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mimi-website-2.5.0-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/mimi-website-2.5.0.tar.gz
+            ${{ runner.temp }}/mimi-website-2.5.0.sha256
+            ${{ runner.temp }}/mimi-website-files.txt
+          retention-days: 14
