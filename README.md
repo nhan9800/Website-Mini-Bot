@@ -38,10 +38,20 @@ Trang Lệnh dùng danh mục trực tiếp khi API trả dữ liệu; khi chưa
 ## Hosting cPanel
 
 Pull request chạy workflow **Kiểm tra và đóng gói website** để tạo gói Linux
-`mimi-website-2.5.0.tar.gz` và checksum, sau typecheck/lint/test/audit/build.
+`mimi-website-2.5.0.tar.gz` và checksum, sau typecheck/lint/test/build,
+audit dependency production và kiểm tra khởi động khi đã bỏ dependency build.
 Gói không chứa dependency đã cài, cache build, cấu hình riêng hoặc dữ liệu đánh giá.
 Workflow này chỉ tạo artifact để kiểm tra; không đẩy nhánh `deploy` hoặc restart host.
 Chỉ đưa gói lên hosting sau khi xác nhận Node phù hợp và sao lưu/migrate dữ liệu cũ.
+
+Tailwind, PostCSS, TypeScript và các gói kiểu chỉ dùng khi phát triển/build, nên đặt
+trong `devDependencies`; hosting nhận build sẵn và cài bằng `npm ci --omit=dev`.
+Ngày 03/10/2026, audit đầy đủ ghi nhận cảnh báo
+[braces GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+qua công cụ build Tailwind/ESLint, chưa có bản vá npm. Audit production không còn
+cảnh báo này sau khi tách công cụ build. Báo cáo đầy đủ được lưu cùng artifact;
+cảnh báo build vẫn còn, không được coi là đã vá. CI dùng mẫu glob từ source repo,
+không nhận mẫu glob từ request người dùng; cập nhật công cụ khi upstream có bản vá.
 
 Workflow dùng Node.js 22 và dựng artifact trên GitHub Actions. Hosting phải chọn nodevenv Node.js 22.12+ trước khi cập nhật; `.cpanel.yml` từ chối runtime cũ, chạy `npm ci` và migration trước khi yêu cầu Passenger khởi động lại. Không build trên host giới hạn RAM.
 

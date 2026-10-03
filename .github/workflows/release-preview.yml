@@ -30,7 +30,11 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
-      - run: npm audit
+      - name: Kiểm tra dependency vận hành
+        run: npm audit --omit=dev
+      - name: Báo cáo đầy đủ cả công cụ build
+        continue-on-error: true
+        run: npm audit --json > "$RUNNER_TEMP/mimi-build-audit.json"
       - name: Build trên Linux
         env:
           NODE_ENV: production
@@ -41,6 +45,12 @@ jobs:
           export NEXT_PUBLIC_BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           npm run build
           test -s .next/BUILD_ID
+      - name: Kiểm tra khởi động chỉ với dependency vận hành
+        env:
+          MIMI_EXPECTED_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          npm prune --omit=dev --no-audit --no-fund
+          node scripts/smoke-release.cjs
       - name: Đóng gói không chứa cấu hình hoặc dữ liệu runtime
         shell: bash
         run: |
@@ -65,4 +75,5 @@ jobs:
             ${{ runner.temp }}/mimi-website-2.5.0.tar.gz
             ${{ runner.temp }}/mimi-website-2.5.0.sha256
             ${{ runner.temp }}/mimi-website-files.txt
+            ${{ runner.temp }}/mimi-build-audit.json
           retention-days: 14
