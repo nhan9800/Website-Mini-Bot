@@ -34,14 +34,8 @@ export default function PartnersPage() {
 
   return (
     <div className="min-h-screen pt-12 pb-24">
-      {/* Background Effects */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-[600px] w-[600px] translate-x-1/2 translate-y-1/2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-[150px]" />
-      </div>
-
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <Reveal className="mx-auto mb-20 max-w-3xl space-y-4 text-center">
+        <Reveal className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <Handshake className="h-4 w-4" />
             <span>Cộng Đồng Sử Dụng Bot</span>

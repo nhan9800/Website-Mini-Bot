@@ -31,20 +31,20 @@ export function Footer() {
               <span className="text-2xl font-extrabold tracking-tight text-white">Mimi<span className="text-mimi-green">.</span></span>
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-7 text-gray-400">Âm nhạc, kết nối và những công cụ chăm sóc cộng đồng. Mimi Bot dành cho máy chủ Discord của bạn, miễn phí.</p>
-            <Link href="/changelog" className="mt-5 inline-block font-mono text-xs text-gray-500 hover:text-mimi-green">Website v{websiteVersion}</Link>
+            <Link href="/changelog" className="mt-5 inline-block font-mono text-xs text-gray-400 hover:text-mimi-green">Website v{websiteVersion}</Link>
           </div>
           <FooterLinks title="Khám phá" links={exploreLinks} />
           <FooterLinks title="Tài nguyên" links={resourceLinks} />
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Gặp nhau trên Discord</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400">Gặp nhau trên Discord</h3>
             <p className="mt-5 text-sm leading-7 text-gray-400">Hỏi cách sử dụng, báo lỗi hoặc chia sẻ một bài nhạc cùng cộng đồng.</p>
             <a href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-mimi-green hover:text-mimi-green-bright">
               Tham gia máy chủ hỗ trợ <ArrowUpRight size={16} />
             </a>
-            <Link href="/pricing" className="mt-5 block text-xs leading-6 text-gray-500 hover:text-gray-200">Mimi Shield · Bot bảo vệ riêng, có các gói bản quyền</Link>
+            <Link href="/pricing" className="mt-5 block text-xs leading-6 text-gray-400 hover:text-gray-200">Mimi Shield · Bot bảo vệ riêng, có các gói bản quyền</Link>
           </div>
         </div>
-        <div className="mt-12 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-xs text-gray-500 sm:flex-row">
+        <div className="mt-12 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-xs text-gray-400 sm:flex-row">
           <p>© {new Date().getFullYear()} Mimi. Được phát triển cùng cộng đồng Việt.</p>
           <p>Nhạc & cộng đồng · Tiếng Việt · Miễn phí</p>
         </div>
@@ -56,7 +56,7 @@ export function Footer() {
 function FooterLinks({ title, links }: { title: string; links: { href: string; label: string }[] }) {
   return (
     <div>
-      <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">{title}</h3>
+      <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400">{title}</h3>
       <ul className="mt-5 space-y-3.5 text-sm">
         {links.map((link) => <li key={link.href}><Link href={link.href} className="text-gray-400 transition-colors hover:text-white">{link.label}</Link></li>)}
       </ul>

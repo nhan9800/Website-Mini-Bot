@@ -21,7 +21,7 @@ export default function ReviewsPage() {
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-12 max-w-3xl space-y-5">
+        <div className="page-intro space-y-5">
           <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <MessageSquare className="h-4 w-4" aria-hidden="true" />
             Cộng đồng Mimi

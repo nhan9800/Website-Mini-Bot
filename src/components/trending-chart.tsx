@@ -92,9 +92,9 @@ export function TrendingChart() {
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12">
           {/* Cột trái: đĩa vinyl 3D + lời dẫn */}
           <Reveal className="space-y-8 text-center lg:col-span-5 lg:text-left">
-            <div className="inline-flex items-center gap-2 rounded-full border border-mimi-pink/30 bg-mimi-pink/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-pink">
+            <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
               <Flame className="h-3.5 w-3.5" />
-              <span>BXH Việt Nam — cập nhật liên tục</span>
+              <span>Nhạc đang thịnh hành</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
               Bài Nào Đang <span className="text-gradient-mimi">Hot</span>,
@@ -103,7 +103,7 @@ export function TrendingChart() {
             </h2>
             <p className="mx-auto max-w-md text-base leading-relaxed text-gray-400 lg:mx-0">
               Top 10 ca khúc được nghe nhiều nhất Việt Nam lúc này. Bấm nút copy bên cạnh
-              bài hát, dán vào Discord là MIMI phát liền — không cần tìm link.
+              bài hát, dán vào Discord là MIMI phát nhạc.
             </p>
 
             {/* Đĩa vinyl 3D quay */}
@@ -129,7 +129,7 @@ export function TrendingChart() {
                         <span>Top 10 Nhạc Việt Thịnh Hành</span>
                       </h3>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <div className="inline-flex items-center gap-1.5 rounded-full border border-mimi-pink/40 bg-mimi-pink/15 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-pink shadow-[0_0_12px_rgba(244,114,182,0.3)]">
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-mimi-green/40 bg-mimi-green/15 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-pink shadow-[0_0_12px_rgba(244,114,182,0.3)]">
                           <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mimi-pink opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-mimi-pink"></span>
@@ -183,7 +183,7 @@ export function TrendingChart() {
                           {s.artworkUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
-                              src={s.artworkUrl}
+                              src={s.artworkUrl.replace(/\/\d+x\d+bb\./, '/96x96bb.')}
                               alt=""
                               loading="lazy"
                               className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md transition-transform duration-300 group-hover:scale-108 group-hover:rotate-2"
@@ -202,7 +202,7 @@ export function TrendingChart() {
                                 </span>
                               )}
                               {s.rank === 2 && (
-                                <span className="shrink-0 rounded-md bg-gradient-to-r from-mimi-pink/20 to-rose-500/20 border border-mimi-pink/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-pink">
+                                <span className="shrink-0 rounded-md bg-gradient-to-r from-mimi-green/20 to-rose-500/20 border border-mimi-green/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-pink">
                                   #2 HOT
                                 </span>
                               )}

@@ -11,28 +11,38 @@ export const metadata: Metadata = {
 
 const latestChanges = [
   {
+    label: 'Không gian 3D',
+    title: 'Gặp Mimi trong một phòng nhạc mới.',
+    detail: 'Mô hình robot từ bộ ví dụ Three.js được phối màu mint riêng, có animation nhảy và vẫy tay. Chọn thêm đĩa nhạc hoặc tai nghe rồi kéo để khám phá từ nhiều góc.',
+  },
+  {
+    label: 'Tương tác',
+    title: 'Chuyển động theo lựa chọn của bạn.',
+    detail: 'Nút tạm dừng giữ nguyên góc nhìn. Thiết lập giảm chuyển động được tôn trọng; cảnh tự ngừng khi ra khỏi màn hình hoặc chuyển tab. Thiết bị không hỗ trợ WebGL hiển thị ảnh minh họa.',
+  },
+  {
     label: 'Giao diện',
-    title: 'Một diện mạo mới, từ trang chủ đến nhật ký.',
-    detail: 'Bố cục mint gọn hơn, điều hướng rõ ràng trên điện thoại và máy tính, có lựa chọn giao diện sáng hoặc tối. Phiên bản website được dùng thống nhất trên thanh điều hướng, chân trang và thông tin bản dựng.',
+    title: 'Đồng bộ từ trang chủ đến các công cụ.',
+    detail: 'Bố cục tính năng mới, màu mint thống nhất, tiêu đề và bề mặt có chiều sâu trên cả giao diện sáng và tối. Các trang lệnh, cộng đồng, hỗ trợ, đánh giá và dashboard cùng nhận diện mới.',
   },
   {
-    label: 'Cộng đồng',
-    title: 'Mimi Bot miễn phí. Mimi Shield là sản phẩm riêng.',
-    detail: 'Lệnh nghe nhạc, công cụ cộng đồng và dashboard của Mimi Bot không yêu cầu mua bản quyền. Các gói bảo vệ của Mimi Shield được trình bày riêng để tránh nhầm lẫn.',
-  },
-  {
-    label: 'Dữ liệu',
-    title: 'Đánh giá được lưu ngoài thư mục bản dựng.',
-    detail: 'Kho đánh giá bền vững có bước chuyển dữ liệu trước khi rebuild. Danh tính xác minh được kiểm tra phía máy chủ; số sao, trạng thái bot và đội ngũ hiển thị theo dữ liệu nhận được, có thông báo khi chưa tải được.',
-  },
-  {
-    label: 'Truy cập',
-    title: 'Dashboard giữ khóa truy cập theo máy chủ.',
-    detail: 'Các yêu cầu điều khiển nhạc và thay đổi cấu hình được kiểm tra quyền phía máy chủ. Danh sách lệnh có bản chụp dự phòng được ghi rõ nguồn khi API bot chưa sẵn sàng.',
+    label: 'Tải trang',
+    title: 'Mô hình tải từ website, chỉ một canvas hoạt động.',
+    detail: 'Tệp mô hình được đóng gói tại website, giới hạn độ phân giải dựng hình và dừng vòng lặp khi tạm nghỉ. Dữ liệu đánh giá và khóa dashboard tiếp tục được bảo toàn qua các lần cập nhật.',
   },
 ];
 
 const history = [
+  {
+    version: '2.5.0',
+    date: '02/10/2026',
+    title: 'Làm mới website và bảo toàn dữ liệu cộng đồng',
+    items: [
+      'Giao diện mint, điều hướng sáng/tối và danh mục lệnh từ dữ liệu bot.',
+      'Tách Mimi Bot miễn phí với Mimi Shield; kho đánh giá được chuyển ra ngoài thư mục bản dựng.',
+      'Bản này được triển khai lên cPanel ngày 17/10/2026, kèm cơ chế nhận bản dựng tự động.',
+    ],
+  },
   {
     version: '2.4.0',
     date: '27/07/2026',

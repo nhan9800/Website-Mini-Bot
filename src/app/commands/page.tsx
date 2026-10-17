@@ -113,7 +113,7 @@ export default function CommandsPage() {
     <div className="min-h-screen py-14">
       <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="mx-auto max-w-3xl space-y-4 text-center">
+        <div className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
             <Terminal className="h-3.5 w-3.5" />
             <span>Tra cứu lệnh</span>
@@ -146,6 +146,7 @@ export default function CommandsPage() {
             <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
+              aria-label="Tìm lệnh Mimi"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm lệnh… (vd: play, setupemoji, help)"
@@ -161,10 +162,11 @@ export default function CommandsPage() {
                 <button
                   key={c.key}
                   type="button"
+                  aria-pressed={active}
                   onClick={() => setCategory(c.key)}
                   className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                     active
-                      ? 'bg-gradient-brand text-[#05060f] shadow-glow'
+                      ? 'bg-mimi-green text-[var(--accent-text)]'
                       : 'border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >

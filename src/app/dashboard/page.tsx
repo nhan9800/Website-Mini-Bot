@@ -71,7 +71,7 @@ export default function DashboardSelectorPage() {
     <div className="min-h-screen py-14">
       <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="mx-auto max-w-3xl space-y-4 text-center">
+        <div className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Bảng điều khiển thời gian thực</span>

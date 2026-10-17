@@ -1,9 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import {
   Sparkles,
   ArrowRight,
@@ -23,17 +21,11 @@ import type { LucideIcon } from 'lucide-react';
 import { env } from '@/lib/env';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
-import { Particles } from '@/components/ui/particles';
+import { ExperienceStage } from '@/components/three/experience-stage';
 import { Reveal } from '@/components/ui/reveal';
 import { TrendingChart } from '@/components/trending-chart';
 import { TeamSection } from '@/components/team/team-section';
 import { CommunityReviewsSection } from '@/components/feedback/community-reviews-section';
-
-// Cảnh 3D WebGL nặng — chỉ tải ở client, trong lúc chờ hiện particles nhẹ.
-const Hero3D = dynamic(() => import('@/components/three/hero-3d'), {
-  ssr: false,
-  loading: () => <Particles />,
-});
 
 /* ── Dữ liệu nội dung ─────────────────────────────────────────── */
 
@@ -109,21 +101,11 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const online = !error && status?.online === true;
   const statusKnown = !error && typeof status?.online === 'boolean';
-  const [reduceMotion, setReduceMotion] = useState(true);
-
-  useEffect(() => {
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncPreference = () => setReduceMotion(preference.matches);
-    syncPreference();
-    preference.addEventListener('change', syncPreference);
-    return () => preference.removeEventListener('change', syncPreference);
-  }, []);
-
   return (
     <div className="min-h-screen">
-      <section className="relative overflow-hidden px-4 pb-12 pt-12 sm:px-6 lg:pb-16 lg:pt-16">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-4 lg:grid-cols-[1.1fr_1fr] lg:gap-8">
-          <div className="relative z-10 space-y-7">
+      <section className="home-hero">
+        <div className="home-hero-grid">
+          <div className="home-hero-copy animate-fade-up">
           <div className="inline-flex items-center gap-2 text-xs font-medium text-mimi-green" role="status">
             {loading ? (
               <span className="h-2 w-2 animate-pulse-soft rounded-full bg-gray-400" />
@@ -143,45 +125,39 @@ export default function HomePage() {
             </span>
           </div>
 
-          <h1 className="text-4xl font-extrabold leading-[1.14] tracking-tight text-white sm:text-5xl xl:text-6xl">
+          <h1>
             Cùng nghe nhạc.<br />
             <span className="text-mimi-green">Cùng kết nối.</span>
           </h1>
 
-          <p className="max-w-lg text-base leading-relaxed text-gray-300 sm:text-lg">
+          <p>
             Bot nhạc và cộng đồng tiếng Việt, miễn phí cho máy chủ Discord của bạn.
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-1">
+          <div className="home-hero-actions">
             <a
               href={env.NEXT_PUBLIC_BOT_INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary whitespace-nowrap !px-7 !py-4 !text-sm"
+              className="btn-primary"
             >
               <Sparkles className="h-5 w-5" />
               <span>Mời Mimi miễn phí</span>
             </a>
-            <Link href="/dashboard" className="btn-secondary whitespace-nowrap !px-7 !py-4 !text-sm">
+            <Link href="/dashboard" className="btn-secondary">
               <LayoutDashboard className="h-5 w-5" />
               <span>Mở dashboard</span>
             </Link>
           </div>
 
           </div>
-          <div className="relative h-[300px] w-full sm:h-[380px] lg:h-[480px]" aria-hidden="true">
-          {reduceMotion ? (
-            <div className="flex h-full items-center justify-center">
-              <Image src="/logo.webp" alt="" width={180} height={180} priority className="rounded-[2rem]" />
-            </div>
-          ) : <Hero3D />}
-          </div>
+          <ExperienceStage />
         </div>
       </section>
 
       {/* ══ SỐ LIỆU THẬT ══════════════════════════════════════════ */}
-      <section className="border-y border-white/5 bg-white/[0.02] py-12">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
+      <section className="home-stat-strip">
+        <div className="grid grid-cols-2 gap-7 lg:grid-cols-4">
           <StatBlock
             icon={Bot}
             value={!error && status ? formatCompact(status.guildCount) : 'Chưa có'}
@@ -211,7 +187,7 @@ export default function HomePage() {
       {/* ══ DỊCH VỤ / TÍNH NĂNG ═══════════════════════════════════ */}
       <section id="dich-vu" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
+          <Reveal className="section-heading">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
               Mimi trong <span className="text-mimi-green">máy chủ của bạn</span>
             </h2>
@@ -220,11 +196,11 @@ export default function HomePage() {
             </p>
           </Reveal>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="feature-showcase">
             {services.map((s, i) => {
               return (
                 <Reveal key={s.title} delay={i * 90}>
-                    <div className={`group h-full space-y-5 rounded-2xl border border-white/10 bg-white/[0.025] p-8 transition-colors ${s.hover}`}>
+                    <div className={`feature-panel group space-y-5 ${['feature-music', '', 'feature-community', 'feature-dashboard'][i]}`}>
                       <div className="flex items-center gap-4">
                         <div
                           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border ${s.ring}`}
@@ -257,8 +233,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <Reveal className="space-y-6">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Sinh Ra Từ Nhu Cầu Thật Của{' '}
-              <span className="text-gradient-mimi">Cộng Đồng Việt</span>
+              Một Mimi.<br /><span className="text-mimi-green">Nhiều cách kết nối.</span>
             </h2>
             <div className="space-y-4 text-sm leading-relaxed text-gray-400 sm:text-base">
               <p>
@@ -374,7 +349,7 @@ export default function HomePage() {
               <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-mimi-green/10 blur-3xl" />
               <div className="relative space-y-7">
                 <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
-                  Sẵn Sàng Nâng Tầm <span className="text-gradient-mimi">Server Của Bạn</span>?
+                  Hẹn nhau trong <span className="text-mimi-green">phòng nhạc.</span>
                 </h2>
                 <p className="mx-auto max-w-2xl text-lg text-gray-300">
                   Mời Mimi, chọn một phòng thoại và bắt đầu bằng lệnh /play.
@@ -421,8 +396,8 @@ function StatBlock({
   return (
     <div className="flex flex-col items-center gap-2.5 text-center">
       <Icon className="h-10 w-10 text-mimi-green" />
-      <span className="font-mono text-3xl font-extrabold text-white sm:text-4xl">{value}</span>
-      <span className="text-xs uppercase tracking-wider text-gray-400">{label}</span>
+      <span className="stat-value font-mono font-extrabold text-white">{value}</span>
+      <span className="stat-label text-gray-400">{label}</span>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function supportsWebGL2(): boolean {
 }
 
 class WebGLBoundary extends React.Component<
-  { children: React.ReactNode; fallback: React.ReactNode },
+  { children: React.ReactNode; fallback: React.ReactNode; onUnavailable?: () => void },
   { failed: boolean }
 > {
   state = { failed: false };
@@ -29,23 +29,27 @@ class WebGLBoundary extends React.Component<
     return { failed: true };
   }
 
+  componentDidCatch() { this.props.onUnavailable?.(); }
+
   render() {
     return this.state.failed ? this.props.fallback : this.props.children;
   }
 }
 
 /** Giữ nguyên nội dung trang khi GPU không khả dụng hoặc bộ dựng hình khởi tạo lỗi. */
-export function SafeCanvas({ fallback = null, ...props }: CanvasProps) {
+export function SafeCanvas({ fallback = null, onUnavailable, ...props }: CanvasProps & { onUnavailable?: () => void }) {
   const [supported, setSupported] = useState(false);
 
   useEffect(() => {
-    setSupported(supportsWebGL2());
-  }, []);
+    const available = supportsWebGL2();
+    setSupported(available);
+    if (!available) onUnavailable?.();
+  }, [onUnavailable]);
 
   if (!supported) return <>{fallback}</>;
 
   return (
-    <WebGLBoundary fallback={fallback}>
+    <WebGLBoundary fallback={fallback} onUnavailable={onUnavailable}>
       <Canvas {...props} fallback={fallback} />
     </WebGLBoundary>
   );
