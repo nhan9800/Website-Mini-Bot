@@ -19,6 +19,9 @@ set +u
 . "$VENV"
 set -u
 PREFIX="$(dirname "$(dirname "$VENV")")/lib"
+LOCK_DIR="$HOME/.mimi-runtime-$APPNAME.lock"
+mkdir -- "$LOCK_DIR" 2>/dev/null || fail "Đang có lượt cài runtime khác; không chạy song song."
+trap 'rmdir -- "$LOCK_DIR" 2>/dev/null || true' EXIT
 mkdir -p "$PREFIX/node_modules"
 if [ -e node_modules ] || [ -L node_modules ]; then
     test -L node_modules || fail "node_modules phải là symlink của CloudLinux; giữ nguyên thư mục hiện có."
@@ -52,8 +55,8 @@ if [ -f "$MARKER" ] && [ "$(cat "$MARKER")" = "$LOCK_HASH" ] && verify_runtime; 
 else
     # Không thay manifest/lockfile của checkout. Không dùng npm install để tự giải
     # lại version, không bỏ peer validation bằng --force/--legacy-peer-deps.
-    cp package.json "$PREFIX/package.json"
-    cp package-lock.json "$PREFIX/package-lock.json"
+    [ package.json -ef "$PREFIX/package.json" ] || cp package.json "$PREFIX/package.json"
+    [ package-lock.json -ef "$PREFIX/package-lock.json" ] || cp package-lock.json "$PREFIX/package-lock.json"
     npm ci --prefix="$PREFIX" --omit=dev --no-audit --no-fund --prefer-online --registry=https://registry.npmjs.org || fail "Cài runtime lỗi; chưa restart."
     test -L node_modules || fail "Mất symlink CloudLinux sau cài đặt."
     verify_runtime || fail "Runtime không khớp lockfile; chưa restart."

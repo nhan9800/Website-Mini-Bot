@@ -50,6 +50,30 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/partners": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/partners",
+      "dataRoute": "/partners.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/dashboard": {
       "experimentalBypassFor": [
         {
@@ -98,7 +122,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/partners": {
+    "/status": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -111,8 +135,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/partners",
-      "dataRoute": "/partners.rsc",
+      "srcRoute": "/status",
+      "dataRoute": "/status.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -137,30 +161,6 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/pricing",
       "dataRoute": "/pricing.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/status": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/status",
-      "dataRoute": "/status.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -270,8 +270,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "b9e7b218120a880a2261e4184cfaf603",
-    "previewModeSigningKey": "43808eef1661da90ff279f326354654d2b1b5970f1d3950aadd633717fd10a7c",
-    "previewModeEncryptionKey": "f9b4a7d2e5ee3fd5cf412f087b9ad796064aee6a453233011328bcb0521b2526"
+    "previewModeId": "d2d247bb3ca64870e42b37d857269fb0",
+    "previewModeSigningKey": "8dbfa15a53154af65d552a67cc69380fd87dc75d50ee19a5ef05b8611300683a",
+    "previewModeEncryptionKey": "88ad7e57c470e6dc85ceb959468344aa9686f76d72ee66b45cb516dc9bf566d6"
   }
 }

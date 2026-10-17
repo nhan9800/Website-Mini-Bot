@@ -128,6 +128,27 @@ test('CloudLinux giữ thư mục node_modules vật lý và từ chối symlink
   assert.equal(fs.existsSync(f.npmLog), false);
 });
 
+test('CloudLinux chấp nhận manifest và lockfile tại prefix cùng trỏ tới file của ứng dụng', { skip: !hasBash }, t => {
+  const f = fixture(t);
+  for (const name of ['package.json', 'package-lock.json']) {
+    fs.linkSync(path.join(f.app, name), path.join(path.dirname(f.modules), name));
+  }
+  const result = f.install();
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(f.git(f.app, 'diff', '--stat'), '');
+  assert.equal(fs.readFileSync(f.npmLog, 'utf8'), 'ci\n');
+});
+
+test('CloudLinux không chạy npm khi một lượt cài runtime khác giữ khóa', { skip: !hasBash }, t => {
+  const f = fixture(t);
+  const lock = path.join(f.home, '.mimi-runtime-website-mini-bot.lock');
+  fs.mkdirSync(lock);
+  assert.equal(f.install().status, 1);
+  assert.equal(fs.existsSync(f.npmLog), false);
+  assert.ok(fs.existsSync(lock));
+  assert.equal(f.git(f.app, 'diff', '--stat'), '');
+});
+
 test('Cron migration chạy trước khi thay artifact và giữ cấu hình/dữ liệu runtime', { skip: !hasBash }, t => {
   const f = fixture(t);
   const oldConfig = fs.readFileSync(path.join(f.app, '.env.local'), 'utf8');
