@@ -5,9 +5,9 @@ const { spawnSync } = require('node:child_process');
 const test = require('node:test');
 const catalog = require('../src/lib/commands-fallback.json');
 
-test('Danh mục dự phòng có tên và tùy chọn lệnh thật của Mimi 1.3.0', () => {
-  assert.equal(catalog.length, 92);
-  assert.equal(new Set(catalog.map(command => command.name)).size, 92);
+test('Danh mục dự phòng có tên và tùy chọn lệnh thật của Mimi 1.4.0', () => {
+  assert.equal(catalog.length, 99);
+  assert.equal(new Set(catalog.map(command => command.name)).size, 99);
   for (const name of ['play', 'queue', 'leave', 'setupverify', 'setupemoji', 'addemoji', 'help']) {
     assert.ok(catalog.some(command => command.name === name), `Có /${name}`);
   }

@@ -32,13 +32,19 @@
   },
   {
     "name": "addnutticket",
-    "description": "Gửi bảng tạo Ticket với tối đa 3 nút bấm tuỳ chỉnh (Màu sắc, Loại nút, Hình ảnh)",
+    "description": "Tạo panel Ticket mới hoặc thêm tối đa 5 nút vào panel theo ID tin nhắn",
     "options": [
       {
         "name": "kênh_gửi",
         "description": "Kênh hiển thị bảng Ticket",
         "type": 7,
         "required": true
+      },
+      {
+        "name": "tin_nhan_id",
+        "description": "ID tin nhắn Ticket của Mimi cần thêm nút (bỏ trống để tạo tin mới)",
+        "type": 3,
+        "required": false
       },
       {
         "name": "tiêu_đề",
@@ -133,6 +139,48 @@
       {
         "name": "nút3_link",
         "description": "Link URL của nút 3",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_loại",
+        "description": "Loại chức năng của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_tên",
+        "description": "Tên hiển thị của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_màu",
+        "description": "Màu của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_link",
+        "description": "Link URL của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút5_loại",
+        "description": "Loại chức năng của nút 5",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút5_tên",
+        "description": "Tên hiển thị của nút 5",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút5_link",
+        "description": "Link URL của nút 5",
         "type": 3,
         "required": false
       }
@@ -309,6 +357,49 @@
     "defaultMemberPermissions": "8"
   },
   {
+    "name": "boostsetup",
+    "description": "Bật/Tắt, chọn kênh và tùy chỉnh cảm ơn Boost",
+    "options": [
+      {
+        "name": "bat",
+        "description": "Bật hoặc tắt; để trống để xem cấu hình",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Kênh cảm ơn Boost",
+        "type": 7,
+        "required": false
+      },
+      {
+        "name": "tin_nhan",
+        "description": "Tin nhắn ngoài khung; {user}, {server}, {boosts}",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "noi_dung",
+        "description": "Nội dung khung cảm ơn; dùng \\n để xuống dòng",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_nho",
+        "description": "URL HTTPS ảnh nhỏ; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_lon",
+        "description": "URL HTTPS banner; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
     "name": "broadcast",
     "description": "Mở bảng tương tác thiết kế thông báo liên server (Components V2)",
     "options": [],
@@ -412,26 +503,38 @@
   },
   {
     "name": "confess",
-    "description": "Gửi lời thổ lộ / tâm sự ẩn danh vào kênh Confessions của server",
+    "description": "Gửi tâm sự công khai hoặc ẩn danh vào kênh Confession",
     "options": [
       {
         "name": "nội_dung",
-        "description": "Nội dung muốn gửi ẩn danh",
+        "description": "Nội dung muốn chia sẻ",
         "type": 3,
         "required": true
+      },
+      {
+        "name": "che_do",
+        "description": "Cách đăng; mặc định ẩn danh",
+        "type": 3,
+        "required": false
       }
     ],
     "defaultMemberPermissions": null
   },
   {
     "name": "confession",
-    "description": "Gửi một confession ẩn danh",
+    "description": "Gửi một confession công khai hoặc ẩn danh",
     "options": [
       {
         "name": "nội_dung",
         "description": "Nội dung confession",
         "type": 3,
         "required": true
+      },
+      {
+        "name": "che_do",
+        "description": "Cách đăng; mặc định ẩn danh",
+        "type": 3,
+        "required": false
       }
     ],
     "defaultMemberPermissions": null
@@ -593,6 +696,49 @@
     "defaultMemberPermissions": "32"
   },
   {
+    "name": "goodbye",
+    "description": "Bật/Tắt, chọn kênh và tùy chỉnh lời tạm biệt như Welcome",
+    "options": [
+      {
+        "name": "bat",
+        "description": "Bật hoặc tắt; để trống để xem cấu hình",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Kênh tạm biệt",
+        "type": 7,
+        "required": false
+      },
+      {
+        "name": "tin_nhan",
+        "description": "Tin nhắn ngoài khung; {user}, {username}, {server}",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "noi_dung",
+        "description": "Nội dung tạm biệt; {count} là số thành viên còn lại",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_nho",
+        "description": "URL HTTPS ảnh nhỏ; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_lon",
+        "description": "URL HTTPS banner; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
     "name": "gopy",
     "description": "Gửi góp ý về kênh góp ý của server",
     "options": [
@@ -622,6 +768,56 @@
     "description": "Tạo link mời vĩnh viễn cho server này",
     "options": [],
     "defaultMemberPermissions": "1"
+  },
+  {
+    "name": "invites",
+    "description": "Kiểm tra thành viên tham gia qua lời mời",
+    "options": [
+      {
+        "name": "nguoi_moi",
+        "description": "Danh sách thành viên được một người mời vào",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "thanh_vien",
+        "description": "Kiểm tra nguồn tham gia của một thành viên",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "event",
+        "description": "Xem top hoặc số người mời trong event hiện tại",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "reset",
+        "description": "Quản trị: reset số liệu event, giữ lịch sử lời mời",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "invitesetup",
+    "description": "Bật/tắt thông báo người mời và số thứ tự trong event",
+    "options": [
+      {
+        "name": "bat",
+        "description": "Bật/tắt đếm và thông báo; bỏ trống xem cấu hình",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Kênh thông báo lời mời",
+        "type": 7,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
   },
   {
     "name": "join",
@@ -688,8 +884,21 @@
   },
   {
     "name": "leaderboard",
-    "description": "Bảng xếp hạng cấp độ chat trong server này",
-    "options": [],
+    "description": "Top 10 cấp độ Chat hoặc Voice của máy chủ",
+    "options": [
+      {
+        "name": "loai",
+        "description": "Chọn bảng xếp hạng",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ky",
+        "description": "Kỳ xếp hạng",
+        "type": 3,
+        "required": false
+      }
+    ],
     "defaultMemberPermissions": null
   },
   {
@@ -700,12 +909,18 @@
   },
   {
     "name": "level",
-    "description": "Xem cấp độ & EXP chat của bạn hoặc người khác trong server",
+    "description": "Xem cấp độ Chat hoặc Voice riêng trong máy chủ",
     "options": [
       {
         "name": "nguoi_dung",
         "description": "Người dùng cần xem (để trống = xem của bạn)",
         "type": 6,
+        "required": false
+      },
+      {
+        "name": "loai",
+        "description": "Chọn bảng cấp độ",
+        "type": 3,
         "required": false
       }
     ],
@@ -713,7 +928,7 @@
   },
   {
     "name": "levelsetup",
-    "description": "Cấu hình hệ thống Level chat cho server",
+    "description": "Cấu hình Level Chat và Voice độc lập trong máy chủ",
     "options": [
       {
         "name": "toggle",
@@ -730,6 +945,30 @@
       {
         "name": "multiplier",
         "description": "Nhân EXP nhận được",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "voice",
+        "description": "Bật/Tắt Level treo Voice, không tính bot hoặc AFK",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "voicekenh",
+        "description": "Chọn kênh thông báo lên cấp Voice; bỏ trống để tắt",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "voicemultiplier",
+        "description": "Hệ số EXP Voice riêng",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "thang",
+        "description": "Bật top tháng, tự tạo và chuyển 3 role Chat hoặc Voice",
         "type": 1,
         "required": false
       }
@@ -1216,6 +1455,19 @@
     "defaultMemberPermissions": "32"
   },
   {
+    "name": "setupconfession",
+    "description": "Chọn kênh và làm mới Trạm sẻ chia",
+    "options": [
+      {
+        "name": "kenh",
+        "description": "Kênh confession; để trống dùng kênh đã chọn",
+        "type": 7,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
     "name": "setupdoctin",
     "description": "Thiết lập kênh đọc tin nhắn bằng giọng nói TTS (Tách biệt /setup)",
     "options": [
@@ -1424,6 +1676,31 @@
     "defaultMemberPermissions": "32"
   },
   {
+    "name": "ticketroles",
+    "description": "Cấu hình 3 vai trò BQT được tag khi mở hoặc Hủy nhận ticket",
+    "options": [
+      {
+        "name": "cauhinh",
+        "description": "Chọn 3 vai trò BQT",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "tudong",
+        "description": "Dùng lại 3 vai trò quản trị cao nhất",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "xem",
+        "description": "Xem vai trò đang được tag",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
     "name": "timdo",
     "description": "Khai quật và tìm kiếm đồ cổ quý hiếm",
     "options": [],
@@ -1437,6 +1714,25 @@
         "name": "so_lan",
         "description": "Số lần muốn tìm (1 đến 30 lần, mặc định: 10)",
         "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "toplv",
+    "description": "Kiểm tra top level trong máy chủ",
+    "options": [
+      {
+        "name": "loai",
+        "description": "Chọn bảng xếp hạng",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ky",
+        "description": "Kỳ xếp hạng",
+        "type": 3,
         "required": false
       }
     ],
