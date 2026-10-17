@@ -7,6 +7,7 @@
 // server.cjs là bản sao y hệt, để dù cPanel đang trỏ vào tên nào cũng chạy được.
 const { createServer } = require('node:http');
 const next = require('next');
+const { clearRouteCache } = require('./scripts/clear-route-cache.cjs');
 
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
 const hostname = process.env.HOST ?? '0.0.0.0';
@@ -15,8 +16,13 @@ const isDev = process.env.NODE_ENV === 'development';
 const app = next({ dev: isDev, hostname, port });
 const handle = app.getRequestHandler();
 
-app
-  .prepare()
+Promise.resolve()
+  .then(() => {
+    if (!isDev && clearRouteCache(__dirname)) {
+      console.log('[Mimi Web] Đã bỏ cache trang cũ; nạp HTML/RSC từ bản dựng hiện tại.');
+    }
+    return app.prepare();
+  })
   .then(() => {
     const server = createServer((req, res) => {
       handle(req, res).catch((err) => {
