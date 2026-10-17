@@ -9,17 +9,21 @@ for (const entry of ['server.cjs', 'server.js']) {
     const privateMessage = 'ECONNREFUSED internal-host:1234 /private/app/config';
     let handleRequest;
     const logged = [];
+    const startup = [];
     const code = fs.readFileSync(path.join(__dirname, '..', entry), 'utf8');
     vm.runInNewContext(code, {
+      __dirname: path.join(__dirname, '..'),
       process: { env: {}, exit: () => assert.fail('Không được thoát server') },
       console: { log() {}, error: (...args) => logged.push(args) },
       require(name) {
         if (name === 'node:http') return { createServer(handler) { handleRequest = handler; return { listen() {} }; } };
-        if (name === 'next') return () => ({ prepare: async () => {}, getRequestHandler: () => async () => { throw new Error(privateMessage); } });
+        if (name === './scripts/clear-route-cache.cjs') return { clearRouteCache() { startup.push('clear'); return true; } };
+        if (name === 'next') return () => ({ prepare: async () => { startup.push('prepare'); }, getRequestHandler: () => async () => { throw new Error(privateMessage); } });
         throw new Error(`Thiếu mock: ${name}`);
       },
     }, { filename: entry });
-    await Promise.resolve();
+    await new Promise(setImmediate);
+    assert.deepEqual(startup, ['clear', 'prepare']);
     const response = { headers: {}, setHeader(name, value) { this.headers[name] = value; }, end(body) { this.body = body; } };
     handleRequest({}, response);
     await Promise.resolve();

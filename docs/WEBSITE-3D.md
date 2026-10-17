@@ -30,3 +30,11 @@ Chạy typecheck/lint/test/build/audit. Xem desktop/mobile, sáng/tối, giảm 
 Lighthouse mobile local (CPU/network mô phỏng): performance 80, accessibility 96, best practices 96, SEO 100, TBT 20ms, CLS 0.001, LCP 4.5s. Lượt đầu performance 61/TBT 530ms/LCP 6.1s. Đã giảm ảnh chart 400px xuống 96px, poster mobile 33.8KB và chỉ tải 3D khi tương tác trên điện thoại; desktop tự tải. Cảnh báo tương phản cuối ở chữ nhãn logo đã sửa gray500 thành gray400 sau lượt audit. Console lỗi local là OAuth chưa cấu hình, không dùng tài khoản thật để kiểm. Đây không phải Core Web Vitals của người dùng production; chưa đạt mục tiêu LCP 2.5s trong lab mobile.
 
 Bổ sung theo yêu cầu chuyển động: chọn một model chủ động bật animation; lựa chọn của người xem được giữ trong phiên component, không bị thay bởi sự kiện hệ thống sau khi đã chọn. Wave/Dance crossfade 0,3 giây, có trạng thái đang nhảy/vẫy/quay và hướng dẫn khi giảm chuyển động. Test hành vi component kiểm mobile poster, click model/animation/pause và dừng khi khuất màn hình.
+
+## Cache khi triển khai trên cPanel
+
+Kiểm tra live phát hiện `/api/version` đã mới nhưng trang chủ vẫn cũ: `.next/server/route-cache` không được Git quản lý, khóa cache chỉ chứa route nên tồn tại qua fast-forward. File cache trang chủ 73.763 byte khớp hoàn toàn HTML công khai cũ, trong khi seed mới có `experience-stage`. Restart đơn thuần vẫn đọc lại cache đĩa này.
+
+Hai startup Passenger xóa riêng response cache này trước `Next.prepare()`, kiểm BUILD_ID và từ chối đường dẫn symlink/ngoài app. Không đụng fetch cache, build seed, cấu hình hoặc kho đánh giá. Test dùng FileSystemCache thật của Next để tái hiện stale HTML/RSC rồi xác nhận đọc seed mới sau reset; thêm kiểm tra symlink và thứ tự startup. Đây vẫn là triển khai Git tại chỗ, không phải thay thế ứng dụng nguyên tử.
+
+Sau bản sửa cache: full suite 34/34 đạt, typecheck/lint/build đạt; chạy production qua `server.cjs` trả HTTP200 và có scene mới. Audit production vẫn 0, đầy đủ 7 high + 2 moderate trong công cụ dev. Kết quả live và commit cuối được ghi riêng trong checkpoint/receipt sau khi hosting nạp.
