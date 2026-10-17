@@ -44,12 +44,12 @@ export function Header() {
         <div className="flex h-20 items-center justify-between gap-5">
           <div className="flex shrink-0 items-center gap-3">
             <ThemeToggle />
-            <Link href="/" className="flex items-center gap-3" aria-label="Mimi — trang chủ">
+            <Link href="/" className="flex items-center gap-3" title="Trang chủ Mimi">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.webp" alt="" width={42} height={42} className="rounded-xl border border-white/10" />
               <span className="flex flex-col">
                 <span className="text-xl font-extrabold tracking-tight text-white">Mimi<span className="text-mimi-green">.</span></span>
-                <span className="text-[10px] font-medium tracking-[0.12em] text-gray-500">NHẠC & CỘNG ĐỒNG</span>
+                <span className="text-[10px] font-medium tracking-[0.12em] text-gray-400">NHẠC & CỘNG ĐỒNG</span>
               </span>
             </Link>
             <Link href="/changelog" title="Xem bản cập nhật website" className="hidden rounded-md border border-mimi-green/20 bg-mimi-green/[0.06] px-2 py-1 font-mono text-[10px] text-mimi-green sm:block">
@@ -71,7 +71,7 @@ export function Header() {
               <LayoutDashboard size={16} /> Dashboard
             </Link>
             <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
-              className="hidden items-center gap-2 rounded-lg bg-mimi-green px-4 py-2.5 text-sm font-bold text-[#071510] transition-colors hover:bg-mimi-green-bright sm:inline-flex">
+              className="hidden items-center gap-2 rounded-lg bg-mimi-green px-4 py-2.5 text-sm font-bold text-[var(--accent-text)] transition-colors hover:bg-mimi-green-bright sm:inline-flex">
               Mời Mimi <ArrowUpRight size={16} />
             </a>
             <button ref={menuButton} type="button" onClick={() => setMobileMenuOpen((open) => !open)}
@@ -103,7 +103,7 @@ export function Header() {
               <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm text-gray-400">Mimi Shield</Link>
             </div>
             <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
-              onClick={() => setMobileMenuOpen(false)} className="mt-3 flex items-center justify-between rounded-lg bg-mimi-green px-4 py-3 text-sm font-bold text-[#071510] sm:hidden">
+              onClick={() => setMobileMenuOpen(false)} className="mt-3 flex items-center justify-between rounded-lg bg-mimi-green px-4 py-3 text-sm font-bold text-[var(--accent-text)] sm:hidden">
               Mời Mimi miễn phí <ArrowUpRight size={18} />
             </a>
           </nav>

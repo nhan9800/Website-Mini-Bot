@@ -1,4 +1,8 @@
-# Website MIMI 2.5.0
+# Website MIMI 2.6.0
+
+## Không gian 3D 2.6.0
+
+Robot có animation từ bộ ví dụ Three.js, đĩa nhạc và tai nghe GLB được đóng gói local. Có chọn model, kéo xoay, pause và Wave/Dance. Khi giảm chuyển động, cảnh giữ trạng thái tĩnh; rời màn hình hoặc đổi tab thì dừng vòng lặp. Thiết bị không có WebGL 2 dùng ảnh minh họa. Nguồn/license và quyết định thiết kế: [docs/WEBSITE-3D.md](docs/WEBSITE-3D.md), [public/models/sources.json](public/models/sources.json). Không thay route, OAuth, khóa dashboard, dữ liệu review hay thanh toán Mimi Shield.
 
 ## Môi trường
 
@@ -38,7 +42,7 @@ Trang Lệnh dùng danh mục trực tiếp khi API trả dữ liệu; khi chưa
 ## Hosting cPanel
 
 Pull request chạy workflow **Kiểm tra và đóng gói website** để tạo gói Linux
-`mimi-website-2.5.0.tar.gz` và checksum, sau typecheck/lint/test/build,
+`mimi-website-2.6.0.tar.gz` và checksum, sau typecheck/lint/test/build,
 audit dependency production và kiểm tra khởi động khi đã bỏ dependency build.
 Gói không chứa dependency đã cài, cache build, cấu hình riêng hoặc dữ liệu đánh giá.
 Workflow này chỉ tạo artifact để kiểm tra; không đẩy nhánh `deploy` hoặc restart host.

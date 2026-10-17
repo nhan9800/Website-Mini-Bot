@@ -13,9 +13,9 @@ const config: Config = {
         surface: "var(--surface)",
         border: "var(--border)",
         mimi: {
-          green: "#2ECC71",
-          "green-bright": "#3EE586",
-          "green-hover": "#27AE60",
+          green: "rgb(var(--accent-rgb) / <alpha-value>)",
+          "green-bright": "var(--accent-hover)",
+          "green-hover": "var(--accent-hover)",
           purple: "#8B5CF6",
           violet: "#A78BFA",
           cyan: "#22D3EE",

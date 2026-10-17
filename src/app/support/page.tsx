@@ -73,7 +73,7 @@ export default function SupportPage() {
     <div className="min-h-screen py-12">
       <div className="mx-auto max-w-5xl space-y-14 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="max-w-3xl space-y-4">
+        <div className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <LifeBuoy className="h-3.5 w-3.5" />
             <span>Trung tâm hỗ trợ</span>

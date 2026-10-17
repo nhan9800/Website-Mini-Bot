@@ -1,53 +1,9 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Reveal } from '@/components/ui/reveal';
 import { ShieldCheck, UserCheck, Crown, Code2 } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
-import { useFrame } from '@react-three/fiber';
-import { SafeCanvas } from '@/components/three/safe-canvas';
-import { Sphere, MeshDistortMaterial, OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
-
-function AnimatedCyberSphere() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += delta * 0.2;
-      meshRef.current.rotation.y += delta * 0.3;
-    }
-  });
-
-  return (
-    <Sphere ref={meshRef} args={[1, 64, 64]} scale={1.8}>
-      <MeshDistortMaterial
-        color="#00f2fe"
-        attach="material"
-        distort={0.4}
-        speed={2.5}
-        roughness={0.2}
-        metalness={0.8}
-        emissive="#00f2fe"
-        emissiveIntensity={0.6}
-        wireframe={true}
-      />
-    </Sphere>
-  );
-}
-
-function Dev3DBackground() {
-  return (
-    <div className="absolute right-0 top-0 h-full w-full sm:w-1/2 opacity-70 z-0 pointer-events-none mix-blend-screen overflow-hidden rounded-[2rem] mask-image-fade">
-      <SafeCanvas camera={{ position: [0, 0, 4], fov: 45 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 10]} intensity={1} color="#4facfe" />
-        <AnimatedCyberSphere />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
-      </SafeCanvas>
-    </div>
-  );
-}
-
 const STATUS_COLORS: Record<string, string> = {
   online: 'bg-mimi-green',
   idle: 'bg-yellow-400',
@@ -88,7 +44,7 @@ export function TeamSection() {
   return (
     <section id="doi-ngu" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <Reveal className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
+        <Reveal className="section-heading space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/40 bg-mimi-green/10 px-3.5 py-1 text-xs font-bold text-mimi-green shadow-[0_0_15px_rgba(46,204,113,0.25)]">
             <ShieldCheck className="h-4 w-4" />
             <span>Nhận diện tự động qua Role Discord</span>
@@ -144,10 +100,10 @@ export function TeamSection() {
                   className={`${vipClass} ${borderHoverClass} relative group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 overflow-hidden`}
                 >
                   {isFounder ? <div className="vip-card-rgb-glow rounded-[2rem]" /> : <div className="vip-card-cyber-glow rounded-[2rem]" />}
-                  
-                  {/* Chèn mô hình 3D lơ lửng cho Dev */}
-                  {!isFounder && <Dev3DBackground />}
-                  
+
+
+
+
                   <div
                     className="relative z-10 h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
                     style={{
