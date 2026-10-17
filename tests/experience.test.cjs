@@ -41,7 +41,7 @@ test('Robot được Three.js nạp thật, Dance/Wave thay đổi xương và c
   mixer.stopAllAction(); mixer.uncacheRoot(gltf.scene);
 });
 
-test('Mobile giảm chuyển động giữ poster; chọn model chủ động bật animation và pause dừng cảnh', () => {
+test('Model tự chạy trên mobile dù giảm chuyển động; không có công tắc và tự phục hồi khi xem lại', () => {
   const vm = require('node:vm');
   const ts = require('typescript');
   const React = require('react');
@@ -49,19 +49,24 @@ test('Mobile giảm chuyển động giữ poster; chọn model chủ động b�
   const compiled=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText;
   const slots=[]; let cursor=0; const effects=[];
   let observer; const listeners={};
+  const pageDocument={visibilityState:'visible',addEventListener(name,fn){listeners[name]=fn;},removeEventListener(){}};
   const hookReact={...React,useState(initial){const id=cursor++; if(!slots[id])slots[id]={value:initial}; return [slots[id].value,value=>{slots[id].value=value;}];},useRef(initial){const id=cursor++; return slots[id]??(slots[id]={current:initial});},useCallback(fn){return fn;},useEffect(fn){const id=cursor++; if(!slots[id]){slots[id]=true; effects.push(fn);}}};
   const exports={};
-  vm.runInNewContext(compiled,{exports,require(name){if(name==='react')return hookReact;if(name==='next/dynamic')return ()=>function Scene(){};if(name==='next/image')return function Image(){};if(name==='lucide-react')return Object.fromEntries(['Disc3','Headphones','Bot','Pause','Play','Hand','Music2'].map(name=>[name,function Icon(){}]));throw Error(name);},window:{matchMedia(query){return {matches:query.includes('reduce'),addEventListener(){},removeEventListener(){}};}},document:{visibilityState:'visible',addEventListener(name,fn){listeners[name]=fn;},removeEventListener(){}},IntersectionObserver:class{constructor(fn){observer=fn;}observe(){}disconnect(){}}});
+  vm.runInNewContext(compiled,{exports,require(name){if(name==='react')return hookReact;if(name==='next/dynamic')return ()=>function Scene(){};if(name==='next/image')return function Image(){};if(name==='lucide-react')return Object.fromEntries(['Disc3','Headphones','Bot','Hand','Music2'].map(name=>[name,function Icon(){}]));throw Error(name);},window:{matchMedia(query){return {matches:query.includes('reduce'),addEventListener(){},removeEventListener(){}};}},document:pageDocument,IntersectionObserver:class{constructor(fn){observer=fn;}observe(){}disconnect(){}}});
   function render(){cursor=0;return exports.ExperienceStage();}
   function all(node){return !node||typeof node!=='object'?[]:[node,...React.Children.toArray(node.props?.children).flatMap(all)];}
   function button(tree,label){return all(tree).find(node=>node.type==='button'&&(node.props['aria-label']===label||React.Children.toArray(node.props.children).some(child=>child?.props?.children===label)));}
   let tree=render(); effects.forEach(fn=>fn()); observer([{isIntersecting:true}]); tree=render();
-  assert.equal(all(tree).filter(node=>node.type?.name==='Scene').length,0);
-  assert.equal(button(tree,'Khám phá 3D có chuyển động').props['aria-pressed'],false);
+  assert.equal(all(tree).filter(node=>node.type?.name==='Scene').length,1);
+  assert.equal(all(tree).find(node=>node.type?.name==='Scene').props.playing,true,'Tự chạy trước mọi click');
+  assert.equal(all(tree).filter(node=>node.type==='button'&&/Tạm dừng|Bật chuyển động|Khám phá/.test(node.props['aria-label']||'')).length,0);
   button(tree,'Tai nghe').props.onClick(); tree=render();
   let scene=all(tree).find(node=>node.type?.name==='Scene'); assert.equal(scene.props.model,'headphones'); assert.equal(scene.props.playing,true);
-  button(tree,'Tạm dừng chuyển động 3D').props.onClick(); tree=render(); scene=all(tree).find(node=>node.type?.name==='Scene'); assert.equal(scene.props.playing,false);
+  button(tree,'Đĩa nhạc').props.onClick(); tree=render(); scene=all(tree).find(node=>node.type?.name==='Scene'); assert.equal(scene.props.model,'vinyl'); assert.equal(scene.props.playing,true);
   button(tree,'Mimi robot').props.onClick(); tree=render(); button(tree,'Chào Mimi, cho robot vẫy tay').props.onClick(); tree=render();
   scene=all(tree).find(node=>node.type?.name==='Scene'); assert.equal(scene.props.motion,'Wave'); assert.equal(scene.props.playing,true);
   observer([{isIntersecting:false}]); tree=render(); assert.equal(all(tree).find(node=>node.type?.name==='Scene').props.playing,false);
+  observer([{isIntersecting:true}]); tree=render(); assert.equal(all(tree).find(node=>node.type?.name==='Scene').props.playing,true);
+  pageDocument.visibilityState='hidden'; listeners.visibilitychange(); tree=render(); assert.equal(all(tree).find(node=>node.type?.name==='Scene').props.playing,false);
+  pageDocument.visibilityState='visible'; listeners.visibilitychange(); tree=render(); assert.equal(all(tree).find(node=>node.type?.name==='Scene').props.playing,true);
 });
