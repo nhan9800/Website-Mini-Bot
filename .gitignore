@@ -37,3 +37,7 @@ next-env.d.ts
 
 # Dữ liệu đánh giá cộng đồng, giữ riêng ngoài bản build.
 /data/
+
+# Passenger runtime, không phải mã nguồn cần triển khai.
+/tmp/
+/stderr.log

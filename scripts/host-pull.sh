@@ -45,6 +45,8 @@ git cat-file -e "$REMOTE:.next/BUILD_ID" 2>/dev/null || fail "Bản dựng thi�
 BUILD_ID="$(git show "$REMOTE:.next/BUILD_ID")" || fail "Không đọc được BUILD_ID."
 [[ "$BUILD_ID" =~ ^[A-Za-z0-9_-]+$ ]] || fail "BUILD_ID không hợp lệ."
 git cat-file -e "$REMOTE:scripts/migrate-feedback.cjs" 2>/dev/null || fail "Bản dựng thiếu công cụ bảo toàn đánh giá."
+git cat-file -e "$REMOTE:scripts/install-runtime.sh" 2>/dev/null || fail "Bản dựng thiếu công cụ cài runtime CloudLinux."
+git cat-file -e "$REMOTE:package-lock.json" 2>/dev/null || fail "Bản dựng thiếu lockfile."
 # Các đường dẫn này phải luôn ở ngoài Git; từ chối artifact có thể ghi đè chúng.
 ARTIFACT_PATHS="$(git ls-tree -r --name-only "$REMOTE")" || fail "Không đọc được danh sách file artifact."
 RUNTIME_PATHS="$(printf '%s\n' "$ARTIFACT_PATHS" | awk '$0 == ".env" || ($0 ~ /^\.env\./ && $0 != ".env.example") || $0 ~ /^(data|tmp|node_modules)(\/|$)/ || $0 == ".next/mimi_feedback_store.json"')"
@@ -85,7 +87,7 @@ if ! git merge --ff-only --quiet "$REMOTE"; then
 fi
 # Nếu bước này lỗi, checkpoint cho cron thử lại đúng bản dựng. Không tự rollback
 # hay restart một bộ thư viện chưa cài xong; lưu ý đây không phải triển khai atomic.
-npm ci --omit=dev --no-audit --no-fund || fail "Cài thư viện lỗi; chưa yêu cầu restart. Checkpoint được giữ để thử lại."
+bash scripts/install-runtime.sh || fail "Cài thư viện lỗi; chưa yêu cầu restart. Checkpoint được giữ để thử lại."
 touch "$APP/tmp/restart.txt" || fail "Không tạo được yêu cầu Passenger restart."
 rm -f -- "$PENDING_FILE"
 echo "[$(date -u +%FT%TZ)] Đã yêu cầu Passenger nạp bản dựng $BUILD_ID @ ${REMOTE:0:7}. Cần kiểm tra /api/version và các trang sau triển khai."

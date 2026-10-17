@@ -8,16 +8,5 @@ deployment:
     - >-
       test -f "$(pwd)/.next/BUILD_ID" ||
       { echo "HUY DEPLOY: thieu .next/BUILD_ID - phai checkout nhanh deploy"; exit 1; }
-    - >-
-      APP="$(pwd)"; APPNAME="$(basename "$APP")"; VENV="";
-      for CANDIDATE in "$HOME"/nodevenv/"$APPNAME"/*/bin/activate; do
-        test -f "$CANDIDATE" || continue;
-        if ( . "$CANDIDATE" && node -e "const [major,minor]=process.versions.node.split('.').map(Number); if(major<22||(major===22&&minor<12)) process.exit(1)" ); then
-          VENV="$CANDIDATE"; break;
-        fi;
-      done;
-      test -n "$VENV" || { echo "HUY DEPLOY: can nodevenv Node >=22.12.0 cho $APPNAME"; exit 1; };
-      . "$VENV" && cd "$APP" &&
-      npm ci --omit=dev --no-audit --no-fund &&
-      node scripts/migrate-feedback.cjs
+    - bash scripts/install-runtime.sh
     - mkdir -p "$(pwd)/tmp" && touch "$(pwd)/tmp/restart.txt" && echo "DEPLOY XONG"

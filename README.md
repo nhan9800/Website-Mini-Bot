@@ -2,7 +2,7 @@
 
 ## Môi trường
 
-Yêu cầu Node.js **22.12.0 trở lên** ở máy phát triển, CI và nodevenv hosting. Bản này dùng Next.js 15.5.27, React 19.3, React Three Fiber 9 và Drei 10 theo [hướng dẫn App Router của Next.js 15](https://nextjs.org/docs/app/guides/upgrading/version-15). Giữ giao diện và tính năng hiện có; tham số route được chuyển sang API bất đồng bộ của Next.js 15. Chưa triển khai lên hosting.
+Yêu cầu Node.js **22.12.0 trở lên** ở máy phát triển, CI và nodevenv hosting. Bản này dùng Next.js 15.5.27, React 19.3, React Three Fiber 9 và Drei 10 theo [hướng dẫn App Router của Next.js 15](https://nextjs.org/docs/app/guides/upgrading/version-15). Giữ giao diện và tính năng hiện có; tham số route được chuyển sang API bất đồng bộ của Next.js 15. Website 2.5.0 đã triển khai ngày 17/10/2026; `/api/version` xác nhận source `271a357`, build run 82. cPanel Passenger đã chuyển sang Node 22.23.0.
 
 Đợt 02/10/2026 làm mới header/footer, trang chủ, nhật ký cập nhật và hướng dẫn cộng đồng; hỗ trợ giao diện sáng/tối, giảm chuyển động và phân biệt rõ Mimi Bot miễn phí với Mimi Shield trả phí. `src/lib/release-info.ts` là nguồn phiên bản/ngày phát hành chung; `package.json`, header, nhật ký và `/api/version` phải đồng bộ. API phiên bản vẫn trả metadata commit bản dựng thật để kiểm chứng deploy.
 
@@ -33,7 +33,7 @@ npm run build
 
 Các bài kiểm tra API chạy với mock ngoại tuyến, không gọi bot, OAuth hoặc gửi đánh giá thật. Build bắt buộc vượt qua TypeScript và ESLint. Quy trình triển khai và khởi động lại hosting là bước vận hành riêng.
 
-Trang Lệnh dùng danh mục trực tiếp khi API trả dữ liệu; khi chưa tải được API, trang ghi rõ bản chụp từ mã nguồn. Đợt này snapshot **92 lệnh** được dựng từ mã Mimi local 1.4.0; đây không phải bằng chứng mã bot đã deploy. Sau khi đổi đăng ký slash command trong bot, chạy từ thư mục website: `node scripts/snapshot-commands.cjs ../D-n-MimiBot` rồi kiểm tra bằng `node scripts/snapshot-commands.cjs ../D-n-MimiBot --check`. Thay đường dẫn nếu kho bot ở nơi khác và cài dependencies của bot trước. Script chỉ thực thi riêng khai báo lệnh với builder thật của Discord.js; không chạy entrypoint, đăng nhập hoặc gọi Discord.
+Trang Lệnh dùng danh mục trực tiếp khi API trả dữ liệu; khi chưa tải được API, trang ghi rõ bản chụp từ mã nguồn. Đợt này snapshot **99 lệnh** được dựng từ mã Mimi local 1.4.0; đây không phải bằng chứng mã bot đã deploy. Sau khi đổi đăng ký slash command trong bot, chạy từ thư mục website: `node scripts/snapshot-commands.cjs ../D-n-MimiBot` rồi kiểm tra bằng `node scripts/snapshot-commands.cjs ../D-n-MimiBot --check`. Thay đường dẫn nếu kho bot ở nơi khác và cài dependencies của bot trước. Script chỉ thực thi riêng khai báo lệnh với builder thật của Discord.js; không chạy entrypoint, đăng nhập hoặc gọi Discord.
 
 ## Hosting cPanel
 
@@ -53,7 +53,11 @@ cảnh báo này sau khi tách công cụ build. Báo cáo đầy đủ được
 cảnh báo build vẫn còn, không được coi là đã vá. CI dùng mẫu glob từ source repo,
 không nhận mẫu glob từ request người dùng; cập nhật công cụ khi upstream có bản vá.
 
-Workflow dùng Node.js 22 và dựng artifact trên GitHub Actions. Hosting phải chọn nodevenv Node.js 22.12+ trước khi cập nhật; `.cpanel.yml` từ chối runtime cũ, chạy `npm ci` và migration trước khi yêu cầu Passenger khởi động lại. Không build trên host giới hạn RAM.
+Workflow dùng Node.js 22 và dựng artifact trên GitHub Actions. Hosting phải chọn nodevenv Node.js 22.12+ trước khi cập nhật; `.cpanel.yml` chạy `scripts/install-runtime.sh` và migration trước khi yêu cầu Passenger khởi động lại. Không build trên host giới hạn RAM.
+
+CloudLinux bọc lệnh npm và đổi prefix sang `nodevenv/<app>/<major>/lib`; wrapper chỉ tự chép manifest. `install-runtime.sh` chép cả lockfile vào prefix trước `npm ci --omit=dev`, giữ symlink `node_modules` và xác minh phiên bản dependency trực tiếp theo lockfile. Script không đổi manifest/lockfile trong checkout, không dùng `--force` hoặc `--legacy-peer-deps`. Nếu hash lockfile và runtime đã khớp, giữ nguyên dependencies để tránh cài lại khi chỉ sửa giao diện. Folder vật lý hoặc symlink sai Node bị từ chối, không tự xoá hay thay đích. `tmp/` và `stderr.log` được Git bỏ qua vì thuộc Passenger.
+
+Ngày 17/10/2026, audit production không có cảnh báo; audit đầy đủ còn 7 high và 2 moderate ở cây công cụ phát triển. Kho legacy trên host được sao lưu nguyên trạng (SHA-256 `66076977dc0ebe8a064d67b7b3c4326c01ad3b6742c7601c3425dfa542272e73`) và migrate sang `data/`; API xác nhận 19 đánh giá thật. Không khôi phục seed ID 1–4 hoặc cờ verified do client cũ tự khai.
 
 Giữ `.env.local`, `data/` và kho `MIMI_FEEDBACK_STORE` ngoài artifact. Trước lần cập nhật đầu tiên từ bản cũ, sao lưu rồi chạy migration khi `.next` cũ còn nguyên. Task cPanel sau pull chỉ chuyển được kho cũ nếu file `.next/mimi_feedback_store.json` vẫn còn; task đó không thể phục hồi file đã bị xoá hoặc bị deployment ghi đè.
 
