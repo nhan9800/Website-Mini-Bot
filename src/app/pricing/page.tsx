@@ -1,27 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   Shield,
+  Music,
   Sparkles,
   CheckCircle2,
   Zap,
   Bot,
-  Lock,
   Copy,
   Check,
   Search,
   KeyRound,
   QrCode,
-  ArrowRight,
   ExternalLink,
-  Flame,
   Crown,
   X
 } from 'lucide-react';
 import { env } from '@/lib/env';
-import { TiltCard } from '@/components/ui/tilt-card';
 import { StatusModal } from '@/components/ui/status-modal';
 
 interface Plan {
@@ -40,22 +37,22 @@ interface Plan {
 const plans: Plan[] = [
   {
     id: '1m',
-    name: 'Gói 1 Tháng (Tiêu Chuẩn)',
+    name: '1 tháng',
     price: 50000,
     priceFormatted: '50.000đ',
     duration: '30 ngày bảo vệ',
     badge: 'TIÊU CHUẨN',
     features: [
-      'Full hệ thống Anti-Raid & Anti-Nuke 0.1s',
+      'Hệ thống Anti-Raid và Anti-Nuke của Mimi Shield',
       'Chống xóa Kênh & Vai Trò hàng loạt',
       'Tự động chặn Bot Lạ & lọc Clone Raid',
-      'Mở khóa toàn diện Hệ Thống Nghe Nhạc HQ',
-      'Cập nhật bản vá bảo mật 2026'
+      'Cấu hình bảo vệ theo nhu cầu máy chủ',
+      'Cập nhật trong thời gian bản quyền'
     ]
   },
   {
     id: '3m',
-    name: 'Gói 3 Tháng (Tiết Kiệm)',
+    name: '3 tháng',
     price: 140000,
     priceFormatted: '140.000đ',
     save: 'Tiết kiệm 10.000đ',
@@ -64,27 +61,27 @@ const plans: Plan[] = [
     popular: true,
     features: [
       'Bao gồm mọi tính năng của Gói 1 Tháng',
-      'Ưu tiên thời gian phản ứng Anti-Nuke 0.05s',
-      'Bảo vệ liên tục 3 tháng không lo gián đoạn',
-      'Hỗ trợ setup & cấu hình riêng cho Server',
-      'Kênh hỗ trợ kỹ thuật ưu tiên 24/7'
+      'Thời hạn bản quyền 90 ngày',
+      'Gia hạn cộng dồn theo máy chủ',
+      'Hướng dẫn setup và cấu hình bảo vệ',
+      'Hỗ trợ qua cộng đồng Discord'
     ]
   },
   {
     id: '12m',
-    name: 'Gói 12 Tháng (VIP Trọn Gói)',
+    name: '12 tháng',
     price: 390000,
     priceFormatted: '390.000đ',
-    save: 'Tiết kiệm 210.000đ (Chỉ ~32k/tháng)',
+    save: 'Tiết kiệm 210.000đ so với 12 gói tháng',
     duration: '365 ngày (1 Năm)',
-    badge: 'SIÊU TIẾT KIỆM',
+    badge: 'DÀI HẠN',
     vip: true,
     features: [
-      'Toàn bộ quyền lợi cao cấp nhất của MIMI',
-      'Huy hiệu Server VIP & Partner độc quyền',
-      'Tùy chỉnh thông báo bản quyền thương hiệu riêng',
-      'Backup & khôi phục cài đặt khi gặp sự cố',
-      'Hỗ trợ trực tiếp từ Lead Developer 24/7'
+      'Bao gồm mọi tính năng của Gói 1 Tháng',
+      'Thời hạn bản quyền 365 ngày',
+      'Gia hạn cộng dồn theo máy chủ',
+      'Hướng dẫn setup và cấu hình bảo vệ',
+      'Hỗ trợ qua cộng đồng Discord'
     ]
   }
 ];
@@ -149,11 +146,15 @@ export default function PricingPage() {
     transferContent
   )}&accountName=DAO%20NGOC%20QUANG`;
 
-  const copyToClipboard = (text: string, keyName: string, label = 'Thông tin') => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(keyName);
-    showModal('success', 'Đã Sao Chép!', `${label} đã được lưu vào khay nhớ tạm: ${text}`, 'ĐÃ COPY');
-    setTimeout(() => setCopiedKey(null), 2000);
+  const copyToClipboard = async (text: string, keyName: string, label = 'Thông tin') => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(keyName);
+      showModal('success', 'Đã Sao Chép!', `${label} đã được lưu vào khay nhớ tạm: ${text}`, 'ĐÃ COPY');
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch {
+      showModal('warning', 'Chưa Sao Chép Được', 'Trình duyệt chưa cho phép truy cập khay nhớ tạm. Bạn có thể chọn và sao chép nội dung hiển thị.', 'KIỂM TRA TRÌNH DUYỆT');
+    }
   };
 
   const handleCheckLicense = async () => {
@@ -171,7 +172,7 @@ export default function PricingPage() {
         showModal(
           'success',
           'Bản Quyền Đang Hoạt Động!',
-          `Máy chủ ${checkId.trim()} đang kích hoạt gói ${data.license.planName}. Còn ${data.license.remainingDays} ngày bảo vệ 24/7.`,
+          `Máy chủ ${checkId.trim()} đang kích hoạt gói ${data.license.planName}. Còn ${data.license.remainingDays} ngày bản quyền Mimi Shield.`,
           'ĐANG BẢO VỆ'
         );
       } else if (data.ok && !data.license?.active) {
@@ -198,7 +199,7 @@ export default function PricingPage() {
       return;
     }
     if (!redeemKey.trim()) {
-      showModal('warning', 'Thiếu Mã License Key', 'Vui lòng nhập mã License Key dạng MIMI-SHIELD-XXXX-XXXX.', 'YÊU CẦU THÔNG TIN');
+      showModal('warning', 'Thiếu Mã License Key', 'Vui lòng nhập mã License Key được đội ngũ Mimi Shield cấp.', 'YÊU CẦU THÔNG TIN');
       return;
     }
 
@@ -314,67 +315,70 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 rounded-full border border-mimi-purple/40 bg-mimi-purple/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-mimi-purple backdrop-blur-md">
-          <Shield className="h-4 w-4 text-mimi-purple" />
-          BẢN QUYỀN MIMI ANTI-RAID SHIELD 2026
+      <div className="space-y-4 max-w-3xl mb-10">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
+          <Shield className="h-4 w-4" />
+          Mimi Shield · Bot anti-raid riêng
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-          Bảng Giá Dịch Vụ <span className="text-gradient-brand">Bảo Vệ Server</span>
+          Bản quyền <span className="text-mimi-green">Mimi Shield</span>
         </h1>
         <p className="text-base sm:text-lg text-gray-400">
-          Kích hoạt dễ dàng theo Server ID (HWID), tự động gia hạn cộng dồn thời gian và bảo vệ toàn diện 24/7.
+          Chọn thời hạn cho bot bảo vệ máy chủ. Các gói dưới đây dành riêng cho Mimi Shield, không áp dụng cho Mimi nhạc và cộng đồng.
         </p>
 
         {/* Quick Invite Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-3 pt-2">
           <a
-            href="https://discord.com/oauth2/authorize?client_id=1539527939723497473&permissions=8&integration_type=0&scope=bot"
+            href={env.NEXT_PUBLIC_SHIELD_BOT_INVITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition-all hover:scale-105"
+            className="btn-primary !px-5 !py-3 !text-sm"
           >
             <Shield className="h-4 w-4" />
-            Mời MIMI SHIELD (Vệ Sĩ Anti-Raid)
+            Mời Mimi Shield
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
           <a
-            href="https://discord.com/oauth2/authorize?client_id=1516603522584416376&permissions=8&integration_type=0&scope=bot"
+            href={env.NEXT_PUBLIC_MIMI_BOT_INVITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-xs transition-all hover:scale-105"
+            className="btn-secondary !px-5 !py-3 !text-sm"
           >
             <Sparkles className="h-4 w-4 text-mimi-green" />
-            Mời MIMI BOT (Nghe Nhạc 100% Free)
+            Mời Mimi miễn phí
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
+      </div>
+
+      <div className="mb-10 rounded-2xl border border-mimi-green/25 bg-mimi-green/[0.035] px-6 py-5">
+        <h2 className="mb-2 flex items-center gap-2 font-bold text-white"><Music className="h-5 w-5 shrink-0 text-mimi-green" /> Mimi nhạc & cộng đồng luôn miễn phí</h2>
+        <p className="max-w-3xl text-sm leading-relaxed text-gray-300">Nghe nhạc, phát 24/7, autoplay, cấp độ và minigame xu không cần key trả phí. Mimi Shield cung cấp công cụ anti-raid riêng; hiệu quả xử lý phụ thuộc cấu hình, quyền Discord và tình trạng kết nối.</p>
       </div>
 
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-4 mb-20 items-stretch overflow-visible">
         {plans.map((p) => {
           return (
-            <TiltCard key={p.id} maxTilt={6} className="h-full rounded-3xl overflow-visible">
+            <div key={p.id} className="h-full rounded-2xl overflow-visible">
               <div
                 className={`relative flex h-full flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
                   p.popular
-                    ? 'border-2 border-mimi-green bg-[#0e1322] shadow-[0_0_40px_rgba(46,204,113,0.2)] md:-translate-y-2'
-                    : p.vip
-                    ? 'border-2 border-yellow-400/80 bg-[#161320] shadow-[0_0_40px_rgba(234,179,8,0.2)]'
-                    : 'border border-white/10 bg-[#0a0c16] hover:border-white/20'
+                    ? 'border-2 border-mimi-green/70 bg-mimi-green/[0.035]'
+                    : 'border border-white/10 bg-white/[0.025] hover:border-white/20'
                 }`}
               >
                 {p.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 rounded-full bg-gradient-to-r from-mimi-green to-mimi-cyan px-4 py-1 text-xs font-black uppercase text-[#05060f] shadow-lg shadow-mimi-green/30 whitespace-nowrap">
-                    🔥 PHỔ BIẾN NHẤT
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-mimi-green px-4 py-1 text-xs font-bold text-[#05060f] whitespace-nowrap">
+                    Phổ biến nhất
                   </div>
                 )}
                 {p.vip && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-1 text-xs font-black uppercase text-black shadow-lg shadow-yellow-500/30 whitespace-nowrap">
-                    👑 VIP TIẾT KIỆM 210K
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full border border-white/20 bg-surface px-4 py-1 text-xs font-bold text-gray-200 whitespace-nowrap">
+                    Tiết kiệm 210.000đ
                   </div>
                 )}
 
@@ -401,17 +405,15 @@ export default function PricingPage() {
                   onClick={() => handleOpenPayment(p)}
                   className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
                     p.popular
-                      ? 'bg-gradient-brand text-[#05060f] shadow-lg shadow-mimi-green/20 hover:scale-[1.02] active:scale-[0.98]'
-                      : p.vip
-                      ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-400/20 hover:scale-[1.02] active:scale-[0.98]'
+                      ? 'bg-mimi-green text-[#05060f] hover:bg-mimi-green/90 active:scale-[0.98]'
                       : 'bg-white/10 text-white hover:bg-white/15 active:scale-[0.98]'
                   }`}
                 >
                   <Zap className="h-4 w-4" />
-                  Mua Gói {p.name.split(' ')[1]}
+                  Chọn gói {p.name}
                 </button>
               </div>
-            </TiltCard>
+            </div>
           );
         })}
       </div>
@@ -421,7 +423,7 @@ export default function PricingPage() {
         {/* Check HWID */}
         <div className="rounded-3xl border border-white/10 bg-[#0a0c16] p-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 rounded-2xl bg-mimi-cyan/10 border border-mimi-cyan/30 text-mimi-cyan">
+            <div className="p-3 rounded-2xl bg-mimi-green/10 border border-mimi-green/30 text-mimi-green">
               <Search className="h-6 w-6" />
             </div>
             <div>
@@ -431,17 +433,19 @@ export default function PricingPage() {
           </div>
 
           <div className="space-y-4">
+            <label htmlFor="shield-check-guild" className="block text-xs font-semibold text-gray-300">ID máy chủ cần tra cứu</label>
             <input
+              id="shield-check-guild"
               type="text"
               value={checkId}
               onChange={(e) => setCheckId(e.target.value)}
-              placeholder="Nhập Server ID (VD: 1539527939723497473)..."
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-mimi-cyan focus:outline-none"
+              placeholder="Nhập Server ID..."
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-mimi-green focus:outline-none"
             />
             <button
               onClick={handleCheckLicense}
               disabled={checkLoading}
-              className="w-full py-3 rounded-xl bg-mimi-cyan/20 border border-mimi-cyan/40 text-mimi-cyan font-bold text-sm hover:bg-mimi-cyan/30 transition-colors"
+              className="w-full py-3 rounded-xl bg-mimi-green/20 border border-mimi-green/40 text-mimi-green font-bold text-sm hover:bg-mimi-green/30 transition-colors"
             >
               {checkLoading ? 'Đang tra cứu...' : '🔍 Tra Cứu Ngay'}
             </button>
@@ -477,34 +481,38 @@ export default function PricingPage() {
         {/* Redeem Key */}
         <div className="rounded-3xl border border-white/10 bg-[#0a0c16] p-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 rounded-2xl bg-mimi-purple/10 border border-mimi-purple/30 text-mimi-purple">
+            <div className="p-3 rounded-2xl bg-mimi-green/10 border border-mimi-green/30 text-mimi-green">
               <KeyRound className="h-6 w-6" />
             </div>
             <div>
               <h3 className="text-xl font-bold text-white">Kích Hoạt License Key</h3>
-              <p className="text-xs text-gray-400">Nhập mã Key dạng MIMI-ANTI-XXXX-XXXX-XXXX</p>
+              <p className="text-xs text-gray-400">Nhập mã key Mimi Shield được đội ngũ cấp</p>
             </div>
           </div>
 
           <div className="space-y-3">
+            <label htmlFor="shield-redeem-guild" className="block text-xs font-semibold text-gray-300">ID máy chủ cần kích hoạt</label>
             <input
+              id="shield-redeem-guild"
               type="text"
               value={redeemGuildId}
               onChange={(e) => setRedeemGuildId(e.target.value)}
               placeholder="Nhập Server ID của máy chủ..."
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-mimi-purple focus:outline-none"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-mimi-green focus:outline-none"
             />
+            <label htmlFor="shield-redeem-key" className="block text-xs font-semibold text-gray-300">Mã key Mimi Shield</label>
             <input
+              id="shield-redeem-key"
               type="text"
               value={redeemKey}
               onChange={(e) => setRedeemKey(e.target.value)}
-              placeholder="Mã Key (VD: MIMI-ANTI-XXXX-XXXX-XXXX)..."
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-mimi-purple focus:outline-none font-mono"
+              placeholder="Nhập mã key Mimi Shield..."
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-mimi-green focus:outline-none font-mono"
             />
             <button
               onClick={handleRedeemKey}
               disabled={redeemLoading}
-              className="w-full py-3 rounded-xl bg-mimi-purple/20 border border-mimi-purple/40 text-mimi-purple font-bold text-sm hover:bg-mimi-purple/30 transition-colors"
+              className="w-full py-3 rounded-xl bg-mimi-green/20 border border-mimi-green/40 text-mimi-green font-bold text-sm hover:bg-mimi-green/30 transition-colors"
             >
               {redeemLoading ? 'Đang kích hoạt...' : '🔑 Kích Hoạt Bản Quyền'}
             </button>
@@ -639,7 +647,7 @@ export default function PricingPage() {
                     {adminResult.license && (
                       <div className="text-xs text-gray-300 space-y-1">
                         <div>Server ID: <b>{adminResult.license.guildId}</b></div>
-                        <div>Hạn mới: <b className="text-mimi-cyan">{adminResult.license.isPermanent ? 'Vĩnh Viễn' : new Date(adminResult.license.expiresTimestamp).toLocaleString('vi-VN')}</b> (+{adminResult.license.remainingDays} ngày)</div>
+                        <div>Hạn mới: <b className="text-mimi-green">{adminResult.license.isPermanent ? 'Vĩnh Viễn' : new Date(adminResult.license.expiresTimestamp).toLocaleString('vi-VN')}</b> (+{adminResult.license.remainingDays} ngày)</div>
                       </div>
                     )}
                   </div>
@@ -674,20 +682,20 @@ export default function PricingPage() {
             </button>
 
             <div className="text-center pr-8 pl-8">
-              <h3 className="text-2xl font-bold text-white">Thanh Toán {selectedPlan.name}</h3>
+              <h3 className="text-2xl font-bold text-white">Mimi Shield · Gói {selectedPlan.name}</h3>
               <p className="text-sm text-mimi-green font-semibold mt-1">Số tiền: {selectedPlan.priceFormatted}</p>
             </div>
 
             {/* Nút Mời Bot Anti-Raid Gắn Qua Thanh Toán */}
-            <div className="rounded-2xl border border-mimi-cyan/40 bg-gradient-to-r from-mimi-cyan/15 via-blue-500/10 to-mimi-cyan/15 p-4 text-center space-y-2.5 shadow-inner">
-              <div className="text-xs font-black text-mimi-cyan flex items-center justify-center gap-1.5 uppercase tracking-wide">
+            <div className="rounded-2xl border border-mimi-green/40 bg-gradient-to-r from-mimi-green/15 via-blue-500/10 to-mimi-green/15 p-4 text-center space-y-2.5 shadow-inner">
+              <div className="text-xs font-black text-mimi-green flex items-center justify-center gap-1.5 uppercase tracking-wide">
                 <Shield className="h-4 w-4" /> BƯỚC 1: MỜI MIMI SHIELD VÀO MÁY CHỦ
               </div>
               <p className="text-[11px] text-gray-300 leading-relaxed">
-                Máy chủ cần có mặt MIMI SHIELD BOT để hệ thống tự động kích hoạt bảo vệ 24/7 ngay khi nhận Key.
+                Mời Mimi Shield vào máy chủ, thiết lập quyền và cấu hình bảo vệ trước khi kích hoạt bản quyền.
               </p>
               <a
-                href="https://discord.com/oauth2/authorize?client_id=1539527939723497473&permissions=8&integration_type=0&scope=bot"
+                href={env.NEXT_PUBLIC_SHIELD_BOT_INVITE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black text-xs shadow-lg shadow-cyan-500/30 hover:scale-[1.01] active:scale-[0.98] transition-all"
@@ -706,7 +714,7 @@ export default function PricingPage() {
                 type="text"
                 value={serverGuildId}
                 onChange={(e) => setServerGuildId(e.target.value)}
-                placeholder="VD: 1539527939723497473..."
+                placeholder="Nhập Server ID..."
                 className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-mimi-green focus:outline-none"
               />
             </div>
@@ -728,7 +736,7 @@ export default function PricingPage() {
                 <span>Số Tài Khoản:</span>
                 <button
                   onClick={() => copyToClipboard('9369144188', 'stk')}
-                  className="flex items-center gap-1 font-bold text-mimi-cyan hover:underline"
+                  className="flex items-center gap-1 font-bold text-mimi-green hover:underline"
                 >
                   9369144188 {copiedKey === 'stk' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                 </button>
@@ -749,9 +757,9 @@ export default function PricingPage() {
               </div>
             </div>
 
-            <div className="text-[11px] text-gray-400 bg-mimi-purple/10 border border-mimi-purple/20 p-3 rounded-xl">
+            <div className="text-[11px] text-gray-400 bg-mimi-green/10 border border-mimi-green/20 p-3 rounded-xl">
               ℹ️ <b>Sau khi chuyển khoản:</b> Vui lòng gửi bill cho Admin qua Discord để nhận Key kích hoạt hoặc hệ
-              thống sẽ duyệt kích hoạt trực tiếp trong 1-3 phút.
+              thống duyệt kích hoạt trực tiếp sau khi xác nhận thanh toán.
             </div>
 
             {/* Nút Đóng Cửa Sổ ở dưới đáy */}

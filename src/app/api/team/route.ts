@@ -16,107 +16,25 @@ export interface TeamMember {
   group: 'core' | 'admin' | 'partner' | 'community';
 }
 
-const FALLBACK_TEAM: TeamMember[] = [
-  {
-    id: '1',
-    name: 'Mimi',
-    username: 'mi.mi2301',
-    role: 'Founder & Community Owner',
-    color: '#ff6b81',
-    avatar: 'https://api.dicebear.com/7.x/lorelei/svg?seed=MimiFounder&backgroundColor=ff6b81',
-    status: 'online',
-    description: 'Sáng lập hệ sinh thái MIMI, định hướng phát triển và kết nối cộng đồng yêu âm nhạc.',
-    isDev: false,
-    group: 'core',
-  },
-  {
-    id: '2',
-    name: 'nhan9800',
-    username: 'nhan9800',
-    role: 'Core Developer',
-    color: '#2ecc71',
-    avatar: 'https://github.com/nhan9800.png',
-    status: 'online',
-    description: 'Phát triển kiến trúc Core Bot, hệ thống Internal API thời gian thực và Website MIMI.',
-    isDev: true,
-    group: 'core',
-  },
-  {
-    id: '3',
-    name: 'Mimi Admin Team',
-    username: 'mimi_admin',
-    role: 'Community Admin',
-    color: '#3498db',
-    avatar: '/logo.webp',
-    status: 'online',
-    description: 'Quản trị máy chủ, điều phối hoạt động sự kiện và hỗ trợ giải đáp thắc mắc của thành viên.',
-    isDev: false,
-    group: 'admin',
-  },
-  {
-    id: '4',
-    name: 'Cộng Đồng MIMI',
-    username: 'mimi_community',
-    role: 'Tester & Support',
-    color: '#9b59b6',
-    avatar: '/logo.webp',
-    status: 'online',
-    description:
-      'Báo cáo lỗi, đề xuất tính năng mới và cùng xây dựng môi trường âm nhạc sôi động trên Discord.',
-    isDev: false,
-    group: 'community',
-  },
-];
-
-/**
- * Proxy: GET /api/team -> GET {bot}/internal/team
- * Nhận diện đội ngũ dev/support dựa trên các role setup trong server Discord.
- */
+/** Chỉ hiển thị đội ngũ được bot xác nhận từ máy chủ cộng đồng đã cấu hình. */
 export async function GET() {
   try {
     const result = await callMimiApi<{ ok: boolean; team: TeamMember[] }>('/internal/team');
-
-    if (result.ok && result.data?.team && result.data.team.length > 0) {
-      // Đảm bảo tương thích ngược: tự động thêm group nếu bot chưa được restart
-      const teamWithGroup = result.data.team.map((m: any) => {
-        if (m.group) return m;
-        let group = 'community';
-        if (m.role.toLowerCase().includes('founder') || m.isDev || m.id === '1138315103821889566') group = 'core';
-        else if (/partner|đối tác/i.test(m.role)) group = 'partner';
-        else if (/admin|quản trị|manager|mod/i.test(m.role)) group = 'admin';
-        return { ...m, group, isDev: m.isDev || m.id === '1138315103821889566' };
+    if (result.ok && result.data?.ok && Array.isArray(result.data.team)) {
+      const team = result.data.team.map((member) => {
+        // Bot cũ có thể chưa trả group, chỉ suy luận từ vai trò thật trong phản hồi.
+        const role = String(member.role || '');
+        const group: TeamMember['group'] = ['core', 'admin', 'partner', 'community'].includes(member.group)
+          ? member.group
+          : /founder/i.test(role) || member.isDev ? 'core'
+          : /partner|đối tác/i.test(role) ? 'partner'
+          : /admin|quản trị|manager|mod/i.test(role) ? 'admin' : 'community';
+        return { ...member, group, status: ['online', 'idle', 'dnd', 'offline'].includes(member.status) ? member.status : 'unknown' };
       });
-
-      // Nếu Bot hoàn toàn bỏ quên Dev (do lỗi cache ở code cũ), tự động thêm Dev vào!
-      const hasDev = teamWithGroup.some((m: any) => m.isDev || m.id === '1138315103821889566');
-      if (!hasDev) {
-        teamWithGroup.push({
-          id: '1138315103821889566',
-          name: 'nhan9800',
-          username: 'nhan9800',
-          role: 'Core Developer',
-          color: '#2ecc71',
-          avatar: 'https://github.com/nhan9800.png',
-          status: 'online',
-          description: 'Phát triển kiến trúc Core Bot, hệ thống Internal API thời gian thực và Website MIMI.',
-          isDev: true,
-          group: 'core',
-        });
-      }
-
-      return NextResponse.json({
-        ok: true,
-        team: teamWithGroup,
-        source: 'discord_roles',
-      });
+      return NextResponse.json({ ok: true, team, source: 'discord_roles' });
     }
-  } catch (err) {
-    // Không kết nối được bot -> fallback
+  } catch {
+    // Kết nối lỗi không được tạo thành viên hoặc trạng thái trực tuyến giả.
   }
-
-  return NextResponse.json({
-    ok: true,
-    team: FALLBACK_TEAM,
-    source: 'fallback_roles',
-  });
+  return NextResponse.json({ ok: false, team: [], source: 'unavailable', error: 'Chưa tải được đội ngũ từ Discord.' }, { status: 503 });
 }

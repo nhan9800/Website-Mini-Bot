@@ -1,5 +1,15 @@
 {
   "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
     "x-next-cache-tags": "_N_T_/layout,_N_T_/commands/layout,_N_T_/commands/page,_N_T_/commands"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/91c5eb5b167c50e2a0a54ec098578103fa7210e79e249bc5b0f229ae851a56ad/$/commands",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/commands/page"
+    },
+    "isFallback": false
   }
 }

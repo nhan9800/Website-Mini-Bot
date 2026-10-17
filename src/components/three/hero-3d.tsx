@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Float, Sparkles, RoundedBox } from '@react-three/drei';
 import { Particles } from '@/components/ui/particles';
+import { SafeCanvas } from '@/components/three/safe-canvas';
 
 /* ────────────────────────────────────────────────────────────────
  * Hero3D — cảnh WebGL thật cho hero trang chủ:
@@ -17,21 +18,6 @@ const MIMI_GREEN = '#2ECC71';
 const MIMI_CYAN = '#22D3EE';
 const MIMI_PURPLE = '#8B5CF6';
 const MIMI_PINK = '#F472B6';
-
-/** Có hỗ trợ WebGL không (máy quá cũ / bị tắt thì fallback về particles). */
-function useWebGLSupport() {
-  const [supported, setSupported] = useState<boolean | null>(null);
-  useEffect(() => {
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-      setSupported(Boolean(gl));
-    } catch {
-      setSupported(false);
-    }
-  }, []);
-  return supported;
-}
 
 /* ── Texture vẽ thủ công (không tải file ngoài) ────────────────── */
 
@@ -402,14 +388,10 @@ function ResponsiveGroup({ children }: { children: React.ReactNode }) {
 /* ── Component chính ───────────────────────────────────────────── */
 
 export default function Hero3D() {
-  const webgl = useWebGLSupport();
-
-  // Chưa xác định xong / không có WebGL → dùng nền particles cũ
-  if (webgl !== true) return <Particles />;
-
   return (
     <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-      <Canvas
+      <SafeCanvas
+        fallback={<Particles />}
         camera={{ position: [0, 2.1, 7.6], fov: 42 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
@@ -430,7 +412,7 @@ export default function Hero3D() {
         </ResponsiveGroup>
 
         <Rig />
-      </Canvas>
+      </SafeCanvas>
     </div>
   );
 }

@@ -38,23 +38,10 @@ export async function GET(request: NextRequest) {
         source: 'discord_bot',
       });
     }
+    return NextResponse.json({ ok: false, user: null, error: 'Chưa xác minh được tài khoản từ Discord. Hãy thử lại khi bot kết nối.' }, { status: result.status >= 400 ? result.status : 503 });
   } catch (err) {
-    // Fallback nếu bot chưa online
+    // Bot chưa kết nối: không dựng trạng thái xác minh hoặc vai trò giả.
   }
 
-  // Fallback an toàn hiển thị thông tin verified giả lập với Identicon
-  const safeName = request.nextUrl.searchParams.get('q') || 'member';
-  return NextResponse.json({
-    ok: true,
-    user: {
-      id: safeName,
-      username: safeName,
-      displayName: `${safeName}`,
-      avatar: `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(safeName)}`,
-      inServer: true,
-      verified: true,
-      roles: ['Discord Member'],
-    },
-    source: 'fallback',
-  });
+  return NextResponse.json({ ok: false, user: null, error: 'Chưa kết nối được với bot để xác minh tài khoản.' }, { status: 503 });
 }

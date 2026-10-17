@@ -1,4 +1,5 @@
 import { buildInfo } from '@/lib/build-info';
+import { websiteVersion, websiteReleaseDate } from '@/lib/release-info';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,8 @@ export async function GET() {
   return new Response(
     JSON.stringify({
       ok: true,
+      version: websiteVersion,
+      releasedAt: websiteReleaseDate,
       commit: buildInfo.commit,
       shortCommit: buildInfo.shortCommit,
       branch: buildInfo.branch,

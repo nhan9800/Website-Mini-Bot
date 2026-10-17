@@ -15,60 +15,28 @@ interface FeedbackItem {
   createdAt: string;
 }
 
-const DEFAULT_REVIEWS: FeedbackItem[] = [
-  {
-    id: '1',
-    userName: 'Minh Tuấn',
-    avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
-    isVerified: true,
-    feature: 'Bảng Xếp Hạng LIVE',
-    stars: 5,
-    comment:
-      'BXH nhạc Việt cập nhật real-time quá xịn! Từ ngày có Mimi bot, voice channel trong server lúc nào cũng nhộn nhịp thành viên vào nghe nhạc chung.',
-    createdAt: 'Hôm nay',
-  },
-  {
-    id: '2',
-    userName: 'Thảo My',
-    avatar: 'https://cdn.discordapp.com/embed/avatars/1.png',
-    isVerified: true,
-    feature: 'Trình Phát Nhạc',
-    stars: 5,
-    comment:
-      'Chất âm 320kbps cực trong và không bị rè hay đứt đoạn như mấy bot cũ. Tính năng tự tìm lời bài hát chuẩn xác 100%!',
-    createdAt: 'Hôm nay',
-  },
-  {
-    id: '3',
-    userName: 'Hải Đăng',
-    avatar: 'https://cdn.discordapp.com/embed/avatars/2.png',
-    isVerified: false,
-    feature: 'Dashboard Quản Trị',
-    stars: 5,
-    comment:
-      'Giao diện web mới cực kỳ sang trọng, vừa nghe nhạc vừa mở Dashboard trên web bấm Pause/Skip không cần gõ lệnh Discord tiện thật sự!',
-    createdAt: 'Hôm qua',
-  },
-];
-
 export function CommunityReviewsSection() {
-  const [avgStars, setAvgStars] = useState<number>(4.9);
-  const [totalReviews, setTotalReviews] = useState<number>(138);
-  const [reviews, setReviews] = useState<FeedbackItem[]>(DEFAULT_REVIEWS);
+  const [avgStars, setAvgStars] = useState<number | null>(null);
+  const [totalReviews, setTotalReviews] = useState<number | null>(null);
+  const [reviews, setReviews] = useState<FeedbackItem[]>([]);
+  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
 
   useEffect(() => {
     async function fetchReviews() {
       try {
         const res = await fetch('/api/feedback', { cache: 'no-store' });
         const data = await res.json();
-        if (data?.ok) {
-          setAvgStars(data.averageStars || 4.9);
-          setTotalReviews(data.totalReviews || 138);
-          if (data.recentFeedbacks && data.recentFeedbacks.length > 0) {
+        if (res.ok && data?.ok) {
+          setAvgStars(data.averageStars ?? null);
+          setTotalReviews(data.totalReviews ?? 0);
+          if (Array.isArray(data.recentFeedbacks)) {
             setReviews(data.recentFeedbacks.slice(0, 3));
           }
+          setLoadState('ready');
+        } else {
+          setLoadState('unavailable');
         }
-      } catch {}
+      } catch { setLoadState('unavailable'); }
     }
     fetchReviews();
   }, []);
@@ -87,12 +55,12 @@ export function CommunityReviewsSection() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className="h-5 w-5 fill-yellow-400 text-yellow-400 drop-shadow-md" />
+                <Star key={s} className={`h-5 w-5 ${avgStars !== null && s <= Math.round(avgStars) ? 'fill-yellow-400 text-yellow-400 drop-shadow-md' : 'text-gray-600'}`} />
               ))}
             </div>
-            <span className="text-xl font-black text-white">{avgStars} / 5.0</span>
+            <span className="text-xl font-black text-white">{avgStars === null ? 'Chưa có điểm' : `${avgStars} / 5.0`}</span>
             <span className="text-sm font-semibold text-gray-400">
-              ({totalReviews} lượt đánh giá thực tế)
+              ({loadState === 'unavailable' ? 'Chưa tải được đánh giá' : totalReviews === null ? 'Đang đồng bộ đánh giá' : `${totalReviews} lượt đánh giá đã lưu`})
             </span>
           </div>
           <p className="text-gray-400">
@@ -102,6 +70,7 @@ export function CommunityReviewsSection() {
 
         {/* Lưới review */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {reviews.length === 0 && <p className="text-sm text-gray-400">{loadState === 'unavailable' ? 'Chưa tải được đánh giá. Hãy thử lại sau.' : loadState === 'loading' ? 'Đang tải đánh giá…' : 'Chưa có đánh giá để hiển thị.'}</p>}
           {reviews.map((rev, idx) => (
             <Reveal key={rev.id || idx} delay={idx * 100}>
               <div className="glass-panel card-lift group flex h-full flex-col justify-between rounded-3xl border border-white/10 p-7 transition-all duration-500 hover:border-yellow-400/50 hover:shadow-[0_0_30px_rgba(234,179,8,0.15)]">
@@ -149,7 +118,7 @@ export function CommunityReviewsSection() {
                             >
                               <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.792-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.766 1.873 3.45-.013.18-.024.358-.024.55 0 2.21 1.71 3.998 3.918 3.998.505 0 .985-.09 1.435-.264 1.13 1.31 2.805 2.136 4.7 2.136 1.894 0 3.57-.826 4.7-2.136.45.174.93.264 1.436.264 2.21 0 3.918-1.792 3.918-4 0-.192-.01-.37-.024-.55 1.133-.684 1.873-1.99 1.873-3.45zm-11.233 4.6l-3.332-3.333 1.414-1.414 1.918 1.918 5.757-5.757 1.414 1.414-7.17 7.17z" />
                             </svg>
-                            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-[10px] font-bold text-white opacity-0 transition-opacity group-hover/badge:opacity-100">
+                            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-[10px] font-bold text-on-color opacity-0 transition-opacity group-hover/badge:opacity-100">
                               Đã xác minh Discord
                             </span>
                           </div>

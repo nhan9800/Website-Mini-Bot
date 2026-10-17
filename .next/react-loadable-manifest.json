@@ -8,10 +8,10 @@
     "files": []
   },
   "app/page.tsx -> @/components/three/hero-3d": {
-    "id": 4475,
+    "id": 48610,
     "files": [
-      "static/chunks/847.9abdf8d1e798b79f.js",
-      "static/chunks/475.58bc61b8faa6a154.js"
+      "static/chunks/224.3965da6f87d3fcf0.js",
+      "static/chunks/610.fce3c1d1a729021e.js"
     ]
   }
 }

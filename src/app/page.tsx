@@ -1,21 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import {
   Sparkles,
   ArrowRight,
-  Zap,
-  Terminal,
   LayoutDashboard,
   ChevronDown,
-  Quote,
   HelpCircle,
   Wifi,
   WifiOff,
-  Star,
-  Code2,
   Heart,
   Music,
   Rocket,
@@ -23,13 +19,12 @@ import {
   Shield,
   Wallet,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { env } from '@/lib/env';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
-import { Soundwave } from '@/components/ui/soundwave';
 import { Particles } from '@/components/ui/particles';
 import { Reveal } from '@/components/ui/reveal';
-import { TiltCard } from '@/components/ui/tilt-card';
 import { TrendingChart } from '@/components/trending-chart';
 import { TeamSection } from '@/components/team/team-section';
 import { CommunityReviewsSection } from '@/components/feedback/community-reviews-section';
@@ -43,7 +38,7 @@ const Hero3D = dynamic(() => import('@/components/three/hero-3d'), {
 /* ── Dữ liệu nội dung ─────────────────────────────────────────── */
 
 const services: {
-  icon: React.ElementType;
+  icon: LucideIcon;
   ring: string;
   hover: string;
   title: string;
@@ -54,59 +49,40 @@ const services: {
     icon: Music,
     ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
     hover: 'hover:border-mimi-green/50',
-    title: 'Bot Nhạc Chất Lượng Cao',
-    desc: 'Phát nhạc YouTube âm thanh Opus HQ, hàng chờ thông minh, loop, autoplay, lời bài hát tức thì. Điều khiển bằng nút bấm ngay trong Discord.',
+    title: 'Một phòng nhạc cho cả nhóm',
+    desc: 'Tìm bài, quản lý hàng chờ, lặp bài và bật autoplay. Bảng điều khiển nằm ngay trong Discord, dễ dùng cả trên điện thoại.',
     bullets: ['Không cần API key', 'Ở lại kênh 24/7', 'Lyrics + TTS tiếng Việt'],
   },
   {
     icon: Shield,
-    ring: 'border-mimi-purple/25 bg-mimi-purple/10 text-mimi-purple',
-    hover: 'hover:border-mimi-purple/50',
-    title: 'Xác Thực & An Ninh',
-    desc: 'Hệ thống xác thực 24 giờ tự reset lúc 00:00 (UTC+7), quản lý role tự động, tùy chọn hủy xác thực khi thành viên bị mute.',
-    bullets: ['Reset đúng giờ VN', 'Role tự động', 'Chống phá server'],
+    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
+    hover: 'hover:border-mimi-green/50',
+    title: 'Thành viên và vai trò',
+    desc: 'Quản trị viên cấu hình kênh và vai trò xác thực; thành viên bấm nút để nhận vai trò. Có tùy chọn gỡ xác thực khi bot xử lý mute.',
+    bullets: ['Xác thực bằng nút bấm', 'Cấu hình vai trò', 'Đặt lại theo yêu cầu quản trị'],
   },
   {
     icon: Wallet,
-    ring: 'border-mimi-cyan/25 bg-mimi-cyan/10 text-mimi-cyan',
-    hover: 'hover:border-mimi-cyan/50',
-    title: 'Chấm Công & Kinh Tế',
-    desc: 'Check-in/check-out nhân sự độc lập, báo cáo tuần tự động. Giám sát Economy, cảnh báo Owner khi có thu nhập bất thường.',
+    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
+    hover: 'hover:border-mimi-green/50',
+    title: 'Sinh hoạt cộng đồng',
+    desc: 'Chấm công, báo cáo tuần, cấp độ và minigame xu giúp quản trị viên theo dõi hoạt động của cộng đồng.',
     bullets: ['Báo cáo tự động', 'Cảnh báo gian lận', 'Quản lý minh bạch'],
   },
   {
     icon: LayoutDashboard,
-    ring: 'border-mimi-amber/25 bg-mimi-amber/10 text-mimi-amber',
-    hover: 'hover:border-mimi-amber/50',
-    title: 'Dashboard Web Thời Gian Thực',
-    desc: 'Xem bài đang phát, quản lý hàng chờ, chỉnh âm lượng và cấu hình bot ngay trên trình duyệt — đồng bộ trực tiếp với bot.',
-    bullets: ['Điều khiển từ xa', 'Cập nhật mỗi 5 giây', 'Không cần cài đặt'],
-  },
-];
-
-// LƯU Ý: đánh giá mẫu minh họa — thay bằng phản hồi thật của thành viên khi có.
-const testimonials = [
-  {
-    name: 'Minh Khang',
-    role: 'Chủ server Gaming 1.2K thành viên',
-    text: 'Chuyển từ bot nước ngoài sang MIMI vì tiếng Việt chuẩn và nút bấm tiện. Anh em trong server giờ toàn treo voice nghe nhạc cả ngày.',
-  },
-  {
-    name: 'Thảo Vy',
-    role: 'Quản trị viên cộng đồng học tập',
-    text: 'Tính năng xác thực 24h giúp server sạch bóng acc ảo. Setup một lần rồi quên luôn, mọi thứ tự chạy đúng giờ Việt Nam.',
-  },
-  {
-    name: 'Đức Anh',
-    role: 'Trưởng nhóm nhân sự Discord shop',
-    text: 'Chấm công tự động + báo cáo tuần là thứ mình cần bấy lâu. Dashboard web nhìn số liệu trực quan, không phải mò lệnh.',
+    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
+    hover: 'hover:border-mimi-green/50',
+    title: 'Điều khiển từ trình duyệt',
+    desc: 'Mở dashboard bằng khóa truy cập được cấp trong Discord để xem nhạc, hàng chờ và cấu hình máy chủ.',
+    bullets: ['Khóa truy cập theo server', 'Dữ liệu từ bot', 'Không cần cài đặt'],
   },
 ];
 
 const faqs = [
   {
     q: 'MIMI có miễn phí không?',
-    a: 'Có — toàn bộ tính năng nhạc, xác thực, chấm công và dashboard đều miễn phí. Không quảng cáo, không khóa tính năng sau paywall.',
+    a: 'Có. Mimi nhạc và cộng đồng miễn phí, bao gồm nghe nhạc, autoplay, cấp độ, minigame, xác thực và dashboard. Mimi Shield là bot anti-raid riêng, có các gói bản quyền riêng.',
   },
   {
     q: 'Làm sao để bắt đầu phát nhạc?',
@@ -114,37 +90,41 @@ const faqs = [
   },
   {
     q: 'MIMI có cần API key Spotify/Genius không?',
-    a: 'Không. Lời bài hát lấy từ lrclib.net, link Spotify được nhận diện tự động rồi tìm bản phát trên YouTube — không cần cấu hình gì thêm.',
+    a: 'Không. Lời bài hát lấy từ lrclib.net, link Spotify được nhận diện tự động rồi tìm bản phát trên YouTube, không cần cấu hình gì thêm.',
   },
   {
     q: 'Dashboard web hoạt động thế nào?',
-    a: 'Web kết nối bot qua Internal API bảo mật bằng token. Bạn nhập ID server có MIMI là xem được bài đang phát, hàng chờ và chỉnh cấu hình ngay lập tức.',
+    a: 'Người có quyền Quản Lý Máy Chủ dùng /dashboard trong Discord để nhận liên kết và khóa truy cập. Bạn cần đúng ID máy chủ cùng khóa dashboard còn hiệu lực để xem và điều khiển; chỉ nhập ID máy chủ chưa đủ.',
   },
   {
-    q: 'Bot có ổn định không? Server đặt ở đâu?',
-    a: 'Bot chạy trên máy chủ đặt tại Việt Nam nên độ trễ với người dùng Việt rất thấp. Bạn có thể xem ping, uptime thời gian thực ở trang Trạng Thái.',
+    q: 'Làm sao kiểm tra trạng thái của bot?',
+    a: 'Trang Trạng Thái hiển thị ping và thời gian hoạt động khi lấy được dữ liệu từ bot. Chất lượng kết nối và phát nhạc còn phụ thuộc Discord, mạng và nguồn âm thanh.',
   },
 ];
 
 /* ── Trang chủ ────────────────────────────────────────────────── */
 
 export default function HomePage() {
-  const { status, loading } = useBotStatus(20000);
+  const { status, error, loading } = useBotStatus(20000);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const online = status?.online === true;
+  const online = !error && status?.online === true;
+  const statusKnown = !error && typeof status?.online === 'boolean';
+  const [reduceMotion, setReduceMotion] = useState(true);
+
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncPreference = () => setReduceMotion(preference.matches);
+    syncPreference();
+    preference.addEventListener('change', syncPreference);
+    return () => preference.removeEventListener('change', syncPreference);
+  }, []);
 
   return (
-    <div className="-mt-24 min-h-screen">
-      {/* ══ HERO — cao hết màn hình, căn giữa, nền particles ══════ */}
-      <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 text-center">
-        {/* Cảnh 3D: đĩa vinyl quay + vòng equalizer + nốt nhạc bay */}
-        <Hero3D />
-        {/* lớp phủ gradient cho chữ nổi trên nền 3D */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_45%,rgba(46,204,113,0.10),transparent_70%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_52%_38%_at_50%_38%,rgba(5,6,15,0.55),transparent_78%)]" />
-
-        <div className="relative z-10 mx-auto max-w-4xl space-y-8">
-          <div className="inline-flex animate-fade-up items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green backdrop-blur-sm">
+    <div className="min-h-screen">
+      <section className="relative overflow-hidden px-4 pb-12 pt-12 sm:px-6 lg:pb-16 lg:pt-16">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-4 lg:grid-cols-[1.1fr_1fr] lg:gap-8">
+          <div className="relative z-10 space-y-7">
+          <div className="inline-flex items-center gap-2 text-xs font-medium text-mimi-green" role="status">
             {loading ? (
               <span className="h-2 w-2 animate-pulse-soft rounded-full bg-gray-400" />
             ) : online ? (
@@ -155,53 +135,48 @@ export default function HomePage() {
             <span>
               {loading
                 ? 'Đang kiểm tra trạng thái bot…'
+                : !statusKnown
+                  ? 'Chưa xác định được trạng thái bot'
                 : online
-                  ? 'Bot đang trực tuyến — sẵn sàng phục vụ'
-                  : 'Bot đang bảo trì — quay lại sau ít phút'}
+                  ? 'Mimi đang trực tuyến'
+                  : 'Bot hiện chưa trực tuyến'}
             </span>
           </div>
 
-          <h1 className="animate-fade-up text-4xl font-black leading-[1.12] tracking-tight text-white delay-75ms sm:text-6xl lg:text-7xl">
-            Giải Pháp Bot Discord{' '}
-            <span className="text-gradient-mimi">Toàn Diện</span>
-            <br className="hidden sm:block" /> Cho Cộng Đồng Việt
+          <h1 className="text-4xl font-extrabold leading-[1.14] tracking-tight text-white sm:text-5xl xl:text-6xl">
+            Cùng nghe nhạc.<br />
+            <span className="text-mimi-green">Cùng kết nối.</span>
           </h1>
 
-          <p className="mx-auto max-w-2xl animate-fade-up text-lg leading-relaxed text-gray-300 delay-150ms sm:text-xl">
-            Nghe nhạc chất lượng cao, xác thực tự động, chấm công nhân sự và dashboard web
-            thời gian thực — tất cả trong một bot duy nhất, hoàn toàn miễn phí.
+          <p className="max-w-lg text-base leading-relaxed text-gray-300 sm:text-lg">
+            Bot nhạc và cộng đồng tiếng Việt, miễn phí cho máy chủ Discord của bạn.
           </p>
 
-          <div className="flex animate-fade-up flex-wrap items-center justify-center gap-4 pt-2 delay-225ms">
+          <div className="flex flex-wrap items-center gap-3 pt-1">
             <a
               href={env.NEXT_PUBLIC_BOT_INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary !px-9 !py-4 !text-base"
+              className="btn-primary whitespace-nowrap !px-7 !py-4 !text-sm"
             >
               <Sparkles className="h-5 w-5" />
-              <span>Mời MIMI Miễn Phí</span>
+              <span>Mời Mimi miễn phí</span>
             </a>
-            <Link href="/dashboard" className="btn-secondary !px-9 !py-4 !text-base">
+            <Link href="/dashboard" className="btn-secondary whitespace-nowrap !px-7 !py-4 !text-sm">
               <LayoutDashboard className="h-5 w-5" />
-              <span>Mở Dashboard</span>
+              <span>Mở dashboard</span>
             </Link>
           </div>
 
-          {/* Sóng nhạc trang trí */}
-          <div className="mx-auto max-w-md animate-fade-up pt-4 delay-300ms">
-            <Soundwave playing={true} className="!h-12 !border-white/10 !bg-black/30" />
+          </div>
+          <div className="relative h-[300px] w-full sm:h-[380px] lg:h-[480px]" aria-hidden="true">
+          {reduceMotion ? (
+            <div className="flex h-full items-center justify-center">
+              <Image src="/logo.webp" alt="" width={180} height={180} priority className="rounded-[2rem]" />
+            </div>
+          ) : <Hero3D />}
           </div>
         </div>
-
-        {/* mũi tên cuộn xuống */}
-        <a
-          href="#dich-vu"
-          className="absolute bottom-8 z-10 animate-float text-gray-500 transition-colors hover:text-mimi-green"
-          aria-label="Cuộn xuống xem dịch vụ"
-        >
-          <ChevronDown className="h-8 w-8" />
-        </a>
       </section>
 
       {/* ══ SỐ LIỆU THẬT ══════════════════════════════════════════ */}
@@ -209,22 +184,22 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
           <StatBlock
             icon={Bot}
-            value={status ? formatCompact(status.guildCount) : '—'}
+            value={!error && status ? formatCompact(status.guildCount) : 'Chưa có'}
             label="Máy chủ đang phục vụ"
           />
           <StatBlock
             icon={Heart}
-            value={status ? formatCompact(status.reachableUsers) : '—'}
+            value={!error && status ? formatCompact(status.reachableUsers) : 'Chưa có'}
             label="Thành viên tiếp cận"
           />
           <StatBlock
             icon={Music}
-            value={status ? String(status.activeVoiceSessions) : '—'}
+            value={!error && status ? String(status.activeVoiceSessions) : 'Chưa có'}
             label="Phiên nhạc đang phát"
           />
           <StatBlock
             icon={Rocket}
-            value={status ? formatUptime(status.uptimeSeconds) : '—'}
+            value={!error && status ? formatUptime(status.uptimeSeconds) : 'Chưa có'}
             label="Thời gian hoạt động"
           />
         </div>
@@ -237,16 +212,11 @@ export default function HomePage() {
       <section id="dich-vu" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
-              <Star className="h-4 w-4" />
-              <span>Dịch vụ của MIMI</span>
-            </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
-              Một Bot — <span className="text-gradient-mimi">Bốn Trụ Cột</span>
+              Mimi trong <span className="text-mimi-green">máy chủ của bạn</span>
             </h2>
             <p className="text-base text-gray-400 sm:text-lg">
-              Mỗi nhóm tính năng được xây như một dịch vụ hoàn chỉnh, phối hợp nhịp nhàng
-              trong cùng một bot.
+              Từ một buổi nghe nhạc đến hoạt động thường ngày, mọi tính năng cộng đồng đều miễn phí.
             </p>
           </Reveal>
 
@@ -254,13 +224,12 @@ export default function HomePage() {
             {services.map((s, i) => {
               return (
                 <Reveal key={s.title} delay={i * 90}>
-                  <TiltCard className="h-full">
-                    <div className={`glass-panel group h-full space-y-5 rounded-3xl p-8 transition-colors ${s.hover}`}>
+                    <div className={`group h-full space-y-5 rounded-2xl border border-white/10 bg-white/[0.025] p-8 transition-colors ${s.hover}`}>
                       <div className="flex items-center gap-4">
                         <div
-                          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border ${s.ring} transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-110`}
+                          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border ${s.ring}`}
                         >
-                          <s.icon className="h-10 w-10" />
+                          <s.icon className="h-6 w-6" />
                         </div>
                         <h3 className="text-xl font-bold text-white">{s.title}</h3>
                       </div>
@@ -276,7 +245,6 @@ export default function HomePage() {
                         ))}
                       </ul>
                     </div>
-                  </TiltCard>
                 </Reveal>
               );
             })}
@@ -288,10 +256,6 @@ export default function HomePage() {
       <section id="ve-mimi" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <Reveal className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-mimi-purple/30 bg-mimi-purple/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-violet">
-              <Heart className="h-4 w-4" />
-              <span>Về MIMI</span>
-            </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
               Sinh Ra Từ Nhu Cầu Thật Của{' '}
               <span className="text-gradient-mimi">Cộng Đồng Việt</span>
@@ -299,13 +263,12 @@ export default function HomePage() {
             <div className="space-y-4 text-sm leading-relaxed text-gray-400 sm:text-base">
               <p>
                 MIMI bắt đầu từ một nhu cầu đơn giản: một bot nhạc tiếng Việt ổn định, không
-                phụ thuộc API trả phí, không chết giữa chừng. Từ đó, bot lớn dần thành hệ
-                sinh thái quản trị trọn vẹn cho server Discord.
+                buộc thành viên mua key để nghe nhạc. Từ đó, bot mở rộng thêm công cụ
+                sinh hoạt và quản trị cho server Discord.
               </p>
               <p>
-                Toàn bộ hạ tầng đặt tại Việt Nam giúp độ trễ thấp nhất cho người dùng Việt.
-                Mã nguồn website mở trên GitHub — minh bạch từ giao diện đến cách kết nối
-                dữ liệu.
+                Website kết nối với bot để hiển thị trạng thái và dữ liệu cộng đồng.
+                Khi chưa có dữ liệu, trang sẽ thông báo rõ để bạn kiểm tra lại kết nối.
               </p>
             </div>
             <div className="flex flex-wrap gap-4 pt-2">
@@ -329,9 +292,9 @@ export default function HomePage() {
               <ul className="space-y-4">
                 {[
                   ['Miễn phí trọn đời', 'Không paywall, không quảng cáo chèn giữa nhạc.'],
-                  ['Máy chủ tại Việt Nam', 'Ping thấp, hỗ trợ tiếng Việt là mặc định.'],
-                  ['Dữ liệu tối thiểu', 'Chỉ lưu ID cần thiết — không đọc tin nhắn riêng.'],
-                  ['Cập nhật liên tục', 'Theo dõi lỗi và cải tiến mỗi tuần qua changelog.'],
+                  ['Hỗ trợ tiếng Việt', 'Hướng dẫn và kênh hỗ trợ dành cho cộng đồng Việt.'],
+                  ['Dữ liệu theo tính năng', 'Lưu cấu hình và dữ liệu tính năng. DM gửi cho bot có thể được chuyển đến chủ bot khi bật hỗ trợ.'],
+                  ['Cập nhật minh bạch', 'Xem thay đổi đã phát hành trong nhật ký cập nhật.'],
                 ].map(([t, d]) => (
                   <li key={t} className="flex items-start gap-3.5">
                     <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mimi-green/15 text-mimi-green">
@@ -346,45 +309,6 @@ export default function HomePage() {
               </ul>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ══ ĐÁNH GIÁ ══════════════════════════════════════════════ */}
-      <section id="danh-gia" className="scroll-mt-24 py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
-            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Cộng Đồng Nói Gì Về <span className="text-gradient-mimi">MIMI</span>?
-            </h2>
-            <p className="text-gray-400">
-              Những trải nghiệm tiêu biểu từ các quản trị viên server đang dùng MIMI.
-            </p>
-          </Reveal>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 100}>
-                <div className="glass-panel card-lift relative h-full space-y-5 rounded-3xl p-8 hover:border-mimi-green/35">
-                  <Quote className="h-8 w-8 text-mimi-green/40" />
-                  <p className="text-sm leading-relaxed text-gray-300">{t.text}</p>
-                  <div className="flex items-center gap-3 border-t border-white/10 pt-5">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-brand text-sm font-extrabold text-[#05060f]">
-                      {t.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-white">{t.name}</p>
-                      <p className="text-xs text-gray-400">{t.role}</p>
-                    </div>
-                    <div className="ml-auto flex gap-0.5">
-                      {Array.from({ length: 5 }).map((_, s) => (
-                        <Star key={s} className="h-3.5 w-3.5 fill-mimi-amber text-mimi-amber" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -448,13 +372,12 @@ export default function HomePage() {
           <Reveal>
             <div className="glass-panel-glow gradient-ring relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-14">
               <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-mimi-green/10 blur-3xl" />
-              <div className="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-mimi-purple/10 blur-3xl" />
               <div className="relative space-y-7">
                 <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
                   Sẵn Sàng Nâng Tầm <span className="text-gradient-mimi">Server Của Bạn</span>?
                 </h2>
                 <p className="mx-auto max-w-2xl text-lg text-gray-300">
-                  Chưa đầy 30 giây để mời MIMI — miễn phí, không cần thẻ, không quảng cáo.
+                  Mời Mimi, chọn một phòng thoại và bắt đầu bằng lệnh /play.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
                   <a
@@ -464,7 +387,7 @@ export default function HomePage() {
                     className="btn-primary !px-9 !py-4 !text-base"
                   >
                     <Sparkles className="h-6 w-6" />
-                    <span>Thêm Vào Discord Ngay</span>
+                    <span>Mời Mimi miễn phí</span>
                   </a>
                   <a
                     href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL}
@@ -491,7 +414,7 @@ function StatBlock({
   value,
   label,
 }: {
-  icon: React.ElementType;
+  icon: LucideIcon;
   value: string;
   label: string;
 }) {

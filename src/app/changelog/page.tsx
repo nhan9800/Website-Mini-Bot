@@ -1,175 +1,165 @@
 import React from 'react';
+import Link from 'next/link';
 import type { Metadata } from 'next';
-import { History, Sparkles, Wrench, Rocket } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, History, MessageCircle, Monitor, ShieldCheck } from 'lucide-react';
+import { websiteReleaseDate, websiteReleaseDateLabel, websiteReleaseTitle, websiteVersion } from '@/lib/release-info';
 
 export const metadata: Metadata = {
-  title: 'Nhật Ký Thay Đổi',
-  description: 'Lịch sử cập nhật của hệ sinh thái Mimi Bot — bot nhạc Discord và website dashboard.',
+  title: 'Nhật ký cập nhật',
+  description: 'Những thay đổi của website Mimi, cùng trạng thái cập nhật riêng của bot và máy chủ cộng đồng.',
 };
 
-const releases = [
+const latestChanges = [
   {
-    version: 'v2.4.0 — Tách Giao Diện Admin & Trang Đối Tác Riêng Biệt',
+    label: 'Giao diện',
+    title: 'Một diện mạo mới, từ trang chủ đến nhật ký.',
+    detail: 'Bố cục mint gọn hơn, điều hướng rõ ràng trên điện thoại và máy tính, có lựa chọn giao diện sáng hoặc tối. Phiên bản website được dùng thống nhất trên thanh điều hướng, chân trang và thông tin bản dựng.',
+  },
+  {
+    label: 'Cộng đồng',
+    title: 'Mimi Bot miễn phí. Mimi Shield là sản phẩm riêng.',
+    detail: 'Lệnh nghe nhạc, công cụ cộng đồng và dashboard của Mimi Bot không yêu cầu mua bản quyền. Các gói bảo vệ của Mimi Shield được trình bày riêng để tránh nhầm lẫn.',
+  },
+  {
+    label: 'Dữ liệu',
+    title: 'Đánh giá được lưu ngoài thư mục bản dựng.',
+    detail: 'Kho đánh giá bền vững có bước chuyển dữ liệu trước khi rebuild. Danh tính xác minh được kiểm tra phía máy chủ; số sao, trạng thái bot và đội ngũ hiển thị theo dữ liệu nhận được, có thông báo khi chưa tải được.',
+  },
+  {
+    label: 'Truy cập',
+    title: 'Dashboard giữ khóa truy cập theo máy chủ.',
+    detail: 'Các yêu cầu điều khiển nhạc và thay đổi cấu hình được kiểm tra quyền phía máy chủ. Danh sách lệnh có bản chụp dự phòng được ghi rõ nguồn khi API bot chưa sẵn sàng.',
+  },
+];
+
+const history = [
+  {
+    version: '2.4.0',
     date: '27/07/2026',
-    tag: 'Feature Release',
-    icon: Sparkles,
+    title: 'Đội ngũ và cộng đồng có không gian riêng',
     items: [
-      'Phân tách khu vực Đội Ngũ (Team): Di chuyển toàn bộ dàn Admin/Support xuống một khu vực riêng biệt, thanh lịch hơn, nhường Spotlight (hào quang) lớn nhất cho Founder và Core Developer.',
-      'Đảm bảo 100% hiển thị Core Developer: Dù Discord Bot có chạy phiên bản cũ hay lỗi cache, API Website vẫn tự động nhận diện và gán đúng vị trí Core Developer cho ID 1138315103821889566.',
-      'Trang Cộng Đồng Sử Dụng Bot (Partners) mới toanh: Các thành viên và máy chủ đối tác (ví dụ: VTC Manager) nay đã có một không gian vinh danh riêng biệt với thẻ bài 3D mạ vàng cực kỳ sang trọng.',
-      'Sửa lỗi hiển thị rớt dòng (text-wrap) trên thanh Header Navigation khi duyệt web trên màn hình nhỏ hoặc có quá nhiều menu.',
+      'Tách nhóm phát triển và nhóm quản trị trong phần giới thiệu đội ngũ.',
+      'Thêm trang cộng đồng sử dụng bot và điều chỉnh thanh điều hướng.',
     ],
   },
   {
-    version: 'v2.3.0 — BXH LIVE, Role Discord Dev Team & Feedback Đồng Bộ',
+    version: '2.3.0',
     date: '27/07/2026',
-    tag: 'Major Update',
-    icon: Sparkles,
+    title: 'Bảng nhạc Việt và đánh giá cộng đồng',
     items: [
-      'Bảng Xếp Hạng Nhạc Việt LIVE ( Apple Music Vietnam): Kết nối trực tiếp 100% vào bảng xếp hạng iTunes/Apple Music chính thức tại Việt Nam (không cache tĩnh), thêm huy hiệu Apple Music VN và nhãn xu hướng #1 APPLE HIT, #2 HOT, #3 TREND.',
-      'Tối ưu tự động nhận diện Đội Ngũ Đứng Sau MIMI: Nhận diện Founder chính xác 100% bằng Role ID cao nhất trong server Discord (1517081002269343854) với 3 lớp fallback — không còn phụ thuộc vào tên username hay tên role, loại bỏ hoàn toàn avatar mặc định.',
-      'Liên Kết Tài Khoản Discord Khi Đánh Giá (Discord Account Linking): Khách hàng có thể nhập Discord Tag hoặc ID để xác thực tài khoản trực tiếp qua Bot Core, hiển thị Avatar thật và huy hiệu ✔ Verified Member trên các bài đánh giá.',
-      'Lưu Trữ Đánh Giá Vĩnh Viễn: Toàn bộ đánh giá của cộng đồng nay được lưu bền vững trên ổ đĩa server (không còn mất khi F5 hay khởi động lại), giữ tối đa 50 đánh giá gần nhất và tự động cộng dồn số liệu tổng.',
-      'Đại tu trải nghiệm Đánh Giá & Góp Ý (Feedback UI): Thêm nút Đánh Giá phát sáng trên Header Navigation Bar ở mọi trang và chuyên mục "Khách Hàng Nói Gì Về MIMI BOT" rực rỡ ngay Trang Chủ.',
-      'Hệ thống Đánh Giá & Phản Hồi Đồng Bộ: Nút floating nổi sang trọng trên toàn bộ website, hỗ trợ chấm điểm 1 - 5 sao và theo dõi đánh giá từ cộng đồng thời gian thực.',
-      'Đại tu toàn bộ hệ thống icon: Chuyển đổi từ icon emoji 3D sang icon 2D Lucide có hộp viền mờ phát sáng (glassmorphism glow) cực kỳ đẳng cấp trên Status, Dashboard, BXH và Trang Chủ.',
-      'Tích hợp cơ chế Smart Fallback an toàn 100% giúp website luôn mượt mà kể cả khi máy chủ bot đang khởi động lại hoặc chưa thiết lập cấu hình.',
+      'Kết nối bảng xếp hạng bài hát từ Apple Music Việt Nam.',
+      'Bổ sung giao diện đánh giá, nhận diện tài khoản Discord và nhóm đội ngũ.',
+      'Ở bản hiện tại, website chỉ hiển thị đội ngũ được bot trả về và giữ tối đa 50 đánh giá gần nhất; không tự thêm thành viên hoặc điểm sao minh họa.',
     ],
   },
   {
-    version: 'v2.2.0 — Hero 3D & Khoá Truy Cập Dashboard',
+    version: '2.2.0',
     date: '26/07/2026',
-    tag: 'Major Update',
-    icon: Rocket,
+    title: 'Cảnh nhạc 3D và khóa dashboard',
     items: [
-      'Trang chủ có cảnh 3D WebGL thật: đĩa vinyl quay theo trục, vòng equalizer 44 thanh chuyển màu theo nhịp, nốt nhạc phát sáng bay lơ lửng và camera nghiêng theo chuột.',
-      'Cảnh 3D tự tắt khi cuộn qua khỏi hero, tôn trọng tuỳ chọn "giảm chuyển động" của hệ điều hành, và quay về nền particles nếu máy không hỗ trợ WebGL.',
-      'Dashboard nay yêu cầu khoá truy cập: gõ /dashboard trong Discord để nhận link riêng. Trước đây bất kỳ ai biết ID server đều điều khiển được nhạc và đổi cấu hình server lạ.',
-      'Sửa 44 lỗi trong bot sau đợt rà soát toàn bộ mã nguồn: rò rỉ bộ nhớ, tiến trình tải nhạc mồ côi, nút Bỏ Qua không ăn khi bật Lặp Bài, và nhiều lỗi hàng chờ khác.',
-      'Nâng Next.js lên 14.2.35 để vá các lỗ hổng bảo mật đã công bố.',
+      'Thêm cảnh vinyl WebGL, hỗ trợ giảm chuyển động và giao diện dự phòng khi thiết bị không hỗ trợ.',
+      'Dashboard bổ sung khóa truy cập riêng theo máy chủ Discord.',
     ],
   },
   {
-    version: 'v2.1.0 — Website Đại Tu & Kết Nối Dữ Liệu Thật',
+    version: '2.1.0',
     date: '26/07/2026',
-    tag: 'Major Update',
-    icon: Rocket,
+    title: 'Website kết nối bot',
     items: [
-      'Thiết kế lại toàn bộ giao diện website: hero mới, nền aurora, hiệu ứng glassmorphism và animation mượt trên mọi trang.',
-      'Dashboard kết nối Internal API THẬT của bot: xem bài đang phát, hàng chờ, điều khiển pause/skip/stop/volume trực tiếp từ trình duyệt.',
-      'Trang Trạng Thái hiển thị số liệu thời gian thực (ping, uptime, số server, phiên voice) — không còn số liệu mô phỏng.',
-      'Trang Lệnh tự đồng bộ danh sách slash command đang đăng ký trên Discord.',
-      'Sửa lỗi build tràn RAM (OOM Killed) trên hosting cPanel: web được build sẵn, host chỉ cần pull về chạy.',
+      'Kết nối dashboard nhạc, trạng thái hệ thống và danh sách lệnh với API bot.',
+      'Chuyển việc build sang máy phát triển hoặc CI để giảm tải hosting.',
     ],
   },
   {
-    version: 'v2.0.0 — Tách Riêng Web & Bot',
+    version: '2.0.0',
     date: '26/07/2026',
-    tag: 'Rebuild',
-    icon: Wrench,
+    title: 'Tách website và bot',
     items: [
-      'Tách kho mã nguồn giữa Bot Discord (D-n-MimiBot) và Website (Website-Mini-Bot).',
-      'Chuyển website sang Next.js 14 App Router, chạy trên cPanel Nhân Hòa qua Phusion Passenger.',
-      'Thêm Internal API bảo mật bằng Bearer token để web và bot giao tiếp giữa hai máy chủ.',
-    ],
-  },
-  {
-    version: 'v1.1.0 — Nâng Cấp Bot Core',
-    date: '15/07/2026',
-    tag: 'Feature Release',
-    icon: Sparkles,
-    items: [
-      'Hệ thống xác thực 24h: tự động reset role vào 00:00 UTC+7 mỗi ngày.',
-      'Chấm công nhân sự độc lập với xác thực: check-in/check-out, báo cáo tuần tự động.',
-      'Cảnh báo Economy bất thường: phát hiện thu nhập trên 5.000.000 xu/ngày, báo Bot Owner qua DM.',
-      'Nghe nhạc không cần API key: lời bài hát qua lrclib.net, nhận diện link Spotify qua oEmbed.',
-      'Tự động thử lại client khác khi YouTube chặn tải nhạc (lỗi 403).',
+      'Tách kho mã nguồn website Next.js và bot Discord; bổ sung API nội bộ cho hai dịch vụ.',
     ],
   },
 ];
 
 export default function ChangelogPage() {
   return (
-    <div className="min-h-screen py-14">
-      <div className="mx-auto max-w-4xl space-y-12 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
-            <History className="h-3.5 w-3.5" />
-            <span>Lịch sử cập nhật</span>
+    <div className="min-h-screen pb-8 pt-10 sm:pt-16">
+      <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
+        <div className="border-b border-white/10 pb-10 sm:pb-14">
+          <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-mimi-green"><History size={15} /> Nhật ký Mimi</p>
+          <div className="mt-6 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.14] tracking-tight text-white sm:text-6xl">Từng thay đổi.<br /><span className="text-mimi-green">Một Mimi tốt hơn.</span></h1>
+            <p className="max-w-sm text-sm leading-7 text-gray-400 sm:text-base">Theo dõi những gì thay đổi trên website và cộng đồng. Phiên bản bot được ghi riêng theo trạng thái thực tế.</p>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Nhật Ký Thay Đổi <span className="text-gradient-mimi">Mimi</span>
-          </h1>
-          <p className="text-base text-gray-400 sm:text-lg">
-            Theo dõi từng bước phát triển của hệ sinh thái âm nhạc và cộng đồng Mimi.
-          </p>
         </div>
 
-        {/* Timeline */}
-        <div className="relative space-y-8 before:absolute before:bottom-8 before:left-[26px] before:top-8 before:hidden before:w-px before:bg-gradient-to-b before:from-mimi-green/50 before:via-mimi-purple/30 before:to-transparent sm:before:block">
-          {releases.map((rel, index) => {
-            const Icon = rel.icon;
-            const isLatest = index === 0;
-            return (
-              <div key={rel.version} className="relative sm:pl-20">
-                <div
-                  className={`absolute left-0 top-8 hidden h-[52px] w-[52px] items-center justify-center rounded-2xl border bg-[#0b0d1c] shadow-glow sm:flex ${
-                    isLatest
-                      ? 'border-mimi-green text-mimi-green shadow-[0_0_20px_rgba(46,204,113,0.5)]'
-                      : 'border-white/20 text-gray-400'
-                  }`}
-                >
-                  <Icon className="h-6 w-6" />
+        <div className="grid gap-10 pt-10 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-14">
+          <aside className="space-y-7 lg:sticky lg:top-28 lg:self-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Website hiện tại</p>
+              <p className="mt-3 font-mono text-3xl font-semibold text-white">v{websiteVersion}</p>
+              <p className="mt-2 text-sm text-gray-400">Cập nhật <time dateTime={websiteReleaseDate}>{websiteReleaseDateLabel}</time></p>
+              <a href="#ban-moi-nhat" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-mimi-green">Xem bản mới nhất <ArrowRight size={16} /></a>
+            </div>
+            <div className="border-t border-white/10 pt-6">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-gray-500"><Monitor size={14} /> Mỗi dịch vụ, một bản dựng</p>
+              <p className="mt-3 text-xs leading-6 text-gray-400">Số phiên bản trên trang này là của website. Mở trang trạng thái để xem dữ liệu bot đang chạy.</p>
+              <Link href="/status" className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-gray-200 hover:text-mimi-green">Trạng thái bot <ArrowUpRight size={15} /></Link>
+            </div>
+            <div className="border-t border-white/10 pt-6">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-gray-500"><MessageCircle size={14} /> Cộng đồng · 02/10</p>
+              <p className="mt-3 text-xs leading-6 text-gray-400">Máy chủ hỗ trợ đã có bố cục, phân quyền và bộ emoji mới. Cấu hình máy chủ được cập nhật riêng; mã bot 1.4.0 chưa được triển khai trong đợt này.</p>
+              <a href="https://discord.com/channels/1517068246493429852/1555605739949531137" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-gray-200 hover:text-mimi-green">Hướng dẫn trên Discord <ArrowUpRight size={15} /></a>
+            </div>
+          </aside>
+
+          <div className="min-w-0">
+            <article id="ban-moi-nhat" className="scroll-mt-28 overflow-hidden rounded-2xl border border-mimi-green/25 bg-surface">
+              <div className="border-b border-white/10 p-6 sm:p-9">
+                <div className="flex flex-wrap items-center gap-3 text-xs">
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-mimi-green/10 px-2.5 py-1 font-semibold text-mimi-green"><Check size={13} /> Mới nhất</span>
+                  <span className="font-mono text-gray-500">WEBSITE v{websiteVersion}</span>
+                  <time dateTime={websiteReleaseDate} className="text-gray-500">{websiteReleaseDateLabel}</time>
                 </div>
-                <div
-                  className={`glass-panel card-lift space-y-5 rounded-3xl p-8 transition-all duration-500 ${
-                    isLatest
-                      ? 'border-mimi-green/50 bg-mimi-green/[0.04] shadow-[0_0_35px_rgba(46,204,113,0.25)]'
-                      : 'hover:border-white/25'
-                  }`}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <h2 className="text-xl font-bold text-white sm:text-2xl">{rel.version}</h2>
-                        {isLatest && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-mimi-green/40 bg-mimi-green/20 px-2.5 py-0.5 text-[11px] font-extrabold text-mimi-green shadow-[0_0_12px_rgba(46,204,113,0.3)]">
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-mimi-green opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-mimi-green"></span>
-                            </span>
-                            <span>MỚI NHẤT</span>
-                          </span>
-                        )}
-                      </div>
-                      <p className="font-mono text-xs text-gray-400">Phát hành: {rel.date}</p>
+                <h2 className="mt-5 max-w-2xl text-2xl font-bold leading-snug tracking-tight text-white sm:text-3xl">{websiteReleaseTitle}</h2>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400">Làm mới trải nghiệm duyệt web và hoàn thiện những phần kết nối dữ liệu, truy cập và đánh giá cộng đồng.</p>
+              </div>
+              <div className="divide-y divide-white/[0.07] px-6 sm:px-9">
+                {latestChanges.map((change) => (
+                  <div key={change.label} className="grid gap-3 py-6 sm:grid-cols-[100px_minmax(0,1fr)] sm:gap-6">
+                    <span className="pt-1 font-mono text-[11px] uppercase tracking-wider text-mimi-green">{change.label}</span>
+                    <div>
+                      <h3 className="text-base font-semibold leading-6 text-white">{change.title}</h3>
+                      <p className="mt-2 text-sm leading-7 text-gray-400">{change.detail}</p>
                     </div>
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${
-                        isLatest
-                          ? 'bg-mimi-green/20 text-mimi-green'
-                          : 'bg-white/10 text-gray-300'
-                      }`}
-                    >
-                      {rel.tag}
-                    </span>
                   </div>
-                  <ul className="space-y-3 text-sm text-gray-300 sm:text-base">
-                    {rel.items.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <Sparkles
-                          className={`mt-0.5 h-4 w-4 shrink-0 ${
-                            isLatest ? 'text-mimi-green' : 'text-mimi-purple'
-                          }`}
-                        />
-                        <span className="leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                ))}
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:px-9">
+                <p className="flex items-center gap-2 text-xs text-gray-500"><ShieldCheck size={15} /> Mimi Bot miễn phí cho cộng đồng</p>
+                <Link href="/commands" className="inline-flex items-center gap-2 text-sm font-semibold text-mimi-green">Khám phá lệnh Mimi <ArrowRight size={16} /></Link>
+              </div>
+            </article>
+
+            <div className="mb-3 mt-14 flex items-center justify-between gap-4 border-b border-white/10 pb-5">
+              <h2 className="text-lg font-semibold text-white">Những phiên bản trước</h2>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-gray-500">Lịch sử website</span>
+            </div>
+            {history.map((release) => (
+              <article key={release.version} className="grid gap-4 border-b border-white/10 py-7 sm:grid-cols-[115px_minmax(0,1fr)] sm:gap-8">
+                <div>
+                  <p className="font-mono text-sm font-semibold text-gray-200">v{release.version}</p>
+                  <p className="mt-2 text-xs text-gray-500">{release.date}</p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">{release.title}</h3>
+                  <ul className="mt-3 space-y-2 text-sm leading-7 text-gray-400">
+                    {release.items.map((item) => <li key={item} className="flex gap-3"><span aria-hidden className="mt-3 h-1 w-1 shrink-0 rounded-full bg-gray-500" /><span>{item}</span></li>)}
                   </ul>
                 </div>
-              </div>
-            );
-          })}
+              </article>
+            ))}
+            <p className="mt-6 text-xs leading-6 text-gray-500">Các mục lịch sử mô tả thay đổi tại thời điểm phát hành. Tính năng và điều kiện truy cập hiện tại được ghi trong hướng dẫn sử dụng.</p>
+          </div>
         </div>
       </div>
     </div>

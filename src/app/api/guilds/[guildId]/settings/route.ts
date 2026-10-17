@@ -35,9 +35,9 @@ function readAccessKey(request: Request): string {
 /** GET /api/guilds/:id/settings → GET {bot}/internal/guilds/:id/settings */
 export async function GET(
   request: Request,
-  { params }: { params: { guildId: string } }
+  { params }: { params: Promise<{ guildId: string }> }
 ) {
-  const { guildId } = params;
+  const { guildId } = await params;
   if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
   const accessKey = readAccessKey(request);
@@ -56,9 +56,9 @@ export async function GET(
  */
 export async function PATCH(
   request: Request,
-  { params }: { params: { guildId: string } }
+  { params }: { params: Promise<{ guildId: string }> }
 ) {
-  const { guildId } = params;
+  const { guildId } = await params;
   if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
   const accessKey = readAccessKey(request);
@@ -69,6 +69,9 @@ export async function PATCH(
     body = await request.json();
   } catch {
     return badRequest('Body phải là JSON.');
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return badRequest('Body phải là một đối tượng JSON.');
   }
 
   // Lọc trước ở web để báo lỗi sớm, thay vì đẩy rác sang bot

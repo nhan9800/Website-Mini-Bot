@@ -1,0 +1,1810 @@
+[
+  {
+    "name": "247",
+    "description": "Bật/Tắt chế độ treo bot 24/7 trong kênh thoại",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "addemoji",
+    "description": "Thêm emoji tùy chỉnh vào server (Hỗ trợ: emoji Discord, link từ emoji.gg/discadia)",
+    "options": [
+      {
+        "name": "nguồn",
+        "description": "Paste emoji Discord (<:tên:id>), ID, hoặc link ảnh từ emoji.gg/discadia",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "tên",
+        "description": "Tên đặt cho emoji (VD: mimi_crown, neon_shield)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ảnh",
+        "description": "Tải file ảnh/gif trực tiếp để tạo emoji",
+        "type": 11,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "1073741824"
+  },
+  {
+    "name": "addnutticket",
+    "description": "Tạo panel Ticket mới hoặc thêm tối đa 5 nút vào panel theo ID tin nhắn",
+    "options": [
+      {
+        "name": "kênh_gửi",
+        "description": "Kênh hiển thị bảng Ticket",
+        "type": 7,
+        "required": true
+      },
+      {
+        "name": "tin_nhan_id",
+        "description": "ID tin nhắn Ticket của Mimi cần thêm nút (bỏ trống để tạo tin mới)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "tiêu_đề",
+        "description": "Tiêu đề của bảng Ticket",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nội_dung",
+        "description": "Nội dung mô tả (hỗ trợ \\n để xuống dòng)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "hình_nhỏ",
+        "description": "Ảnh thumbnail bên góc phải (Mặc định: Logo Server)",
+        "type": 11,
+        "required": false
+      },
+      {
+        "name": "hình_lớn",
+        "description": "Ảnh banner to bên dưới",
+        "type": 11,
+        "required": false
+      },
+      {
+        "name": "nút1_loại",
+        "description": "Loại chức năng của nút 1",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút1_tên",
+        "description": "Tên hiển thị của nút 1",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút1_màu",
+        "description": "Màu của nút 1 (chỉ áp dụng Tạo Ticket)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút1_link",
+        "description": "Link URL (Bắt buộc nếu nút 1 là Liên Kết)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút2_loại",
+        "description": "Loại chức năng của nút 2",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút2_tên",
+        "description": "Tên hiển thị của nút 2",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút2_màu",
+        "description": "Màu của nút 2",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút2_link",
+        "description": "Link URL của nút 2",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút3_loại",
+        "description": "Loại chức năng của nút 3",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút3_tên",
+        "description": "Tên hiển thị của nút 3",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút3_màu",
+        "description": "Màu của nút 3",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút3_link",
+        "description": "Link URL của nút 3",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_loại",
+        "description": "Loại chức năng của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_tên",
+        "description": "Tên hiển thị của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_màu",
+        "description": "Màu của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút4_link",
+        "description": "Link URL của nút 4",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút5_loại",
+        "description": "Loại chức năng của nút 5",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút5_tên",
+        "description": "Tên hiển thị của nút 5",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút5_link",
+        "description": "Link URL của nút 5",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "addrole",
+    "description": "Thêm vai trò cho người dùng (chọn menu hoặc nhập tên)",
+    "options": [
+      {
+        "name": "nguoi_dung",
+        "description": "Người dùng cần thêm vai trò",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "vai_tro",
+        "description": "Chọn vai trò từ menu (ưu tiên)",
+        "type": 8,
+        "required": false
+      },
+      {
+        "name": "ten_vai_tro",
+        "description": "Nhập tên vai trò bằng text nếu không chọn từ menu",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "268435456"
+  },
+  {
+    "name": "afk",
+    "description": "Treo máy (AFK). Tự động thông báo nếu ai đó nhắc đến bạn.",
+    "options": [
+      {
+        "name": "lý_do",
+        "description": "Lý do bạn AFK",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "album",
+    "description": "Quản lý album nhạc cá nhân của bạn",
+    "options": [
+      {
+        "name": "xem",
+        "description": "Xem tất cả album của bạn hoặc chi tiết 1 album",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "tao",
+        "description": "Tạo một album mới",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "them",
+        "description": "Thêm bài ĐANG PHÁT vào một album",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "phat",
+        "description": "Phát toàn bộ một album vào hàng đợi",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "xoa",
+        "description": "Xóa một album của bạn",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "antiraid",
+    "description": "Cấu hình và kiểm soát hệ thống bảo vệ máy chủ Anti-Raid",
+    "options": [
+      {
+        "name": "trangthai",
+        "description": "Xem trạng thái hoạt động của hệ thống Anti-Raid",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "lockdown",
+        "description": "Khóa hoặc mở khóa khẩn cấp toàn bộ kênh chat",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "autoplay",
+    "description": "Bật/Tắt chế độ tự động phát nhạc khi hết hàng đợi",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "avatar",
+    "description": "Xem ảnh đại diện của bản thân hoặc người dùng khác",
+    "options": [
+      {
+        "name": "người_dùng",
+        "description": "Thành viên muốn xem (mặc định: bản thân)",
+        "type": 6,
+        "required": false
+      },
+      {
+        "name": "loại",
+        "description": "Loại ảnh (mặc định: profile toàn cầu)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "ban",
+    "description": "Ban một thành viên khỏi server",
+    "options": [
+      {
+        "name": "thành_viên",
+        "description": "Thành viên cần ban",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "lý_do",
+        "description": "Lý do ban (tùy chọn)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "xóa_tin_nhắn",
+        "description": "Xóa tin nhắn trong N ngày gần đây (0-7, mặc định 0)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "4"
+  },
+  {
+    "name": "banminigame",
+    "description": "Cấm người chơi tham gia tất cả minigame cá cược (Admin & Owner)",
+    "options": [
+      {
+        "name": "người_dùng",
+        "description": "Người dùng cần cấm",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "thời_gian",
+        "description": "Thời gian cấm (VD: 10m, 1h, 1d) (Trống = vĩnh viễn)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "lý_do",
+        "description": "Lý do cấm minigame",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "boostsetup",
+    "description": "Bật/Tắt, chọn kênh và tùy chỉnh cảm ơn Boost",
+    "options": [
+      {
+        "name": "bat",
+        "description": "Bật hoặc tắt; để trống để xem cấu hình",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Kênh cảm ơn Boost",
+        "type": 7,
+        "required": false
+      },
+      {
+        "name": "tin_nhan",
+        "description": "Tin nhắn ngoài khung; {user}, {server}, {boosts}",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "noi_dung",
+        "description": "Nội dung khung cảm ơn; dùng \\n để xuống dòng",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_nho",
+        "description": "URL HTTPS ảnh nhỏ; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_lon",
+        "description": "URL HTTPS banner; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "broadcast",
+    "description": "Mở bảng tương tác thiết kế thông báo liên server (Components V2)",
+    "options": [],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "broadcastupdate",
+    "description": "Phát thông báo cập nhật hệ thống Components V2 tới kênh chính và liên server",
+    "options": [
+      {
+        "name": "force",
+        "description": "Bắt buộc gửi lại ngay cả khi đã gửi rồi",
+        "type": 5,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "canhcao",
+    "description": "Cảnh cáo thủ công — đủ 5 lần cảnh cáo (kể cả tự động) sẽ tự động Mute",
+    "options": [
+      {
+        "name": "thành_viên",
+        "description": "Thành viên cần cảnh cáo",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "lý_do",
+        "description": "Lý do cảnh cáo (tùy chọn)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "1099511627776"
+  },
+  {
+    "name": "caonhanh",
+    "description": "Câu cá nhanh hàng loạt (thời gian chờ = số lần câu / phút)",
+    "options": [
+      {
+        "name": "so_lan",
+        "description": "Số lần muốn câu (1 đến 30 lần, mặc định: 10)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "caothap",
+    "description": "Trò chơi Cao Thấp (Hi-Lo): Dự đoán lá bài tiếp theo cao hơn hay thấp hơn",
+    "options": [
+      {
+        "name": "tiền_cược",
+        "description": "Số tiền cược (hoặc all)",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "cauca",
+    "description": "Đi câu cá thư giãn nhận xu và cá vào kho đồ",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "changelog",
+    "description": "[Admin] Gửi thông báo cập nhật vào kênh chỉ định",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "checkclone",
+    "description": "Kiểm tra thông tin tài khoản (Chống clone/rửa tiền)",
+    "options": [
+      {
+        "name": "nguoi_dung",
+        "description": "Người dùng cần kiểm tra",
+        "type": 6,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "clear",
+    "description": "Xóa một số lượng tin nhắn gần nhất trong kênh hiện tại",
+    "options": [
+      {
+        "name": "số_lượng",
+        "description": "Số tin nhắn cần xóa (1-100)",
+        "type": 4,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "8192"
+  },
+  {
+    "name": "confess",
+    "description": "Gửi tâm sự công khai hoặc ẩn danh vào kênh Confession",
+    "options": [
+      {
+        "name": "nội_dung",
+        "description": "Nội dung muốn chia sẻ",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "che_do",
+        "description": "Cách đăng; mặc định ẩn danh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "confession",
+    "description": "Gửi một confession công khai hoặc ẩn danh",
+    "options": [
+      {
+        "name": "nội_dung",
+        "description": "Nội dung confession",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "che_do",
+        "description": "Cách đăng; mặc định ẩn danh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "configticket",
+    "description": "Custom tin nhắn chào mừng hiển thị bên trong phòng Ticket ẩn",
+    "options": [
+      {
+        "name": "nội_dung",
+        "description": "Nội dung lời nhắn mới (Dùng \\n để xuống dòng)",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "configwelcome",
+    "description": "Thiết lập cố định kênh hiển thị lời chào (Khóa tính năng tự động của setup)",
+    "options": [
+      {
+        "name": "kênh_welcome",
+        "description": "Chọn kênh Welcome thủ công",
+        "type": 7,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "daokimcuong",
+    "description": "Trò chơi Đào Kim Cương (Mines kiểu OwO): Dò tìm 3x3 né bom săn thưởng lớn",
+    "options": [
+      {
+        "name": "tiền_cược",
+        "description": "Số tiền cược (VD: 50000, 50k hoặc all). Bỏ trống để đào khoáng sản miễn phí",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "số_bom",
+        "description": "Số lượng bom ẩn trong 9 ô (1 đến 8 quả, mặc định: 1)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "dashboard",
+    "description": "Lấy link Dashboard web kèm khoá truy cập cho server này",
+    "options": [],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "dj",
+    "description": "Cấu hình nhạc cho server: DJ role, âm lượng mặc định",
+    "options": [
+      {
+        "name": "xem",
+        "description": "Xem cấu hình nhạc hiện tại của server",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "role",
+        "description": "Đặt vai trò DJ (chỉ DJ + admin mới điều khiển nhạc)",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "amluong",
+        "description": "Đặt âm lượng mặc định khi bắt đầu phát (0-150%)",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "donate",
+    "description": "Xem thông tin donate ủng hộ duy trì bot và mã QR chuyển khoản",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "farm",
+    "description": "Mở nông trại MIMI Farm: Trồng trọt, tưới nước, thu hoạch và làm giàu",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "genkey",
+    "description": "[Admin/Owner] Tạo mã License Key bản quyền để cấp cho khách hàng",
+    "options": [
+      {
+        "name": "gói",
+        "description": "Gói bản quyền cần tạo",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "số_lượng",
+        "description": "Số lượng mã key muốn tạo (1-20)",
+        "type": 4,
+        "required": false
+      },
+      {
+        "name": "ghi_chú",
+        "description": "Ghi chú người mua / lý do",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "giveawaycreate",
+    "description": "Tạo Giveaway mới trong kênh Giveaway",
+    "options": [
+      {
+        "name": "tiêu_đề",
+        "description": "Tiêu đề Giveaway",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "phần_thưởng",
+        "description": "Mô tả phần thưởng",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "thời_gian",
+        "description": "Thời gian diễn ra",
+        "type": 4,
+        "required": true
+      },
+      {
+        "name": "đơn_vị",
+        "description": "Đơn vị thời gian",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "số_người_thắng",
+        "description": "Số người thắng (mặc định: 1)",
+        "type": 4,
+        "required": false
+      },
+      {
+        "name": "vai_trò_tag",
+        "description": "Vai trò cần tag khi bắt đầu (tùy chọn)",
+        "type": 8,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "goodbye",
+    "description": "Bật/Tắt, chọn kênh và tùy chỉnh lời tạm biệt như Welcome",
+    "options": [
+      {
+        "name": "bat",
+        "description": "Bật hoặc tắt; để trống để xem cấu hình",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Kênh tạm biệt",
+        "type": 7,
+        "required": false
+      },
+      {
+        "name": "tin_nhan",
+        "description": "Tin nhắn ngoài khung; {user}, {username}, {server}",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "noi_dung",
+        "description": "Nội dung tạm biệt; {count} là số thành viên còn lại",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_nho",
+        "description": "URL HTTPS ảnh nhỏ; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "anh_lon",
+        "description": "URL HTTPS banner; xóa để bỏ ảnh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "gopy",
+    "description": "Gửi góp ý về kênh góp ý của server",
+    "options": [
+      {
+        "name": "loại",
+        "description": "Chọn loại góp ý",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "nội_dung",
+        "description": "Nội dung góp ý của bạn",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "help",
+    "description": "Xem bảng hướng dẫn sử dụng tất cả các tính năng của bot",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "invite",
+    "description": "Tạo link mời vĩnh viễn cho server này",
+    "options": [],
+    "defaultMemberPermissions": "1"
+  },
+  {
+    "name": "invites",
+    "description": "Kiểm tra thành viên tham gia qua lời mời",
+    "options": [
+      {
+        "name": "nguoi_moi",
+        "description": "Danh sách thành viên được một người mời vào",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "thanh_vien",
+        "description": "Kiểm tra nguồn tham gia của một thành viên",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "event",
+        "description": "Xem top hoặc số người mời trong event hiện tại",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "reset",
+        "description": "Quản trị: reset số liệu event, giữ lịch sử lời mời",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "invitesetup",
+    "description": "Bật/tắt thông báo người mời và số thứ tự trong event",
+    "options": [
+      {
+        "name": "bat",
+        "description": "Bật/tắt đếm và thông báo; bỏ trống xem cấu hình",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Kênh thông báo lời mời",
+        "type": 7,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "join",
+    "description": "Mời bot tham gia vào kênh thoại của bạn",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "kichhoat",
+    "description": "Kích hoạt hoặc gia hạn bản quyền Anti-Raid bằng mã Key",
+    "options": [
+      {
+        "name": "mã_key",
+        "description": "Mã License Key (dạng MIMI-ANTI-XXXX-XXXX-XXXX)",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "kick",
+    "description": "Kick một thành viên khỏi server",
+    "options": [
+      {
+        "name": "thành_viên",
+        "description": "Thành viên cần kick",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "lý_do",
+        "description": "Lý do kick (tùy chọn)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "2"
+  },
+  {
+    "name": "kyluat",
+    "description": "Xem lịch sử vi phạm kỷ luật của bản thân hoặc thành viên khác",
+    "options": [
+      {
+        "name": "thành_viên",
+        "description": "Thành viên cần xem (bỏ trống để tự kiểm tra)",
+        "type": 6,
+        "required": false
+      },
+      {
+        "name": "loại",
+        "description": "Loại số đếm muốn chỉnh (Admin Only)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "giá_trị",
+        "description": "Giá trị mới muốn đặt cho loại số đếm ở trên (Admin Only)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "leaderboard",
+    "description": "Top 10 cấp độ Chat hoặc Voice của máy chủ",
+    "options": [
+      {
+        "name": "loai",
+        "description": "Chọn bảng xếp hạng",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ky",
+        "description": "Kỳ xếp hạng",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "leave",
+    "description": "Ngắt kết nối và cho bot rời khỏi kênh thoại",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "level",
+    "description": "Xem cấp độ Chat hoặc Voice riêng trong máy chủ",
+    "options": [
+      {
+        "name": "nguoi_dung",
+        "description": "Người dùng cần xem (để trống = xem của bạn)",
+        "type": 6,
+        "required": false
+      },
+      {
+        "name": "loai",
+        "description": "Chọn bảng cấp độ",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "levelsetup",
+    "description": "Cấu hình Level Chat và Voice độc lập trong máy chủ",
+    "options": [
+      {
+        "name": "toggle",
+        "description": "Bật/Tắt hệ thống level chat",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "kenh",
+        "description": "Đặt kênh thông báo khi lên cấp",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "multiplier",
+        "description": "Nhân EXP nhận được",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "voice",
+        "description": "Bật/Tắt Level treo Voice, không tính bot hoặc AFK",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "voicekenh",
+        "description": "Chọn kênh thông báo lên cấp Voice; bỏ trống để tắt",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "voicemultiplier",
+        "description": "Hệ số EXP Voice riêng",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "thang",
+        "description": "Bật top tháng, tự tạo và chuyển 3 role Chat hoặc Voice",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "license",
+    "description": "Xem thông tin bản quyền bảo vệ Anti-Raid của máy chủ",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "lichsugiaodich",
+    "description": "Xem lịch sử biến động số dư (Give, Bán đồ, v.v.)",
+    "options": [
+      {
+        "name": "nguoi_dung",
+        "description": "Xem của người khác (Chỉ Admin)",
+        "type": 6,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "lock",
+    "description": "Khóa kênh chat hiện tại",
+    "options": [],
+    "defaultMemberPermissions": "16"
+  },
+  {
+    "name": "loibaihat",
+    "description": "Xem lời bài hát đang phát, hoặc tìm lời theo tên bài",
+    "options": [
+      {
+        "name": "tên_bài",
+        "description": "Tên bài muốn tìm lời. Bỏ trống = bài đang phát.",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "mines",
+    "description": "Trò chơi Đào Kim Cương Mines (Chuẩn phong cách OwO)",
+    "options": [
+      {
+        "name": "tiền_cược",
+        "description": "Số tiền cược (VD: 50000, 50k hoặc all)",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "số_bom",
+        "description": "Số lượng bom ẩn trong 9 ô (1 đến 8 quả, mặc định: 1)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "mute",
+    "description": "Mute thành viên — thời gian tự động leo thang (1 phút → 7 ngày qua 5 lần)",
+    "options": [
+      {
+        "name": "thành_viên",
+        "description": "Thành viên cần mute",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "lý_do",
+        "description": "Lý do mute (tùy chọn)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "1099511627776"
+  },
+  {
+    "name": "nowplaying",
+    "description": "Hiển thị bảng điều khiển bài hát đang phát",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "play",
+    "description": "Phát nhạc từ YouTube, Spotify, SoundCloud — tìm theo tên hoặc dán link",
+    "options": [
+      {
+        "name": "từ_khóa",
+        "description": "Tên bài hát hoặc link (YouTube, Spotify, SoundCloud, v.v.)",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "nguồn",
+        "description": "Nguồn tìm kiếm ưu tiên (mặc định: Tự động)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "queue",
+    "description": "Xem danh sách hàng đợi nhạc hiện tại của server",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "reactionrole-add",
+    "description": "Gắn 1 Emoji vào 1 Vai trò trên bảng Reaction Role đã tạo",
+    "options": [
+      {
+        "name": "id_tin_nhắn",
+        "description": "ID tin nhắn của bảng chọn vai trò",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "emoji",
+        "description": "Emoji dùng để thả (VD: 🎮 hoặc emoji server <:tên:id>)",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "vai_trò",
+        "description": "Vai trò sẽ được cấp khi thả Emoji này",
+        "type": 8,
+        "required": true
+      },
+      {
+        "name": "mô_tả",
+        "description": "Mô tả ngắn cho vai trò này (hiện trong bảng)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "268435456"
+  },
+  {
+    "name": "reactionrole-create",
+    "description": "Tạo bảng chọn vai trò bằng Reaction Emoji (Tính năng riêng, không ảnh hưởng /setup)",
+    "options": [
+      {
+        "name": "kênh",
+        "description": "Kênh hiển thị bảng chọn vai trò",
+        "type": 7,
+        "required": true
+      },
+      {
+        "name": "tiêu_đề",
+        "description": "Tiêu đề bảng chọn vai trò",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "nội_dung",
+        "description": "Mô tả hướng dẫn phía trên (Dùng \\n để xuống dòng)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "268435456"
+  },
+  {
+    "name": "reactionrole-remove",
+    "description": "Gỡ 1 Emoji khỏi bảng chọn vai trò (Không xóa cả bảng)",
+    "options": [
+      {
+        "name": "id_tin_nhắn",
+        "description": "ID tin nhắn của bảng chọn vai trò",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "emoji",
+        "description": "Emoji cần gỡ khỏi bảng",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "268435456"
+  },
+  {
+    "name": "reactionrole-reset",
+    "description": "Xóa toàn bộ bảng + dữ liệu Reaction Role (Không ảnh hưởng /setup, /resetsetup)",
+    "options": [],
+    "defaultMemberPermissions": "268435456"
+  },
+  {
+    "name": "remind",
+    "description": "Đặt lịch nhắc nhở cá nhân (VD: 10m, 1h, 1d)",
+    "options": [
+      {
+        "name": "thời_gian",
+        "description": "Khoảng thời gian (VD: 10m, 1h30m, 2d, 30s)",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "nội_dung",
+        "description": "Nội dung cần nhắc nhở",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "removerole",
+    "description": "Gỡ vai trò của người dùng (chọn menu hoặc nhập tên)",
+    "options": [
+      {
+        "name": "nguoi_dung",
+        "description": "Người dùng cần gỡ vai trò",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "vai_tro",
+        "description": "Chọn vai trò từ menu (ưu tiên)",
+        "type": 8,
+        "required": false
+      },
+      {
+        "name": "ten_vai_tro",
+        "description": "Nhập tên vai trò bằng text nếu không chọn từ menu",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "268435456"
+  },
+  {
+    "name": "resetbalance",
+    "description": "Quản lý xu, dữ liệu kinh tế & test (Chỉ Owner)",
+    "options": [
+      {
+        "name": "action",
+        "description": "Chọn hành động",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "amount",
+        "description": "Số xu cần thêm (dùng với action=add)",
+        "type": 4,
+        "required": false
+      },
+      {
+        "name": "người_dùng",
+        "description": "Tag người cần xử lý (mặc định là chính mình nếu để trống)",
+        "type": 6,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "0"
+  },
+  {
+    "name": "resetbot",
+    "description": "[Owner Only] Quét toàn bộ server, dọn config, đồng bộ kênh, nhắc server chưa setup",
+    "options": [],
+    "defaultMemberPermissions": "0"
+  },
+  {
+    "name": "resetgame",
+    "description": "[Owner Only] Khởi động lại toàn bộ trạng thái các trò chơi đang chạy",
+    "options": [],
+    "defaultMemberPermissions": "0"
+  },
+  {
+    "name": "resetsetup",
+    "description": "Xóa các bảng nút bấm cũ để chuẩn bị làm mới hệ thống",
+    "options": [],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "resetverify",
+    "description": "(Tùy chọn) Tắt và xóa riêng cấu hình hệ thống xác thực, không ảnh hưởng phần khác",
+    "options": [],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "resetverify-all",
+    "description": "🔴 [ADMIN ONLY] Gỡ role Đã Xác Thực và gán lại Chưa Xác Thực cho toàn bộ thành viên",
+    "options": [],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "resetwelcome",
+    "description": "Xóa kênh tùy chỉnh đã ghim và đưa cấu hình lời chào về mặc định ban đầu",
+    "options": [],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "sek",
+    "description": "Tua bài đang phát tới mốc thời gian bất kỳ (vd: 90 hoặc 1:30 hoặc 1m30s)",
+    "options": [
+      {
+        "name": "thời_điểm",
+        "description": "Giây (90) hoặc phút:giây (1:30) hoặc 1m30s",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "sendembed",
+    "description": "Tạo và gửi tin nhắn Embed với nút bấm tùy chỉnh",
+    "options": [
+      {
+        "name": "kênh",
+        "description": "Kênh gửi embed",
+        "type": 7,
+        "required": true
+      },
+      {
+        "name": "tiêu_đề",
+        "description": "Tiêu đề embed",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "nội_dung",
+        "description": "Nội dung embed (\\n để xuống dòng)",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "màu",
+        "description": "Màu HEX (VD: #FF0000 — mặc định: #5865F2)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ảnh_nhỏ",
+        "description": "URL ảnh thumbnail góc phải",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ảnh_lớn",
+        "description": "URL ảnh banner phía dưới",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "footer",
+        "description": "Chữ footer",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút1_tên",
+        "description": "Tên nút link 1",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút1_link",
+        "description": "URL nút link 1",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút2_tên",
+        "description": "Tên nút link 2",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút2_link",
+        "description": "URL nút link 2",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút3_tên",
+        "description": "Tên nút link 3",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nút3_link",
+        "description": "URL nút link 3",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "8192"
+  },
+  {
+    "name": "sendsystem",
+    "description": "Tổ chức Sự Kiện Liên Server - Giveaway xu xuyên server (Chỉ Owner)",
+    "options": [
+      {
+        "name": "nội_dung",
+        "description": "Mô tả / nội dung sự kiện",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "xu",
+        "description": "Số xu thưởng cho MỖI người thắng",
+        "type": 4,
+        "required": true
+      },
+      {
+        "name": "thời_gian",
+        "description": "Thời gian kết thúc (vd: 10m, 1h, 2h30m, 30s)",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "số_người_thắng",
+        "description": "Số người thắng tối đa",
+        "type": 4,
+        "required": true
+      },
+      {
+        "name": "ảnh",
+        "description": "URL ảnh banner cho sự kiện (tùy chọn)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "serverlist",
+    "description": "[Owner Only] Xem toàn bộ server bot đang tham gia kèm link mời",
+    "options": [],
+    "defaultMemberPermissions": "0"
+  },
+  {
+    "name": "setprefix",
+    "description": "Thay đổi tiền tố lệnh prefix cho server này (mặc định: mi)",
+    "options": [
+      {
+        "name": "prefix",
+        "description": "Tiền tố mới (VD: m, bot, sv — không dấu cách)",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setup",
+    "description": "Tự động khởi tạo hoặc sử dụng lại các kênh để làm mới nút bấm",
+    "options": [],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupattendance",
+    "description": "Bật hoặc Tắt hệ thống Chấm công nhân sự độc lập (Tách biệt /setup)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupcategory",
+    "description": "Bật/Tắt danh mục kênh",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt danh mục",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupconfession",
+    "description": "Chọn kênh và làm mới Trạm sẻ chia",
+    "options": [
+      {
+        "name": "kenh",
+        "description": "Kênh confession; để trống dùng kênh đã chọn",
+        "type": 7,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupdoctin",
+    "description": "Thiết lập kênh đọc tin nhắn bằng giọng nói TTS (Tách biệt /setup)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt hệ thống đọc tin nhắn",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "16"
+  },
+  {
+    "name": "setupdonate",
+    "description": "Tạo hoặc làm mới kênh ☕-donate hiển thị thông tin ủng hộ & mã QR",
+    "options": [],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupemoji",
+    "description": "Cài bộ emoji Mimi vào máy chủ, dùng lại emoji đã có",
+    "options": [],
+    "defaultMemberPermissions": "1073741824"
+  },
+  {
+    "name": "setupfeedback",
+    "description": "Thiết lập kênh góp ý (Tách biệt /setup)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt hệ thống góp ý",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "16"
+  },
+  {
+    "name": "setupgiveaway",
+    "description": "Tạo phòng Giveaway (Tách biệt /setup)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "16"
+  },
+  {
+    "name": "setupmodlog",
+    "description": "Bật/Tắt kênh nhật ký quản trị riêng cho Admin (kick/ban/mute, sửa/xóa tin nhắn, đổi tên/avatar)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt hệ thống nhật ký",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupsystem",
+    "description": "Cài đặt kênh nhận thông báo toàn hệ thống từ Admin Bot",
+    "options": [
+      {
+        "name": "kênh",
+        "description": "Chọn kênh để nhận thông báo hệ thống",
+        "type": 7,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupticket",
+    "description": "Bật/Tắt hệ thống Ticket hỗ trợ",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt hệ thống",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupverify",
+    "description": "Chủ động Bật/Tắt hệ thống xác thực (Tách biệt hoàn toàn khỏi /setup)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc tắt xác thực; quản trị viên chủ động đặt lại khi cần",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "gỡ_xác_thực_khi_mute",
+        "description": "Khi mute 1 người (trừ bot), tự động gỡ role Đã Xác Thực và trả về Chưa Xác Thực",
+        "type": 5,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "setupvoiceroom",
+    "description": "Tạo hệ thống phòng Voice riêng tự động (Tách biệt /setup)",
+    "options": [
+      {
+        "name": "trạng_thái",
+        "description": "Bật hoặc Tắt hệ thống Voice Room",
+        "type": 3,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "16"
+  },
+  {
+    "name": "setwelcome",
+    "description": "Chỉnh sửa nội dung và hình ảnh của tin nhắn chào mừng",
+    "options": [
+      {
+        "name": "tin_nhắn_ngoài",
+        "description": "Sửa chữ phía trên khung Embed",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "nội_dung_chính",
+        "description": "Sửa phần mô tả chính (Dùng \\n để xuống dòng, \"xóa\" để ẩn)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ảnh_nhỏ_phải",
+        "description": "Dán link ảnh nhỏ, gõ \"xóa\" để về mặc định logo server",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ảnh_lớn_dưới",
+        "description": "Dán link ảnh lớn, gõ \"xóa\" để ẩn ảnh",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "shop",
+    "description": "Mở siêu thị MIMI Bot: Mua hạt giống, mở rộng đất, nhẫn cưới, ảnh bìa",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "thongbao",
+    "description": "Gửi thông báo CHIA MỤC (đẹp, nhiều phần) vào một kênh trong server",
+    "options": [
+      {
+        "name": "kênh",
+        "description": "Kênh sẽ đăng thông báo",
+        "type": 7,
+        "required": true
+      },
+      {
+        "name": "tiêu_đề",
+        "description": "Tiêu đề lớn ở đầu thông báo",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "nội_dung",
+        "description": "Các mục, cách nhau bằng \" | \". Mỗi mục dạng \"Tiêu đề mục :: nội dung\"",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "màu",
+        "description": "Màu viền (hex, VD: #5865F2). Mặc định: xanh Discord",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "chân_trang",
+        "description": "Dòng ghi chú nhỏ ở cuối (tùy chọn)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "gắn_mọi_người",
+        "description": "Có gắn @everyone kèm thông báo không? (mặc định: Không)",
+        "type": 5,
+        "required": false
+      },
+      {
+        "name": "vai_trò_tag",
+        "description": "Vai trò cần ping (tùy chọn)",
+        "type": 8,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "ticketroles",
+    "description": "Cấu hình 3 vai trò BQT được tag khi mở hoặc Hủy nhận ticket",
+    "options": [
+      {
+        "name": "cauhinh",
+        "description": "Chọn 3 vai trò BQT",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "tudong",
+        "description": "Dùng lại 3 vai trò quản trị cao nhất",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "xem",
+        "description": "Xem vai trò đang được tag",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
+    "name": "timdo",
+    "description": "Khai quật và tìm kiếm đồ cổ quý hiếm",
+    "options": [],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "timnhanh",
+    "description": "Tìm kiếm đồ cổ nhanh hàng loạt (độ hiếm giảm nhẹ, thời gian chờ = số lần / phút)",
+    "options": [
+      {
+        "name": "so_lan",
+        "description": "Số lần muốn tìm (1 đến 30 lần, mặc định: 10)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "toplv",
+    "description": "Kiểm tra top level trong máy chủ",
+    "options": [
+      {
+        "name": "loai",
+        "description": "Chọn bảng xếp hạng",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "ky",
+        "description": "Kỳ xếp hạng",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "unbanminigame",
+    "description": "Gỡ lệnh cấm minigame cho người chơi (Admin & Owner)",
+    "options": [
+      {
+        "name": "người_dùng",
+        "description": "Người dùng cần gỡ cấm",
+        "type": 6,
+        "required": true
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "unlock",
+    "description": "Mở khóa kênh chat hiện tại",
+    "options": [],
+    "defaultMemberPermissions": "16"
+  },
+  {
+    "name": "unmute",
+    "description": "Gỡ timeout (mute) cho một thành viên",
+    "options": [
+      {
+        "name": "thành_viên",
+        "description": "Thành viên cần gỡ mute",
+        "type": 6,
+        "required": true
+      },
+      {
+        "name": "lý_do",
+        "description": "Lý do gỡ mute (tùy chọn)",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "1099511627776"
+  },
+  {
+    "name": "xacnhan",
+    "description": "[Admin/Owner] Xác nhận đã nhận tiền và kích hoạt ngay bản quyền cho Server ID",
+    "options": [
+      {
+        "name": "server_id",
+        "description": "Server ID (Guild ID) của máy chủ khách hàng",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "gói",
+        "description": "Gói bản quyền kích hoạt",
+        "type": 3,
+        "required": true
+      },
+      {
+        "name": "ghi_chú",
+        "description": "Ghi chú bill/người mua",
+        "type": 3,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "8"
+  },
+  {
+    "name": "yeuthich",
+    "description": "Xem danh sách bài hát yêu thích của bạn và phát lại",
+    "options": [],
+    "defaultMemberPermissions": null
+  }
+]

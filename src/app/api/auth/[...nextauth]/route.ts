@@ -1,25 +1,18 @@
 import NextAuth from 'next-auth';
-import DiscordProvider from 'next-auth/providers/discord';
-
-const authOptions = {
-  providers: [
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID || '',
-      clientSecret: process.env.DISCORD_CLIENT_SECRET || '',
-    }),
-  ],
-  callbacks: {
-    async session({ session, token }: any) {
-      if (session.user) {
-        session.user.id = token.sub;
-        session.user.isVerified = true;
-      }
-      return session;
-    },
-  },
-  secret: process.env.NEXTAUTH_SECRET || 'mimi-bot-super-secret-key-12345',
-};
+import { authOptions } from '@/lib/auth-options';
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+function configured(): boolean {
+  return Boolean(process.env.NEXTAUTH_SECRET?.trim() && process.env.DISCORD_CLIENT_ID?.trim() && process.env.DISCORD_CLIENT_SECRET?.trim());
+}
+
+export async function GET(request: Request, context: { params: Promise<{ nextauth: string[] }> }) {
+  if (!configured()) return Response.json({ ok: false, error: 'Đăng nhập Discord chưa được cấu hình trên máy chủ.' }, { status: 503 });
+  return handler(request, context);
+}
+
+export async function POST(request: Request, context: { params: Promise<{ nextauth: string[] }> }) {
+  if (!configured()) return Response.json({ ok: false, error: 'Đăng nhập Discord chưa được cấu hình trên máy chủ.' }, { status: 503 });
+  return handler(request, context);
+}

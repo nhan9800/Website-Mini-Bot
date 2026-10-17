@@ -1,159 +1,122 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipForward, SkipBack, Volume2, VolumeX } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Play, Pause, Volume2, VolumeX, Music, X } from "lucide-react";
 import { usePlayerStore } from "@/lib/store/use-player-store";
 
+function timeLabel(seconds: number) {
+  const safe = Number.isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : 0;
+  return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
+}
+
+/** Trình nghe thử bài hát trên website; độc lập với nhạc đang phát trong Discord. */
 export function WebPlayer() {
   const { track, isPlaying, setIsPlaying, stop } = usePlayerStore();
   const [isMuted, setIsMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [playbackError, setPlaybackError] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const reducedMotion = useReducedMotion();
+  const animateMotion = reducedMotion === false;
 
   useEffect(() => {
-    // Reset progress when track changes
-    setProgress(0);
+    setCurrentTime(0);
+    setDuration(0);
+    setPlaybackError("");
   }, [track]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch(e => console.log("Audio play failed:", e));
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying, track]);
+    const audio = audioRef.current;
+    if (!audio) return;
+    let cancelled = false;
+    if (track && isPlaying) {
+      setPlaybackError("");
+      audio.play().catch(() => {
+        if (cancelled) return;
+        setPlaybackError("Chưa phát được bản nghe thử. Hãy bấm phát để thử lại.");
+        setIsPlaying(false);
+      });
+    } else audio.pause();
+    return () => { cancelled = true; };
+  }, [isPlaying, track, setIsPlaying]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.muted = isMuted;
-    }
-  }, [isMuted]);
+    if (!audioRef.current) return;
+    audioRef.current.muted = isMuted;
+    audioRef.current.volume = volume;
+  }, [isMuted, volume]);
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      const current = audioRef.current.currentTime;
-      const total = audioRef.current.duration;
-      setProgress((current / total) * 100);
-    }
+  const syncTime = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    setCurrentTime(Number.isFinite(audio.currentTime) ? Math.max(0, audio.currentTime) : 0);
+    setDuration(Number.isFinite(audio.duration) ? Math.max(0, audio.duration) : 0);
+  };
+
+  const seek = (seconds: number) => {
+    if (!audioRef.current || duration <= 0 || !Number.isFinite(seconds)) return;
+    const nextTime = Math.min(duration, Math.max(0, seconds));
+    try {
+      audioRef.current.currentTime = nextTime;
+      setCurrentTime(nextTime);
+    } catch { setPlaybackError("Bản nghe thử này chưa hỗ trợ tua đến vị trí đã chọn."); }
   };
 
   return (
     <>
-      <audio
-        ref={audioRef}
-        src={track?.url || ""}
-        onTimeUpdate={handleTimeUpdate}
+      <audio ref={audioRef} src={track?.url?.trim() || undefined} preload="none"
+        onTimeUpdate={syncTime} onLoadedMetadata={syncTime} onDurationChange={syncTime}
         onEnded={() => setIsPlaying(false)}
-      />
+        onError={() => {
+          if (!track) return;
+          setPlaybackError("Không tải được bản nghe thử từ nguồn bài hát.");
+          setIsPlaying(false);
+        }} />
       <AnimatePresence>
-        {track && isPlaying ? (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <div className="relative group overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_0_40px_rgba(30,215,96,0.15)] p-3 flex items-center gap-4">
-              
-              {/* Animated Glow Background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-transparent to-cyan-500/10 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-              
-              {/* Vinyl Record */}
-              <div className="relative z-10 w-16 h-16 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] shrink-0 bg-zinc-900 flex items-center justify-center">
-                <motion.img 
-                  src={track.cover} 
-                  alt="Cover" 
-                  className="w-14 h-14 rounded-full object-cover"
-                  animate={{ rotate: isPlaying ? 360 : 0 }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                />
-                {/* Center hole */}
-                <div className="absolute w-3 h-3 bg-zinc-900 rounded-full border border-white/20" />
+        {track && (
+          <motion.div initial={animateMotion ? { y: 30, opacity: 0 } : false} animate={{ y: 0, opacity: 1 }}
+            exit={animateMotion ? { y: 30, opacity: 0 } : { opacity: 1 }} transition={{ duration: animateMotion ? 0.2 : 0 }}
+            className="fixed bottom-20 left-1/2 z-50 w-[calc(100%_-_24px)] max-w-2xl sm:bottom-6"
+            style={{ x: "-50%" }}
+            aria-label="Trình nghe thử nhạc trên website">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-surface p-3 shadow-xl sm:gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-background sm:h-14 sm:w-14" aria-hidden="true">
+                {track.cover?.trim() ? <motion.img src={track.cover.trim()} alt="" className="h-full w-full rounded-full object-cover"
+                  animate={{ rotate: animateMotion && isPlaying ? 360 : 0 }} transition={{ repeat: animateMotion && isPlaying ? Infinity : 0, duration: animateMotion ? 8 : 0, ease: "linear" }} /> : <Music className="h-6 w-6 text-mimi-green" />}
               </div>
-
-              {/* Track Info */}
-              <div className="relative z-10 flex-1 min-w-0">
-                <motion.h3 
-                  className="text-white font-bold truncate text-sm sm:text-base drop-shadow-md"
-                  animate={{ x: isHovered && track.title.length > 20 ? -50 : 0 }}
-                  transition={{ duration: 4, repeat: Infinity, repeatType: "mirror" }}
-                >
-                  {track.title}
-                </motion.h3>
-                <p className="text-zinc-400 text-xs sm:text-sm truncate">
-                  {track.artist}
-                </p>
-                
-                {/* Progress Bar */}
-                <div className="mt-2 h-1.5 w-full bg-white/10 rounded-full overflow-hidden cursor-pointer group/progress">
-                  <motion.div 
-                    className="h-full bg-emerald-400 group-hover/progress:bg-emerald-300 transition-colors shadow-[0_0_10px_rgba(52,211,153,0.5)]"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-500">Nghe thử trên website</p>
+                <h3 title={track.title} className="truncate text-sm font-semibold text-white">{track.title}</h3>
+                <p className="truncate text-xs text-gray-400">{track.artist}</p>
+                <input type="range" aria-label="Vị trí nghe thử" min={0} max={duration || 1} step={0.1}
+                  value={Math.min(currentTime, duration || 0)} disabled={duration <= 0}
+                  onChange={(event) => seek(Number(event.target.value))}
+                  className="mt-2 block h-1 w-full cursor-pointer accent-emerald-500 disabled:cursor-default" />
+                <p className="mt-1 text-[9px] text-gray-500">{timeLabel(currentTime)} / {timeLabel(duration)}</p>
+                {playbackError && <p role="status" className="mt-1 text-[10px] text-gray-400">{playbackError}</p>}
               </div>
-
-              {/* Controls */}
-              <div className="relative z-10 flex items-center gap-2 sm:gap-4 shrink-0 pr-2">
-                <button className="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full hidden sm:block">
-                  <SkipBack className="w-5 h-5 fill-current" />
+              <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+                <button type="button" aria-label={isPlaying ? "Tạm dừng nghe thử" : "Phát bản nghe thử"}
+                  onClick={() => setIsPlaying(!isPlaying)} className="flex h-10 w-10 items-center justify-center rounded-full bg-mimi-green text-[#071510]">
+                  {isPlaying ? <Pause size={19} /> : <Play size={19} />}
                 </button>
-                
-                <button 
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="w-12 h-12 flex items-center justify-center bg-white text-black hover:scale-105 active:scale-95 transition-all rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                >
-                  {isPlaying ? (
-                    <Pause className="w-6 h-6 fill-current" />
-                  ) : (
-                    <Play className="w-6 h-6 fill-current ml-1" />
-                  )}
-                </button>
-
-                <button className="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full hidden sm:block">
-                  <SkipForward className="w-5 h-5 fill-current" />
-                </button>
-
-                <div className="w-px h-8 bg-white/10 mx-1 hidden sm:block" />
-
-                <div className="hidden sm:flex items-center gap-1">
-                  <button 
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
-                  >
-                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                <div className="hidden items-center gap-1 sm:flex">
+                  <button type="button" aria-label={isMuted ? "Bật tiếng nghe thử" : "Tắt tiếng nghe thử"}
+                    onClick={() => setIsMuted(!isMuted)} className="rounded-lg p-2 text-gray-400 hover:text-white">
+                    {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                   </button>
-                  
-                  <div className="w-20 flex items-center">
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      defaultValue="1"
-                      onChange={(e) => {
-                        if (audioRef.current) {
-                          const val = parseFloat(e.target.value);
-                          audioRef.current.volume = val;
-                          if (val > 0 && isMuted) setIsMuted(false);
-                          if (val === 0 && !isMuted) setIsMuted(true);
-                        }
-                      }}
-                      className="w-16 h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                    />
-                  </div>
+                  <input type="range" aria-label="Âm lượng nghe thử" min={0} max={1} step={0.01} value={volume}
+                    onChange={(event) => { const nextVolume = Number(event.target.value); setVolume(nextVolume); setIsMuted(nextVolume === 0); }}
+                    className="h-1 w-16 cursor-pointer accent-emerald-500" />
                 </div>
+                <button type="button" onClick={stop} aria-label="Đóng trình nghe thử" className="rounded-lg p-2 text-gray-400 hover:text-white"><X size={17} /></button>
               </div>
             </div>
           </motion.div>
-        ) : null}
+        )}
       </AnimatePresence>
     </>
   );

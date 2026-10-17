@@ -1,79 +1,75 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 
 interface TiltCardProps {
   children: React.ReactNode;
   className?: string;
   /** Độ nghiêng tối đa (độ). */
   maxTilt?: number;
-  /** Bật quầng sáng spotlight theo chuột */
+  /** Bật quầng sáng theo con trỏ chuột. */
   spotlight?: boolean;
 }
 
-/**
- * Card nghiêng 3D theo con trỏ chuột (perspective + rotateX/rotateY)
- * tích hợp hiệu ứng Spotlight Glow theo vị trí chuột siêu mượt mà.
- * overflow-visible để không làm cắt các badge/thẻ nổi phía trên.
- */
-export function TiltCard({
-  children,
-  className = '',
-  maxTilt = 7,
-  spotlight = true,
-}: TiltCardProps) {
+/** Cập nhật hiệu ứng bằng MotionValue, không render lại nội dung ở mỗi lần rê chuột. */
+export function TiltCard({ children, className = '', maxTilt = 7, spotlight = true }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [coords, setCoords] = useState<{ x: number; y: number; opacity: number }>({
-    x: 0,
-    y: 0,
-    opacity: 0,
-  });
+  const reducedMotion = useReducedMotion();
+  const allowMotion = reducedMotion === false;
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const scale = useMotionValue(1);
+  const spotX = useMotionValue(0);
+  const spotY = useMotionValue(0);
+  const spotOpacity = useMotionValue(0);
+  const springX = useSpring(rotateX, { stiffness: 220, damping: 28 });
+  const springY = useSpring(rotateY, { stiffness: 220, damping: 28 });
+  const springScale = useSpring(scale, { stiffness: 220, damping: 28 });
+  const spotBackground = useMotionTemplate`radial-gradient(420px circle at ${spotX}px ${spotY}px, rgba(98, 166, 143, 0.14), transparent 75%)`;
+
+  useEffect(() => {
+    if (allowMotion) return;
+    rotateX.set(0);
+    rotateY.set(0);
+    scale.set(1);
+    spotOpacity.set(0);
+    springX.jump(0);
+    springY.jump(0);
+    springScale.jump(1);
+  }, [allowMotion, rotateX, rotateY, scale, spotOpacity, springX, springY, springScale]);
 
   const reset = () => {
-    const el = ref.current;
-    if (el) {
-      el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-    }
-    setCoords((prev) => ({ ...prev, opacity: 0 }));
+    rotateX.set(0);
+    rotateY.set(0);
+    scale.set(1);
+    spotOpacity.set(0);
   };
 
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const px = x / rect.width - 0.5;
-    const py = y / rect.height - 0.5;
-
-    el.style.transform = `perspective(1000px) rotateX(${(-py * maxTilt).toFixed(2)}deg) rotateY(${(px * maxTilt).toFixed(2)}deg) scale3d(1.018, 1.018, 1.018)`;
-    setCoords({ x, y, opacity: 1 });
+  const handleMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!allowMotion || event.pointerType !== 'mouse' || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    rotateX.set(-(y / rect.height - 0.5) * maxTilt);
+    rotateY.set((x / rect.width - 0.5) * maxTilt);
+    scale.set(1.012);
+    spotX.set(x);
+    spotY.set(y);
+    spotOpacity.set(1);
   };
 
   return (
-    <div
-      ref={ref}
-      onMouseMove={handleMove}
-      onMouseEnter={() => setCoords((prev) => ({ ...prev, opacity: 1 }))}
-      onMouseLeave={reset}
+    <motion.div ref={ref} onPointerMove={handleMove} onPointerLeave={reset} onPointerCancel={reset}
       className={`relative overflow-visible ${className}`}
-      style={{
-        transition: 'transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.22s ease',
-        willChange: 'transform',
-      }}
-    >
+      style={{ transformPerspective: 1000, rotateX: allowMotion ? springX : 0, rotateY: allowMotion ? springY : 0, scale: allowMotion ? springScale : 1 }}>
       {spotlight && (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit] z-0">
-          <div
-            className="absolute -inset-px transition-opacity duration-300"
-            style={{
-              opacity: coords.opacity,
-              background: `radial-gradient(420px circle at ${coords.x}px ${coords.y}px, rgba(46, 204, 113, 0.16), rgba(34, 211, 238, 0.08), transparent 75%)`,
-            }}
-          />
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
+          <motion.div className="absolute -inset-px" style={{ opacity: allowMotion ? spotOpacity : 0, background: spotBackground }} />
         </div>
       )}
       <div className="relative z-10 h-full">{children}</div>
-    </div>
+    </motion.div>
   );
 }

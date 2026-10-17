@@ -34,9 +34,9 @@ function readAccessKey(request: Request): string {
 /** GET /api/guilds/:id/player → GET {bot}/internal/guilds/:id/player */
 export async function GET(
   request: Request,
-  { params }: { params: { guildId: string } }
+  { params }: { params: Promise<{ guildId: string }> }
 ) {
-  const { guildId } = params;
+  const { guildId } = await params;
   if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
   const accessKey = readAccessKey(request);
@@ -55,9 +55,9 @@ export async function GET(
  */
 export async function POST(
   request: Request,
-  { params }: { params: { guildId: string } }
+  { params }: { params: Promise<{ guildId: string }> }
 ) {
-  const { guildId } = params;
+  const { guildId } = await params;
   if (!GUILD_ID_RE.test(guildId)) return badRequest('Guild ID không hợp lệ (phải là dãy 15–22 chữ số).');
 
   const accessKey = readAccessKey(request);

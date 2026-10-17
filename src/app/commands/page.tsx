@@ -11,14 +11,15 @@ import {
   Settings,
   Sparkles,
   Wifi,
-  WifiOff,
   MicVocal,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { ApiCommand } from '@/lib/types';
+import commandSnapshot from '@/lib/commands-fallback.json';
 
 type Category = 'music' | 'verification' | 'attendance' | 'economy' | 'voice' | 'system';
 
-const CATEGORIES: { key: Category | 'all'; label: string; icon: React.ElementType }[] = [
+const CATEGORIES: { key: Category | 'all'; label: string; icon: LucideIcon }[] = [
   { key: 'all', label: 'Tất Cả', icon: Terminal },
   { key: 'music', label: 'Âm Nhạc', icon: Music },
   { key: 'verification', label: 'Xác Thực', icon: Shield },
@@ -58,21 +59,8 @@ const categoryLabel: Record<Category, string> = {
   system: 'Hệ Thống',
 };
 
-/** Danh mục dự phòng khi bot offline — các lệnh cốt lõi chắc chắn tồn tại. */
-const FALLBACK_COMMANDS: ApiCommand[] = [
-  { name: 'play', description: 'Phát nhạc từ YouTube vào kênh thoại hiện tại (tên bài hoặc URL).', options: [{ name: 'query', description: 'Tên bài hát hoặc link', type: 3, required: true }], defaultMemberPermissions: null },
-  { name: 'pause', description: 'Tạm dừng bài hát đang phát.', options: [], defaultMemberPermissions: null },
-  { name: 'resume', description: 'Tiếp tục phát bài hát đang tạm dừng.', options: [], defaultMemberPermissions: null },
-  { name: 'skip', description: 'Bỏ qua bài hiện tại, chuyển sang bài kế tiếp trong hàng chờ.', options: [], defaultMemberPermissions: null },
-  { name: 'queue', description: 'Xem danh sách hàng chờ phát nhạc của máy chủ.', options: [], defaultMemberPermissions: null },
-  { name: 'volume', description: 'Chỉnh âm lượng phát nhạc (0–150%).', options: [{ name: 'level', description: 'Mức âm lượng', type: 4, required: true }], defaultMemberPermissions: null },
-  { name: 'loop', description: 'Bật/tắt lặp lại bài hiện tại hoặc cả hàng chờ.', options: [], defaultMemberPermissions: null },
-  { name: 'lyrics', description: 'Tra lời bài hát đang phát (nguồn lrclib).', options: [], defaultMemberPermissions: null },
-  { name: 'leave', description: 'Dừng nhạc, xóa hàng chờ và rời kênh thoại.', options: [], defaultMemberPermissions: null },
-  { name: 'verify', description: 'Xác thực thành viên trong hệ thống xác thực 24 giờ.', options: [], defaultMemberPermissions: null },
-  { name: 'attendance', description: 'Check-in / check-out chấm công nhân sự.', options: [], defaultMemberPermissions: null },
-  { name: 'config', description: 'Xem và thay đổi cấu hình bot của máy chủ (prefix, chế độ xác thực…).', options: [], defaultMemberPermissions: null },
-];
+/** Bản chụp đăng ký lệnh từ mã nguồn Mimi; làm mới bằng scripts/snapshot-commands.cjs. */
+const FALLBACK_COMMANDS: ApiCommand[] = commandSnapshot;
 
 export default function CommandsPage() {
   const [commands, setCommands] = useState<ApiCommand[] | null>(null);
@@ -138,7 +126,7 @@ export default function CommandsPage() {
               ? 'Đang tải danh sách lệnh…'
               : isLive
                 ? `${commands?.length ?? 0} lệnh slash đang được đăng ký trực tiếp trên Discord.`
-                : 'Bot đang ngoại tuyến — hiển thị danh sách lệnh cốt lõi.'}
+                : `Chưa tải được dữ liệu lệnh từ bot. Hiển thị danh mục dự phòng từ mã nguồn gồm ${FALLBACK_COMMANDS.length} lệnh.`}
           </p>
           {!loading && (
             <div
@@ -146,8 +134,8 @@ export default function CommandsPage() {
                 isLive ? 'bg-mimi-green/15 text-mimi-green' : 'bg-mimi-amber/15 text-mimi-amber'
               }`}
             >
-              {isLive ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
-              <span>{isLive ? 'Dữ liệu trực tiếp từ bot' : 'Dữ liệu dự phòng'}</span>
+              {isLive ? <Wifi className="h-3 w-3" /> : <Terminal className="h-3 w-3" />}
+              <span>{isLive ? 'Dữ liệu trực tiếp từ bot' : 'Bản chụp từ mã nguồn Mimi'}</span>
             </div>
           )}
         </div>
@@ -160,7 +148,7 @@ export default function CommandsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm lệnh… (vd: play, verify, volume)"
+              placeholder="Tìm lệnh… (vd: play, setupemoji, help)"
               className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 pl-12 pr-4 text-sm text-white placeholder-gray-500 outline-none backdrop-blur-md transition-colors focus:border-mimi-green/50 focus:bg-white/[0.07]"
             />
           </div>
