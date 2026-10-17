@@ -1,5 +1,9 @@
 # Mimi 2.6.0: không gian âm nhạc 3D
 
+## Yêu cầu hiện hành: tự chuyển động, không công tắc — 17/10/2026
+
+Chủ website yêu cầu model tự chuyển động mặc định và không có nút bật/tắt. Cảnh 3D hiện tự tải trên cả desktop/mobile, bỏ Khám phá 3D, Bật chuyển động và Tạm dừng; không để lựa chọn reduced-motion của hệ thống chặn model theo yêu cầu trực tiếp này. Nút chọn model và đổi Dance/Wave vẫn hoạt động, không tắt chuyển động. Khi cảnh khuất màn hình hoặc ẩn tab, chỉ dừng render để tiết kiệm GPU và tự tiếp tục khi quay lại. Các mô tả chế độ opt-in/pause bên dưới là lịch sử thiết kế trước yêu cầu này.
+
 ## Hướng thiết kế
 
 Làm lại diện mạo, giữ nhận diện mint, logo Mimi, Be Vietnam Pro và các URL/luồng quản trị hiện có. DESIGN_VARIANCE 7, MOTION_INTENSITY 7, VISUAL_DENSITY 4. Cảnh 3D có chức năng giới thiệu bot và mời người xem tương tác; các phần đọc nội dung không có vòng lặp chuyển động trang trí.
