@@ -36,7 +36,12 @@ function fixture(t, { badRuntime = false, missingBuild = false, runtimeArtifact 
   git(seed, 'config', 'user.email', 'fixture@offline.invalid');
   write(path.join(seed, '.gitignore'), '.env*\n!.env.example\ndata/\ntmp/\nnode_modules/\n.next/mimi_feedback_store.json\n');
   write(path.join(seed, 'scripts/host-pull.sh'), fs.readFileSync(path.join(root, 'scripts/host-pull.sh'), 'utf8'));
+  write(path.join(seed, 'scripts/install-runtime.sh'), fs.readFileSync(path.join(root, 'scripts/install-runtime.sh'), 'utf8'));
   write(path.join(seed, 'scripts/migrate-feedback.cjs'), fs.readFileSync(path.join(root, 'scripts/migrate-feedback.cjs'), 'utf8'));
+  write(path.join(seed, 'package.json'), JSON.stringify({ name: 'website-mini-bot', dependencies: { 'mimi-fixture-runtime': '1.0.0' } }));
+  write(path.join(seed, 'package-lock.json'), JSON.stringify({ lockfileVersion: 3, packages: {
+    '': { dependencies: { 'mimi-fixture-runtime': '1.0.0' } }, 'node_modules/mimi-fixture-runtime': { version: '1.0.0' },
+  } }));
   write(path.join(seed, '.next/BUILD_ID'), 'build_old');
   write(path.join(seed, 'page.txt'), 'old');
   git(seed, 'add', '-A');
@@ -67,7 +72,16 @@ function fixture(t, { badRuntime = false, missingBuild = false, runtimeArtifact 
   const bin = path.join(base, 'bin');
   const npmLog = path.join(home, 'npm-calls');
   const npmFail = path.join(home, 'npm-fail');
-  write(path.join(bin, 'npm'), '#!/bin/bash\nprintf "ci\\n" >> "$MIMI_FIXTURE_NPM_LOG"\n[ ! -f "$MIMI_FIXTURE_NPM_FAIL" ]\n');
+  write(path.join(bin, 'npm'), `#!/bin/bash
+set -e
+printf 'ci\\n' >> "$MIMI_FIXTURE_NPM_LOG"
+test ! -f "$MIMI_FIXTURE_NPM_FAIL"
+for ARG in "$@"; do case "$ARG" in --prefix=*) PREFIX="\${ARG#--prefix=}";; esac; done
+test -n "$PREFIX"
+cmp package-lock.json "$PREFIX/package-lock.json"
+mkdir -p "$PREFIX/node_modules/mimi-fixture-runtime"
+printf '%s' '{"version":"1.0.0"}' > "$PREFIX/node_modules/mimi-fixture-runtime/package.json"
+`);
   fs.chmodSync(path.join(bin, 'npm'), 0o755);
   if (badRuntime) {
     write(path.join(bin, 'node'), '#!/bin/bash\nexit 1\n');
@@ -75,12 +89,44 @@ function fixture(t, { badRuntime = false, missingBuild = false, runtimeArtifact 
   }
   const activation = path.join(home, 'nodevenv', 'website-mini-bot', '22', 'bin', 'activate');
   write(activation, `export PATH=${quote(posix(bin) + ':' + posix(path.dirname(process.execPath)))}:"$PATH"\n`);
+  const modules = path.join(home, 'nodevenv', 'website-mini-bot', '22', 'lib', 'node_modules');
+  fs.mkdirSync(modules, { recursive: true });
+  fs.symlinkSync(modules, path.join(app, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
   const env = { ...process.env, HOME: posix(home), NODE_PATH: path.join(root, 'node_modules'), MIMI_FIXTURE_NPM_LOG: posix(npmLog), MIMI_FIXTURE_NPM_FAIL: posix(npmFail) };
   delete env.MIMI_FEEDBACK_STORE;
   delete env.MIMI_DEPLOY_BRANCH;
   const run = () => spawnSync(bash, [posix(path.join(app, 'scripts/host-pull.sh'))], { cwd: app, env, encoding: 'utf8', timeout: 30000 });
-  return { app, home, git, run, oldHead, newHead, store, npmLog, npmFail, pending: path.join(home, '.mimi-deploy-website-mini-bot.pending') };
+  const install = () => spawnSync(bash, [posix(path.join(app, 'scripts/install-runtime.sh'))], { cwd: app, env, encoding: 'utf8', timeout: 30000 });
+  return { app, home, git, run, install, modules, oldHead, newHead, store, npmLog, npmFail, pending: path.join(home, '.mimi-deploy-website-mini-bot.pending') };
 }
+
+test('CloudLinux cài bằng lockfile ở đúng prefix, giữ symlink và bỏ qua runtime đã khớp', { skip: !hasBash }, t => {
+  const f = fixture(t);
+  const link = fs.readlinkSync(path.join(f.app, 'node_modules'));
+  const result = f.install();
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(fs.readlinkSync(path.join(f.app, 'node_modules')), link);
+  assert.equal(fs.readFileSync(path.join(path.dirname(f.modules), 'package-lock.json'), 'utf8'), fs.readFileSync(path.join(f.app, 'package-lock.json'), 'utf8'));
+  assert.equal(f.install().status, 0);
+  assert.equal(fs.readFileSync(f.npmLog, 'utf8'), 'ci\n');
+  write(path.join(f.modules, 'mimi-fixture-runtime/package.json'), '{"version":"0.9.0"}');
+  assert.equal(f.install().status, 0);
+  assert.equal(fs.readFileSync(f.npmLog, 'utf8'), 'ci\nci\n');
+  assert.equal(f.git(f.app, 'diff', '--stat'), '');
+});
+
+test('CloudLinux giữ thư mục node_modules vật lý và từ chối symlink sai virtualenv', { skip: !hasBash }, t => {
+  const f = fixture(t);
+  fs.unlinkSync(path.join(f.app, 'node_modules'));
+  write(path.join(f.app, 'node_modules/keep.txt'), 'keep');
+  assert.equal(f.install().status, 1);
+  assert.equal(fs.readFileSync(path.join(f.app, 'node_modules/keep.txt'), 'utf8'), 'keep');
+  assert.equal(fs.existsSync(f.npmLog), false);
+  fs.renameSync(path.join(f.app, 'node_modules'), path.join(f.app, 'physical-modules'));
+  fs.symlinkSync(path.join(f.app, 'physical-modules'), path.join(f.app, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
+  assert.equal(f.install().status, 1);
+  assert.equal(fs.existsSync(f.npmLog), false);
+});
 
 test('Cron migration chạy trước khi thay artifact và giữ cấu hình/dữ liệu runtime', { skip: !hasBash }, t => {
   const f = fixture(t);
