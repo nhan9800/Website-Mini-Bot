@@ -43,16 +43,18 @@ function Robot({ motion, playing }: { motion: RobotMotion; playing: boolean }) {
     return { object, materials, scale, offset: new THREE.Vector3(-center.x * scale, -box.min.y * scale - 1.75, -center.z * scale) };
   }, [source.scene]);
   const mixer = useMemo(() => new THREE.AnimationMixer(object), [object]);
+  const currentAction = useRef<THREE.AnimationAction | null>(null);
 
   useEffect(() => {
     const clip = source.animations.find(clip => clip.name === motion);
     if (!clip) return;
     const action = mixer.clipAction(clip);
-    mixer.stopAllAction();
-    action.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+    const previous = currentAction.current;
+    if (previous && previous !== action) previous.fadeOut(0.3);
+    action.reset().setLoop(THREE.LoopRepeat, Infinity).fadeIn(previous ? 0.3 : 0).play();
+    currentAction.current = action;
     mixer.update(0.01);
     invalidate();
-    return () => { action.stop(); };
   }, [mixer, source.animations, motion, invalidate]);
   useEffect(() => () => {
     mixer.stopAllAction(); mixer.uncacheRoot(object);

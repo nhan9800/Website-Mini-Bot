@@ -25,12 +25,17 @@ export function ExperienceStage() {
   const [ready, setReady] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [started, setStarted] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const motionChoice = useRef<boolean | null>(null);
   const handleReady = useCallback(() => setReady(true), []);
   const handleUnavailable = useCallback(() => setUnavailable(true), []);
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncMotion = () => setPlaying(!preference.matches);
+    const syncMotion = () => {
+      setReducedMotion(preference.matches);
+      setPlaying(motionChoice.current ?? !preference.matches);
+    };
     const syncPage = () => setPageVisible(document.visibilityState === 'visible');
     syncMotion(); syncPage();
     // Điện thoại tải poster trước; mô hình được tải khi người xem chọn khám phá.
@@ -47,12 +52,17 @@ export function ExperienceStage() {
   }, []);
 
   const animated = playing && visible && pageVisible;
+  const startMotion = () => {
+    motionChoice.current = true;
+    setStarted(true);
+    setPlaying(true);
+  };
 
   return (
     <div ref={stage} className="experience-stage" aria-label="Phòng trưng bày 3D Mimi">
       <div className="experience-models" role="group" aria-label="Chọn mô hình 3D">
         {models.map(({ id, label, icon: Icon }) => (
-          <button key={id} type="button" aria-pressed={model === id} onClick={() => { setStarted(true); if (id !== model) { setReady(false); setModel(id); } }} disabled={unavailable}>
+          <button key={id} type="button" aria-pressed={model === id} onClick={() => { startMotion(); if (id !== model) { setReady(false); setModel(id); } }} disabled={unavailable}>
             <Icon size={16} aria-hidden /><span>{label}</span>
           </button>
         ))}
@@ -71,14 +81,14 @@ export function ExperienceStage() {
       </div>
       <div className="experience-controls">
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => { setStarted(true); setPlaying(started ? !playing : true); }} aria-label={!started ? 'Khám phá 3D' : playing ? 'Tạm dừng chuyển động 3D' : 'Bật chuyển động 3D'} disabled={unavailable} aria-pressed={started && playing}>
-            {started && playing ? <Pause size={16} /> : <Play size={16} />}<span>{!started ? 'Khám phá 3D' : playing ? 'Tạm dừng' : 'Chuyển động'}</span>
+          <button type="button" onClick={() => { const next = started ? !playing : true; motionChoice.current = next; setStarted(true); setPlaying(next); }} aria-label={!started ? 'Khám phá 3D có chuyển động' : playing ? 'Tạm dừng chuyển động 3D' : 'Bật chuyển động 3D'} disabled={unavailable} aria-pressed={started && playing}>
+            {started && playing ? <Pause size={16} /> : <Play size={16} />}<span>{!started ? 'Khám phá 3D' : playing ? 'Tạm dừng' : 'Bật chuyển động'}</span>
           </button>
-          {model === 'robot' && <button type="button" disabled={unavailable} onClick={() => { setStarted(true); setMotion(motion === 'Dance' ? 'Wave' : 'Dance'); setPlaying(true); }} aria-label={motion === 'Dance' ? 'Chào Mimi, cho robot vẫy tay' : 'Nhảy nhạc, cho robot nhảy'}>
+          {model === 'robot' && <button type="button" disabled={unavailable} onClick={() => { startMotion(); setMotion(motion === 'Dance' ? 'Wave' : 'Dance'); }} aria-label={motion === 'Dance' ? 'Chào Mimi, cho robot vẫy tay' : 'Nhảy nhạc, cho robot nhảy'}>
             {motion === 'Dance' ? <Hand size={16} /> : <Music2 size={16} />}<span>{motion === 'Dance' ? 'Chào Mimi' : 'Nhảy nhạc'}</span>
           </button>}
         </div>
-        <span className="experience-caption" role="status">{unavailable ? 'Ảnh minh họa • thiết bị không hỗ trợ 3D' : !started ? 'Chọn mô hình để bắt đầu' : ready ? 'Kéo để xoay mô hình' : 'Đang chuẩn bị mô hình…'}</span>
+        <span className="experience-caption" role="status">{unavailable ? 'Ảnh minh họa • thiết bị không hỗ trợ 3D' : !started ? 'Bấm để xem mô hình chuyển động' : !ready ? 'Đang chuẩn bị mô hình…' : !playing && reducedMotion ? 'Máy đang bật giảm chuyển động. Bạn có thể bật ở đây.' : playing ? `${model === 'robot' ? motion === 'Dance' ? 'Mimi đang nhảy nhạc' : 'Mimi đang vẫy tay' : model === 'vinyl' ? 'Đĩa nhạc đang quay' : 'Tai nghe đang xoay'} • Kéo để xoay` : 'Đã tạm dừng • Kéo để xoay'}</span>
       </div>
     </div>
   );

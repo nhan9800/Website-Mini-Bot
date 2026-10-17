@@ -25,6 +25,8 @@ Làm lại diện mạo, giữ nhận diện mint, logo Mimi, Be Vietnam Pro và
 Chạy typecheck/lint/test/build/audit. Xem desktop/mobile, sáng/tối, giảm chuyển động, 3 mô hình, pause/đổi animation, menu/FAQ/tìm lệnh; kiểm dữ liệu review trước/sau deploy. Chỉ xác nhận các kiểm tra đã có bằng chứng trong checkpoint cuối.
 ## Kết quả local ngày 17/10/2026
 
-30/30 kiểm thử đạt, typecheck/lint/build đạt. Model robot đã sửa lỗi đo bounds của skeleton clone; đo scene gốc đã nạp để giữ tỷ lệ đúng. Tai nghe dùng shader đổi vỏ sang mint, giữ đệm tai đen. Đã kiểm tương tác Wave/Dance/pause, chọn 3 model và kéo xoay thật, sáng/tối và viewport 390x844; menu và lọc nowplaying hoạt động.
+31/31 kiểm thử đạt, typecheck/lint/build đạt. Model robot đã sửa lỗi đo bounds của skeleton clone; đo scene gốc đã nạp để giữ tỷ lệ đúng. Tai nghe dùng shader đổi vỏ sang mint, giữ đệm tai đen. Đã kiểm tương tác Wave/Dance/pause, chọn 3 model và kéo xoay thật, sáng/tối và viewport 390x844; menu và lọc nowplaying hoạt động.
 
 Lighthouse mobile local (CPU/network mô phỏng): performance 80, accessibility 96, best practices 96, SEO 100, TBT 20ms, CLS 0.001, LCP 4.5s. Lượt đầu performance 61/TBT 530ms/LCP 6.1s. Đã giảm ảnh chart 400px xuống 96px, poster mobile 33.8KB và chỉ tải 3D khi tương tác trên điện thoại; desktop tự tải. Cảnh báo tương phản cuối ở chữ nhãn logo đã sửa gray500 thành gray400 sau lượt audit. Console lỗi local là OAuth chưa cấu hình, không dùng tài khoản thật để kiểm. Đây không phải Core Web Vitals của người dùng production; chưa đạt mục tiêu LCP 2.5s trong lab mobile.
+
+Bổ sung theo yêu cầu chuyển động: chọn một model chủ động bật animation; lựa chọn của người xem được giữ trong phiên component, không bị thay bởi sự kiện hệ thống sau khi đã chọn. Wave/Dance crossfade 0,3 giây, có trạng thái đang nhảy/vẫy/quay và hướng dẫn khi giảm chuyển động. Test hành vi component kiểm mobile poster, click model/animation/pause và dừng khi khuất màn hình.
