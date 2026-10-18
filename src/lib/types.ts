@@ -93,6 +93,17 @@ export interface GuildStatsResponse {
   };
 }
 
+/** Một server bot đang phục vụ, dùng cho trang Cộng đồng/Trạng thái. */
+export interface CommunitySummary {
+  id: string;
+  name: string;
+  iconUrl: string | null;
+  memberCount: number;
+  boostCount: number;
+  owner: { id: string; username: string | null; displayName: string | null; avatarUrl: string | null } | null;
+  onlineCount: number | null;
+  features: { music: boolean; ticket: boolean; level: boolean };
+}
 /** GET /internal/commands */
 export interface ApiCommand {
   name: string;
