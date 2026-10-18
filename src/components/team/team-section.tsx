@@ -1,226 +1,68 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { MotionReveal } from '@/components/ui/motion-primitives';
-import { ShieldCheck, UserCheck, Crown, Code2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ShieldCheck } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
-const STATUS_COLORS: Record<string, string> = {
-  online: 'bg-mimi-green',
-  idle: 'bg-yellow-400',
-  dnd: 'bg-red-500',
-  offline: 'bg-gray-500',
-  unknown: 'bg-gray-500',
-};
-
-const STATUS_TITLES: Record<string, string> = {
-  online: 'Trực tuyến trên Discord',
-  idle: 'Đang vắng mặt',
-  dnd: 'Đang bận (Do Not Disturb)',
-  offline: 'Ngoại tuyến',
-  unknown: 'Chưa có trạng thái Discord',
-};
+import { partitionTeamMembers } from '@/lib/team-spotlights';
+import { MotionReveal } from '@/components/ui/motion-primitives';
+import { MemberAvatar, TeamSpotlight } from './team-spotlight';
+import './team.css';
 
 export function TeamSection() {
   const [team, setTeam] = useState<TeamMember[]>([]);
-  const [source, setSource] = useState<string>('loading');
+  const [source, setSource] = useState<'loading' | 'ready' | 'unavailable'>('loading');
 
   useEffect(() => {
+    const controller = new AbortController();
     async function loadTeam() {
       try {
-        const res = await fetch('/api/team', { cache: 'no-store' });
-        const data = await res.json();
-        if (res.ok && data?.ok && Array.isArray(data.team)) {
-          setTeam(data.team);
-          setSource(data.source || 'discord_roles');
-        } else {
-          setTeam([]);
-          setSource('unavailable');
-        }
-      } catch { setTeam([]); setSource('unavailable'); }
+        const response = await fetch('/api/team', { signal: controller.signal });
+        const data = await response.json();
+        if (!response.ok || !data.ok || !Array.isArray(data.team)) throw new Error('Team unavailable');
+        setTeam(data.team);
+        setSource('ready');
+      } catch {
+        if (!controller.signal.aborted) setSource('unavailable');
+      }
     }
-    loadTeam();
+    void loadTeam();
+    return () => controller.abort();
   }, []);
 
+  const { featured, remaining } = partitionTeamMembers(team);
+
   return (
-    <section id="doi-ngu" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <MotionReveal variant="mask" className="section-heading space-y-4">
-          <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/40 bg-mimi-green/10 px-3.5 py-1 text-xs font-bold text-mimi-green shadow-[0_0_15px_rgba(46,204,113,0.25)]">
-            <ShieldCheck className="h-4 w-4" />
-            <span>Nhận diện tự động qua Role Discord</span>
-          </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Đội Ngũ Đứng Sau <span className="text-gradient-mimi">MIMI</span>
-          </h2>
-          <p className="text-gray-400">
-            Danh sách thành viên được tự động đồng bộ từ Role trong server Discord chính thức của MIMI.
-          </p>
+    <section id="doi-ngu" className="team-section py-24 md:py-32" aria-labelledby="team-heading">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <MotionReveal variant="mask" className="team-heading">
+          <p className="team-eyebrow">Những người làm nên Mimi</p>
+          <h2 id="team-heading">Đứng sau từng <span>kết nối.</span></h2>
+          <p>Từ người đặt nền móng đến người phát triển dự án — cùng một tâm huyết dành cho cộng đồng.</p>
         </MotionReveal>
 
-        {team.length === 0 && (
-          <p role="status" className="text-center text-sm text-gray-400">
-            {source === 'loading' ? 'Đang tải đội ngũ từ Discord…' : source === 'unavailable' ? 'Chưa kết nối được với Discord để tải đội ngũ.' : 'Chưa có thành viên đội ngũ được cấu hình.'}
-          </p>
+        {source === 'loading' && <p className="team-state" role="status">Đang kết nối với đội ngũ Mimi…</p>}
+        {source === 'unavailable' && <p className="team-state" role="status">Chưa tải được đội ngũ từ Discord. Bạn vui lòng quay lại sau.</p>}
+        {source === 'ready' && !featured.length && !remaining.length && <p className="team-state">Chưa có thành viên đội ngũ được cấu hình.</p>}
+
+        {featured.length > 0 && (
+          <div className="team-spotlights">
+            {featured.map(({ kind, member }, index) => (
+              <MotionReveal key={member.id} variant={kind === 'founder' ? 'clip' : 'flip'} delay={index * 0.12} amount={0.08}>
+                <TeamSpotlight kind={kind} member={member} />
+              </MotionReveal>
+            ))}
+          </div>
         )}
 
-        {/* --- CORE TEAM --- */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {team.filter(m => m.group === 'core').map((member, idx) => {
-            const isFounder = member.role.toLowerCase().includes('founder');
-            let borderHoverClass = 'hover-3d-tilt';
-            let shadowGlowStyle = '0 0 25px rgba(139,92,246,0.3)';
-            let RoleIcon = UserCheck;
-            let badgeText = 'Role Discord';
-            let badgeColorClass = 'text-mimi-green';
-            let avatarRingClass = 'ring-white/10';
-            let vipClass = 'glass-panel card-lift hover:border-[#00f2fe]';
-            let badgeBgClass = 'bg-white/5 border-white/10';
-
-            if (isFounder) {
-              vipClass = 'vip-card-rgb';
-              shadowGlowStyle = '0 0 45px rgba(255,107,129,0.5)';
-              RoleIcon = Crown;
-              badgeText = 'Founder';
-              badgeColorClass = 'text-[#ff6b81]';
-              badgeBgClass = 'bg-[#ff6b81]/10 border-[#ff6b81]/30 shadow-[0_0_15px_rgba(255,107,129,0.3)]';
-              avatarRingClass = 'ring-[#ff6b81]/40';
-            } else {
-              vipClass = 'vip-card-cyber';
-              shadowGlowStyle = '0 0 35px rgba(0,242,254,0.4)';
-              RoleIcon = Code2;
-              badgeText = 'System Dev';
-              badgeColorClass = 'text-[#00f2fe]';
-              badgeBgClass = 'bg-[#00f2fe]/10 border-[#00f2fe]/30 shadow-[0_0_15px_rgba(0,242,254,0.3)]';
-              avatarRingClass = 'ring-[#00f2fe]/30';
-            }
-
-            return (
-              <MotionReveal key={member.id} variant="scale" delay={idx * 0.1}>
-                <div
-                  className={`${vipClass} ${borderHoverClass} relative group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 overflow-hidden`}
-                >
-                  {isFounder ? <div className="vip-card-rgb-glow rounded-[2rem]" /> : <div className="vip-card-cyber-glow rounded-[2rem]" />}
-
-
-
-
-                  <div
-                    className="relative z-10 h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 transition-transform duration-500 group-hover:scale-105"
-                    style={{
-                      borderColor: member.color || (isFounder ? '#ff6b81' : '#00f2fe'),
-                      boxShadow: shadowGlowStyle,
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={member.avatar || '/logo.webp'}
-                      alt={member.name}
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/logo.webp';
-                      }}
-                    />
-                    <div className={`absolute inset-0 rounded-2xl ring-1 ring-inset ${avatarRingClass}`} />
-                    <span
-                      className={`absolute bottom-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-2 ring-black ${
-                        STATUS_COLORS[member.status || 'unknown'] || 'bg-gray-500'
-                      }`}
-                      title={STATUS_TITLES[member.status || 'unknown'] || 'Chưa có trạng thái Discord'}
-                    />
-                  </div>
-
-                  <div className="relative z-10 space-y-3 sm:space-y-2">
-                    <div className="flex flex-col sm:flex-row items-center gap-3">
-                      <h3 className="text-xl font-extrabold text-white tracking-wide">{member.name}</h3>
-                      <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider border ${badgeBgClass}`}>
-                        <RoleIcon className={`h-3.5 w-3.5 ${badgeColorClass}`} />
-                        <span className={badgeColorClass}>{badgeText}</span>
-                      </span>
-                    </div>
-                    <p
-                      className="text-sm font-semibold"
-                      style={{ color: member.color || (isFounder ? '#ff6b81' : '#00f2fe') }}
-                    >
-                      {member.role}
-                    </p>
-                    <p className="mt-1 text-xs leading-relaxed text-gray-400">
-                      {member.description}
-                    </p>
-                  </div>
-                </div>
-              </MotionReveal>
-            );
-          })}
-        </div>
-
-        {/* --- ADMIN & SUPPORT TEAM --- */}
-        {team.filter(m => m.group === 'admin' || m.group === 'community').length > 0 && (
-          <div className="mt-20">
-            <MotionReveal variant="clip" className="mx-auto mb-10 max-w-2xl space-y-3 text-center">
-              <h3 className="text-2xl font-bold text-white">Đội Ngũ Quản Trị & Hỗ Trợ</h3>
-              <p className="text-sm text-gray-400">Những người hùng thầm lặng điều phối sự kiện và hỗ trợ giải đáp thắc mắc của cộng đồng MIMI.</p>
-            </MotionReveal>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {team
-                .filter(m => m.group === 'admin' || m.group === 'community')
-                .sort((a, b) => {
-                  const getWeight = (r: string) => {
-                    const lower = (r || '').toLowerCase();
-                    if (lower.includes('owner')) return 1;
-                    if (lower.includes('manager')) return 2;
-                    if (lower.includes('event')) return 3;
-                    if (lower.includes('staff')) return 4;
-                    return 5;
-                  };
-                  const weightA = getWeight(a.role);
-                  const weightB = getWeight(b.role);
-                  if (weightA !== weightB) return weightA - weightB;
-                  return (a.role || '').localeCompare(b.role || '');
-                })
-                .map((member, idx) => (
-                <MotionReveal key={member.id} variant="drift" delay={idx * 0.05}>
-                  <div
-                    className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04]"
-                    style={{
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = member.color ? `${member.color}66` : 'rgba(255,255,255,0.2)';
-                      e.currentTarget.style.boxShadow = `0 10px 30px -10px ${member.color || 'rgba(255,255,255,0.3)'}`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
-                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
-                    }}
-                  >
-                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/10 bg-black/20">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={member.avatar || '/logo.webp'}
-                        alt={member.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/logo.webp';
-                        }}
-                      />
-                      <span
-                        className={`absolute bottom-0 right-0 h-3 w-3 rounded-full ring-2 ring-black ${
-                          STATUS_COLORS[member.status || 'unknown'] || 'bg-gray-500'
-                        }`}
-                        title={STATUS_TITLES[member.status || 'unknown'] || 'Chưa có trạng thái Discord'}
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="truncate text-sm font-bold text-gray-200 transition-colors group-hover:text-white">
-                        {member.name}
-                      </h4>
-                      <p className="truncate text-xs font-semibold tracking-wide" style={{ color: member.color || '#9b59b6' }}>
-                        {member.role}
-                      </p>
-                    </div>
-                  </div>
-                </MotionReveal>
+        {remaining.length > 0 && (
+          <div className="team-community">
+            <div className="team-community-heading"><ShieldCheck size={18} aria-hidden="true" /><h3>Cùng xây dựng cộng đồng</h3><span>{remaining.length} thành viên</span></div>
+            <div className="team-community-grid">
+              {remaining.map(member => (
+                <a key={member.id} className="team-member" href={`https://discord.com/users/${member.id}`} target="_blank" rel="noopener noreferrer" aria-label={`Xem hồ sơ Discord của ${member.name}`}>
+                  <MemberAvatar member={member} />
+                  <div><h4>{member.name}</h4><p>{member.role}</p></div>
+                </a>
               ))}
             </div>
           </div>
