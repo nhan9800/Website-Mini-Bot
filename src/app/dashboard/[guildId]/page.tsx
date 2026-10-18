@@ -21,8 +21,15 @@ import {
   Shield,
   Save,
   Wand2,
+  BarChart3,
+  MessageCircle,
+  Hash,
+  Mic2,
+  Crown,
+  CheckCircle,
+  Ticket,
 } from 'lucide-react';
-import type { PlayerState, GuildSettingsResponse, ApiErrorBody } from '@/lib/types';
+import type { PlayerState, GuildSettingsResponse, GuildStatsResponse, ApiErrorBody } from '@/lib/types';
 import { formatDuration } from '@/lib/format';
 import { Soundwave } from '@/components/ui/soundwave';
 import { adoptAccessKeyFromUrl, accessKeyHeader, clearAccessKey } from '@/lib/access-key';
@@ -80,6 +87,11 @@ export default function GuildDashboardPage() {
   const [flags, setFlags] = useState<GuildSettingsResponse['settings'] | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // ── Thống kê riêng của server (được bot trả qua dashboard key) ──
+  const [guildStats, setGuildStats] = useState<GuildStatsResponse['stats'] | null>(null);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   // ── Lấy player state, poll mỗi 5s ───────────────────────────────
   const fetchPlayer = useCallback(async () => {
@@ -151,6 +163,36 @@ export default function GuildDashboardPage() {
   useEffect(() => {
     if (accessKey) fetchSettings();
   }, [fetchSettings, accessKey]);
+
+  const fetchStats = useCallback(async () => {
+    if (!accessKey) return;
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/stats`, {
+        cache: 'no-store',
+        headers: accessKeyHeader(accessKey),
+      });
+      const data = await res.json();
+      if (res.ok && data?.ok && data.stats) {
+        setGuildStats(data.stats as GuildStatsResponse['stats']);
+        setStatsError(null);
+      } else {
+        setStatsError((data as ApiErrorBody)?.error?.message || `Lỗi ${res.status} từ máy chủ.`);
+      }
+    } catch {
+      setStatsError('Không thể tải thống kê server từ bot.');
+    } finally {
+      setStatsLoading(false);
+    }
+  }, [guildId, accessKey]);
+
+  useEffect(() => {
+    if (!accessKey) return;
+    fetchStats();
+    const t = setInterval(() => {
+      if (!document.hidden) fetchStats();
+    }, 15000);
+    return () => clearInterval(t);
+  }, [fetchStats, accessKey]);
 
   // ── Gửi lệnh điều khiển ─────────────────────────────────────────
   const sendAction = useCallback(
@@ -268,17 +310,17 @@ export default function GuildDashboardPage() {
                 )}
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                    playerError || settingsError
+                    playerError || settingsError || statsError
                       ? 'bg-mimi-amber/20 text-mimi-amber'
                       : 'bg-mimi-green/20 text-mimi-green'
                   }`}
                 >
                   <span
                     className={`h-1.5 w-1.5 rounded-full ${
-                      playerError || settingsError ? 'bg-mimi-amber' : 'animate-pulse bg-mimi-green'
+                      playerError || settingsError || statsError ? 'bg-mimi-amber' : 'animate-pulse bg-mimi-green'
                     }`}
                   />
-                  {playerError || settingsError ? 'Kết nối gián đoạn' : 'Đã kết nối Internal API'}
+                  {playerError || settingsError || statsError ? 'Kết nối gián đoạn' : 'Đã kết nối Internal API'}
                 </span>
               </div>
               <h1 className="truncate text-2xl font-extrabold text-white sm:text-3xl">
@@ -353,7 +395,9 @@ export default function GuildDashboardPage() {
 
         {/* ══ TAB 1: TRÌNH PHÁT ══════════════════════════════════ */}
         {activeTab === 'player' && (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="space-y-8">
+            <GuildStatsPanel stats={guildStats} loading={statsLoading} error={statsError} onRefresh={fetchStats} />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Cột trái: player */}
             <div className="space-y-6 lg:col-span-7">
               <div className="glass-panel-glow gradient-ring relative space-y-7 overflow-hidden rounded-[2rem] p-7 shadow-2xl sm:p-9">
@@ -578,6 +622,7 @@ export default function GuildDashboardPage() {
                 )}
               </div>
             </div>
+            </div>
           </div>
         )}
 
@@ -685,6 +730,67 @@ export default function GuildDashboardPage() {
       </div>
     </div>
   );
+}
+
+function GuildStatsPanel({
+  stats,
+  loading,
+  error,
+  onRefresh,
+}: {
+  stats: GuildStatsResponse['stats'] | null;
+  loading: boolean;
+  error: string | null;
+  onRefresh: () => void;
+}) {
+  const metric = (value: number | null | undefined) => loading ? '—' : value == null ? '—' : value.toLocaleString('vi-VN');
+  return (
+    <section aria-labelledby="server-stats-title" className="glass-panel-glow relative overflow-hidden rounded-[2rem] p-6 sm:p-7">
+      <div className="relative z-10 flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-5">
+        <div>
+          <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mimi-green"><BarChart3 className="h-3.5 w-3.5" /> Dữ liệu riêng của server</p>
+          <h2 id="server-stats-title" className="mt-2 text-xl font-extrabold text-white">Tổng quan cộng đồng</h2>
+          <p className="mt-1 text-xs text-gray-400">Lấy trực tiếp từ bot và tự làm mới mỗi 15 giây.</p>
+        </div>
+        <button type="button" onClick={onRefresh} disabled={loading} className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-gray-300 transition-colors hover:text-white disabled:opacity-50" aria-label="Làm mới thống kê server">
+          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+        </button>
+      </div>
+      {error && !stats ? (
+        <div className="relative z-10 mt-5 flex items-center justify-between gap-3 rounded-2xl border border-mimi-amber/25 bg-mimi-amber/10 px-4 py-3 text-xs text-mimi-amber"><span>{error}</span><button type="button" onClick={onRefresh} className="font-bold underline">Thử lại</button></div>
+      ) : (
+        <>
+          <div className="relative z-10 mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatMetric icon={<Users className="h-4 w-4" />} label="Thành viên" value={metric(stats?.members.total)} tone="green" />
+            <StatMetric icon={<Radio className="h-4 w-4" />} label="Đang online" value={metric(stats?.members.online)} tone="cyan" />
+            <StatMetric icon={<MessageCircle className="h-4 w-4" />} label="Kênh text" value={metric(stats?.channels?.text)} tone="purple" />
+            <StatMetric icon={<Mic2 className="h-4 w-4" />} label="Kênh voice" value={metric(stats?.channels?.voice)} tone="pink" />
+          </div>
+          <div className="relative z-10 mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4"><div className="flex items-center gap-2 text-xs text-gray-400"><Crown className="h-4 w-4 text-mimi-amber" /> Boost</div><p className="mt-2 text-lg font-black text-white">{metric(stats?.guild.boostCount)}</p></div>
+            <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4"><div className="flex items-center gap-2 text-xs text-gray-400"><Hash className="h-4 w-4 text-mimi-cyan" /> Level / thành viên đã tính</div><p className="mt-2 text-lg font-black text-white">{metric((stats?.levels.chatUsers ?? 0) + (stats?.levels.voiceUsers ?? 0))}</p></div>
+            <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4"><div className="flex items-center gap-2 text-xs text-gray-400"><Music className="h-4 w-4 text-mimi-green" /> Hàng chờ nhạc</div><p className="mt-2 text-lg font-black text-white">{metric(stats?.music.queueCount)} bài</p></div>
+          </div>
+          {stats && <div className="relative z-10 mt-4 flex flex-wrap gap-2 text-[11px] text-gray-400">
+            {stats.features.ticket && <FeaturePill icon={<Ticket className="h-3 w-3" />} label="Ticket" />}
+            {stats.features.verify && <FeaturePill icon={<CheckCircle className="h-3 w-3" />} label="Xác thực" />}
+            {stats.features.levelChat && <FeaturePill icon={<BarChart3 className="h-3 w-3" />} label="Level chat" />}
+            {stats.features.levelVoice && <FeaturePill icon={<Mic2 className="h-3 w-3" />} label="Level voice" />}
+            {stats.invites.eventEnabled && <FeaturePill icon={<Users className="h-3 w-3" />} label="Event lời mời" />}
+          </div>}
+        </>
+      )}
+    </section>
+  );
+}
+
+function StatMetric({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: 'green' | 'cyan' | 'purple' | 'pink' }) {
+  const tones = { green: 'text-mimi-green', cyan: 'text-mimi-cyan', purple: 'text-mimi-violet', pink: 'text-mimi-pink' };
+  return <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4"><div className={`flex items-center gap-2 text-xs ${tones[tone]}`}>{icon}<span className="text-gray-400">{label}</span></div><p className="mt-2 text-2xl font-black text-white">{value}</p></div>;
+}
+
+function FeaturePill({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return <span className="inline-flex items-center gap-1.5 rounded-full border border-mimi-green/20 bg-mimi-green/10 px-2.5 py-1 text-mimi-green">{icon}{label}</span>;
 }
 
 /** Màn hình khi vào thẳng URL mà chưa có khoá truy cập. */
