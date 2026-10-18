@@ -39,12 +39,12 @@ export function Header() {
   const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-surface backdrop-blur-xl">
+    <header className="site-header fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-surface backdrop-blur-xl">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between gap-5">
           <div className="flex shrink-0 items-center gap-3">
             <ThemeToggle />
-            <Link href="/" className="flex items-center gap-3" title="Trang chủ Mimi">
+            <Link href="/" className="site-brand flex items-center gap-3" title="Trang chủ Mimi">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.webp" alt="" width={42} height={42} className="rounded-xl border border-white/10" />
               <span className="flex flex-col">
