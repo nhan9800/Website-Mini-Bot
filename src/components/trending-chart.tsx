@@ -6,6 +6,7 @@ import { Flame, Copy, Check, TrendingUp, Music, Play, Pause, RefreshCw } from 'l
 import { Magnetic, MotionReveal } from '@/components/ui/motion-primitives';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { usePlayerStore } from '@/lib/store/use-player-store';
+import './trending-chart.css';
 
 interface TrendingSong {
   rank: number;
@@ -27,16 +28,28 @@ export function TrendingChart() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [copiedRank, setCopiedRank] = useState<number | null>(null);
   const activeRequest = useRef<AbortController | null>(null);
+  const requestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mounted = useRef(false);
-  const { playTrack, track: currentTrack, isPlaying, setIsPlaying } = usePlayerStore();
+  const { playTrack, track: currentTrack, isPlaying, playbackStatus, setIsPlaying } = usePlayerStore();
 
   const fetchTrending = useCallback(async (replacePending = true) => {
     if (!mounted.current || (!replacePending && activeRequest.current)) return;
+    if (requestTimer.current) clearTimeout(requestTimer.current);
     activeRequest.current?.abort();
     const controller = new AbortController();
     activeRequest.current = controller;
     setLoading(true);
+    // Bound both the network response and body parsing, including a stalled feed.
+    const deadline = setTimeout(() => {
+      if (activeRequest.current !== controller || !mounted.current) return;
+      controller.abort();
+      activeRequest.current = null;
+      requestTimer.current = null;
+      setLoading(false);
+      setFailed(true);
+    }, 12000);
+    requestTimer.current = deadline;
     try {
       const res = await fetch(`https://itunes.apple.com/vn/rss/topsongs/limit=10/json?t=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
       const data = await res.json();
@@ -75,6 +88,8 @@ export function TrendingChart() {
       console.error("Fetch trending error:", e);
       setFailed(true);
     } finally {
+      clearTimeout(deadline);
+      if (requestTimer.current === deadline) requestTimer.current = null;
       if (activeRequest.current === controller) {
         activeRequest.current = null;
         if (mounted.current) setLoading(false);
@@ -92,6 +107,7 @@ export function TrendingChart() {
       clearInterval(timer);
       activeRequest.current?.abort();
       activeRequest.current = null;
+      if (requestTimer.current) clearTimeout(requestTimer.current);
       if (copyTimer.current) clearTimeout(copyTimer.current);
     };
   }, [fetchTrending]);
@@ -109,11 +125,8 @@ export function TrendingChart() {
     } catch {}
   };
 
-  // BXH không tải được thì ẩn hẳn section — không hiển thị dữ liệu giả
-  if (failed) return null;
-
   return (
-    <section id="bxh" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
+    <section id="bxh" className="trending-chart scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12">
           {/* Cột trái: đĩa vinyl 3D + lời dẫn */}
@@ -149,7 +162,7 @@ export function TrendingChart() {
               <TiltCard maxTilt={4}>
                 <div className="glass-panel-glow gradient-ring space-y-2 rounded-[2rem] p-5 sm:p-7">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-2 pb-4">
-                    <div className="flex items-center gap-2.5">
+                    <div className="trending-chart-heading flex items-center gap-2.5">
                       <h3 className="flex items-center gap-2 text-lg font-bold text-white">
                         <TrendingUp className="h-5 w-5 text-mimi-green" />
                         <span>Top 10 Nhạc Việt Thịnh Hành</span>
@@ -163,7 +176,7 @@ export function TrendingChart() {
                           <span>LIVE</span>
                         </div>
                         <div className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/5 px-2.5 py-0.5 text-[10px] font-bold text-gray-300" title="Dữ liệu trực tiếp từ Apple Music / iTunes Chart Việt Nam">
-                          <span> Apple Music VN</span>
+                          <Music className="h-3 w-3 shrink-0" aria-hidden="true" /><span>Apple Music VN</span>
                         </div>
                       </div>
                     </div>
@@ -188,18 +201,28 @@ export function TrendingChart() {
                     </div>
                   </div>
 
-                  {!songs ? (
+                  {failed && (
+                    <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-mimi-green/20 bg-mimi-green/5 px-3 py-3 text-xs text-gray-400">
+                      <p>{songs ? 'Chưa làm mới được bảng nhạc. Đang giữ kết quả đã tải gần nhất.' : 'Chưa tải được bảng nhạc từ Apple Music. Bạn có thể thử lại.'}</p>
+                      <button type="button" onClick={() => fetchTrending()} disabled={loading}
+                        className="min-h-11 shrink-0 rounded-lg px-3 font-bold text-mimi-green transition-colors hover:bg-mimi-green/10 disabled:opacity-50">
+                        {loading ? 'Đang thử lại…' : 'Thử lại'}
+                      </button>
+                    </div>
+                  )}
+
+                  {!songs && !failed ? (
                     <div className="space-y-2 pt-2">
                       {Array.from({ length: 6 }).map((_, i) => (
                         <div key={i} className="h-14 animate-pulse rounded-2xl bg-white/5" />
                       ))}
                     </div>
-                  ) : (
+                  ) : songs ? (
                     <ul className="trending-scroll-list max-h-[460px] space-y-1.5 overflow-x-hidden overflow-y-auto pr-1 pt-2">
                       {songs.map((s, index) => (
                         <motion.li
                           key={s.rank}
-                          className="group flex min-w-0 items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-[transform,border-color,background-color,box-shadow] duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
+                          className="trending-row group flex min-w-0 items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-[transform,border-color,background-color,box-shadow] duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
                           style={{ '--rank-delay': `${Math.min(index, 5) * 55}ms` } as React.CSSProperties}
                           initial={{ opacity: 0, clipPath: 'inset(0 12% 0 0)' }}
                           whileInView={{ opacity: 1, clipPath: 'inset(0 0% 0 0)' }}
@@ -207,7 +230,7 @@ export function TrendingChart() {
                           transition={{ duration: 0.48, delay: Math.min(index, 5) * 0.055, ease: [0.16, 1, 0.3, 1] }}
                         >
                           <span
-                            className={`w-8 shrink-0 text-center font-mono text-lg font-black transition-transform duration-300 group-hover:scale-110 ${
+                            className={`trending-rank w-8 shrink-0 text-center font-mono text-lg font-black transition-transform duration-300 group-hover:scale-110 ${
                               s.rank <= 3 ? 'text-gradient-mimi' : 'text-gray-500'
                             }`}
                           >
@@ -219,28 +242,28 @@ export function TrendingChart() {
                               src={s.artworkUrl.replace(/\/\d+x\d+bb\./, '/96x96bb.')}
                               alt=""
                               loading="lazy"
-                              className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md transition-transform duration-300 group-hover:scale-[1.08] group-hover:rotate-2"
+                              className="trending-artwork h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md transition-transform duration-300 group-hover:scale-[1.08] group-hover:rotate-2"
                             />
                           ) : (
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm transition-transform duration-300 group-hover:scale-[1.08]">
+                            <div className="trending-artwork flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm transition-transform duration-300 group-hover:scale-[1.08]">
                               <Music className="h-6 w-6" />
                             </div>
                           )}
-                          <div className="min-w-0 flex-1">
+                          <div className="trending-song-copy min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <p className="min-w-0 flex-1 truncate text-sm font-bold text-white">{s.title}</p>
+                              <p className="trending-song-title min-w-0 flex-1 truncate text-sm font-bold text-white">{s.title}</p>
                               {s.rank === 1 && (
-                                <span className="shrink-0 rounded-md bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/40 px-1.5 py-0.5 text-[9px] font-extrabold text-yellow-300">
+                                <span className="trending-rank-badge shrink-0 rounded-md bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/40 px-1.5 py-0.5 text-[9px] font-extrabold text-yellow-300">
                                   #1 APPLE HIT
                                 </span>
                               )}
                               {s.rank === 2 && (
-                                <span className="shrink-0 rounded-md bg-gradient-to-r from-mimi-green/20 to-rose-500/20 border border-mimi-green/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-pink">
+                                <span className="trending-rank-badge shrink-0 rounded-md bg-gradient-to-r from-mimi-green/20 to-rose-500/20 border border-mimi-green/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-pink">
                                   #2 HOT
                                 </span>
                               )}
                               {s.rank === 3 && (
-                                <span className="shrink-0 rounded-md bg-gradient-to-r from-mimi-cyan/20 to-blue-500/20 border border-mimi-cyan/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-cyan">
+                                <span className="trending-rank-badge shrink-0 rounded-md bg-gradient-to-r from-mimi-cyan/20 to-blue-500/20 border border-mimi-cyan/40 px-1.5 py-0.5 text-[9px] font-extrabold text-mimi-cyan">
                                   #3 TREND
                                 </span>
                               )}
@@ -248,7 +271,7 @@ export function TrendingChart() {
                             <p className="min-w-0 truncate text-xs text-gray-400">{s.artist}</p>
                           </div>
                           {/* Equalizer hiện khi hover hoặc đang phát */}
-                          <div className={`h-6 items-end gap-0.5 ${(isPlaying && currentTrack?.title === s.title) ? 'flex' : 'hidden group-hover:flex'}`} aria-hidden>
+                          <div className={`trending-row-equalizer flex h-6 w-4 shrink-0 items-end gap-0.5 transition-opacity duration-200 ${(playbackStatus === 'playing' && currentTrack?.url === s.previewUrl) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100'}`} aria-hidden>
                             {[0, 1, 2].map((b) => (
                               <span
                                 key={b}
@@ -262,13 +285,13 @@ export function TrendingChart() {
                             ))}
                           </div>
                           
-                          <div className="flex items-center gap-1 shrink-0">
+                          <div className="trending-row-actions flex items-center gap-1 shrink-0">
                             {s.previewUrl && (
                               <Magnetic strength={0.06}>
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    if (currentTrack?.title === s.title) {
+                                    if (currentTrack?.url === s.previewUrl) {
                                       setIsPlaying(!isPlaying);
                                     } else {
                                       playTrack({
@@ -280,14 +303,14 @@ export function TrendingChart() {
                                     }
                                   }}
                                   className={`rounded-xl border p-2.5 transition-colors ${
-                                    currentTrack?.title === s.title && isPlaying
+                                    currentTrack?.url === s.previewUrl && isPlaying
                                       ? 'border-mimi-green bg-mimi-green/20 text-mimi-green'
                                       : 'border-white/10 bg-white/5 text-gray-300 hover:border-mimi-green/40 hover:text-mimi-green'
                                   }`}
                                   title={`Nghe thử ${s.title}`}
                                   aria-label={`Nghe thử ${s.title}`}
                                 >
-                                  {currentTrack?.title === s.title && isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                  {currentTrack?.url === s.previewUrl && isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                 </button>
                               </Magnetic>
                             )}
@@ -308,7 +331,7 @@ export function TrendingChart() {
                         </motion.li>
                       ))}
                     </ul>
-                  )}
+                  ) : null}
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-white/10 px-2 pt-4 text-xs text-gray-500">
                     <p>

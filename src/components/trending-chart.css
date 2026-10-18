@@ -1,0 +1,20 @@
+.trending-row { position: relative; }
+.trending-chart-heading { min-width: 0; }
+
+@media (max-width: 767px) {
+  .trending-chart-heading { flex-wrap: wrap; }
+  .trending-chart-heading h3 { min-width: 0; font-size: 16px; }
+  .trending-chart-heading h3 > svg { flex-shrink: 0; }
+  /* Keep the title readable at 320px; controls occupy their own vertical rail. */
+  .trending-chart .trending-row { display: grid; grid-template-columns: 20px 40px minmax(0, 1fr) 44px; gap: 6px; min-height: 60px; padding: 6px; }
+  .trending-chart .trending-row:hover { transform: none; }
+  .trending-row .trending-rank { width: 20px; font-size: 14px; }
+  .trending-row .trending-artwork { width: 40px; height: 40px; }
+  .trending-song-copy { min-width: 0; }
+  .trending-row .trending-song-title { display: -webkit-box; overflow: hidden; white-space: normal; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; font-size: 12px; line-height: 1.4; }
+  .trending-row .trending-rank-badge { display: none; }
+  .trending-row .trending-row-actions { grid-column: 4; display: flex; flex-direction: column; gap: 4px; width: 44px; }
+  .trending-row-actions button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; }
+  /* The reserved artwork area also carries the meter: zero title-width change. */
+  .trending-row .trending-row-equalizer { position: absolute; top: calc(50% + 2px); left: 44px; z-index: 1; height: 16px; width: 16px; filter: drop-shadow(0 1px 2px #071e16); pointer-events: none; }
+}

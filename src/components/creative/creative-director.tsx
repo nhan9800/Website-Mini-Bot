@@ -58,7 +58,16 @@ export function CreativeDirector() {
         syncTouch: false,
         anchors: { offset: -96 },
         // Chart lists, forms, dialogs and the 3D canvas retain native input.
-        prevent: node => Boolean(node.closest('[data-lenis-prevent], [role="dialog"], dialog, input, textarea, select, .trending-scroll-list, .services-story-card, .experience-stage')),
+        prevent: node => {
+          const native = Boolean(node.closest('[data-lenis-prevent], [role="dialog"], dialog, input, textarea, select, .trending-scroll-list, .services-story-card, .experience-stage'));
+          // Lenis returns early for native regions before stopping its current
+          // interpolation. Cancel that earlier wheel target so a new native
+          // scroll cannot fight the still-running smooth animation.
+          if (native && instance?.isScrolling === 'smooth' && document.body.style.overflow !== 'hidden') {
+            instance.scrollTo(window.scrollY, { immediate: true });
+          }
+          return native;
+        },
       });
       lockObserver = new MutationObserver(syncVisibility);
       lockObserver.observe(document.body, { attributes: true, attributeFilter: ['style'] });

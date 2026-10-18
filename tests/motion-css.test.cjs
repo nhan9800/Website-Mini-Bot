@@ -8,7 +8,7 @@ test('vinyl thương hiệu vẫn chuyển động khi desktop bật reduced-mot
   const trending = fs.readFileSync(path.resolve(__dirname, '../src/components/trending-chart.tsx'), 'utf8');
   const reducedMotion = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
   assert.match(reducedMotion, /\.vinyl-disc\s*\{\s*animation:\s*vinylSpin\s+7s\s+linear\s+infinite\s*!important;/);
-  assert.match(reducedMotion, /\.animate-soundwave\s*\{\s*animation:\s*soundwave\s+1\.1s\s+ease-in-out\s+infinite\s*!important;/);
+  assert.match(reducedMotion, /\.animate-soundwave\s*\{\s*animation:\s*soundwave\s+var\(--soundwave-duration,\s*1\.1s\)\s+ease-in-out\s+var\(--soundwave-delay,\s*0s\)\s+infinite\s*!important;/);
   assert.match(css, /@keyframes\s+trendingEqualizer[\s\S]*?50%\s*\{\s*transform:\s*scaleY\(1\)/);
   assert.match(trending, /className=\"trending-equalizer\b/);
 });
@@ -34,7 +34,9 @@ test('Soundwave gắn class chạy lại khi reduced-motion override animation',
   const soundwave = fs.readFileSync(path.resolve(__dirname, '../src/components/ui/soundwave.tsx'), 'utf8');
   assert.match(soundwave, /soundwave-bar/);
   assert.match(soundwave, /playing \? 'animate-soundwave' : ''/);
-  assert.match(css, /\.animate-soundwave\s*\{\s*animation:\s*soundwave\s+1\.1s\s+ease-in-out\s+infinite\s*!important;/);
+  assert.match(css, /\.soundwave-bar\.animate-soundwave\s*\{\s*animation:\s*soundwave\s+var\(--soundwave-duration,\s*1\.1s\)\s+ease-in-out\s+var\(--soundwave-delay,\s*0s\)\s+infinite\s*!important;/);
+  assert.match(soundwave, /'--soundwave-duration'/);
+  assert.match(soundwave, /'--soundwave-delay'/);
 });
 
 test('StatusModal dùng animation của dialog chung, không phụ thuộc utility plugin chưa cài', () => {

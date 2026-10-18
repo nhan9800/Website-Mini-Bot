@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   HelpCircle,
@@ -170,25 +171,32 @@ export default function SupportPage() {
                 >
                   <button
                     type="button"
+                    id={`support-faq-question-${i}`}
                     onClick={() => setOpenIndex(open ? null : i)}
                     className="flex w-full items-center justify-between gap-4 p-6 text-left"
                     aria-expanded={open}
+                    aria-controls={`support-faq-answer-${i}`}
                   >
                     <span className="flex items-start gap-3 text-base font-bold text-white">
                       <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-mimi-green" />
                       <span>{faq.q}</span>
                     </span>
                     <ChevronDown
-                      className={`h-5 w-5 shrink-0 text-gray-400 transition-transform duration-300 ${
+                      className={`h-5 w-5 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(.16,1,.3,1)] ${
                         open ? 'rotate-180' : ''
                       }`}
                     />
                   </button>
-                  {open && (
-                    <MotionReveal variant="clip" className="px-6 pb-6 pl-14 text-sm leading-relaxed text-gray-400" amount={0.05}>
-                      {faq.a}
-                    </MotionReveal>
-                  )}
+                  <AnimatePresence initial={false}>
+                    {open && (
+                      <motion.div key={`answer-${i}`} id={`support-faq-answer-${i}`} role="region" aria-labelledby={`support-faq-question-${i}`}
+                        initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                        transition={{ height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.18, ease: [0.16, 1, 0.3, 1] } }}
+                        className="overflow-hidden">
+                        <div className="px-6 pb-6 pl-14 text-sm leading-relaxed text-gray-400">{faq.a}</div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}

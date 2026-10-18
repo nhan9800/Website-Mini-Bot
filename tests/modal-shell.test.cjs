@@ -84,6 +84,11 @@ function setup() {
       return current.tree;
     };
     current.open = onClose => { current.render(true, onClose); return current.render(true, onClose); };
+    current.finishExit = onClose => {
+      nodes(current.tree).find(node => node.type === 'presence').props.onExitComplete();
+      current.render(false, onClose);
+    };
+    current.unmount = () => current.slots.forEach(slot => slot?.cleanup?.());
     return current;
   };
   const key = (name, shiftKey = false) => {
@@ -118,6 +123,11 @@ test('Portal dialog traps focus, preserves Enter and restores the trigger/body a
   env.key('Escape');
   assert.equal(closeCount, 1);
   dialog.render(false, close);
+  assert.equal(env.doc.body.style.overflow, 'hidden', 'The exiting backdrop must keep background scrolling locked');
+  assert.equal(env.doc.activeElement, last, 'Focus stays inside until the final exit frame');
+  env.key('Escape');
+  assert.equal(closeCount, 1, 'An exiting dialog does not dispatch a second close');
+  dialog.finishExit(close);
   assert.equal(env.doc.activeElement, trigger);
   assert.equal(env.doc.body.style.overflow, 'auto');
   assert.equal(env.doc.body.style.paddingRight, '6px');
@@ -146,10 +156,39 @@ test('Nested notice closes alone, retains the parent scroll lock and uses the ke
   assert.equal(childCloses, 1);
   assert.equal(parentCloses, 0);
   child.render(false, childClose);
+  assert.equal(env.doc.activeElement, child.panel);
+  env.key('Escape');
+  assert.equal(parentCloses, 0, 'Parent cannot close through a notice that is still exiting');
+  child.finishExit(childClose);
   assert.equal(env.doc.activeElement, copyButton);
   assert.equal(env.doc.body.style.overflow, 'hidden');
   env.key('Escape');
   assert.equal(parentCloses, 1);
   parent.render(false, parentClose);
+  assert.equal(env.doc.body.style.overflow, 'hidden');
+  parent.finishExit(parentClose);
   assert.equal(env.doc.body.style.overflow, 'auto');
+});
+
+test('Reopening during exit retains the boundary; unmount during exit releases it immediately', () => {
+  const env = setup();
+  const trigger = new env.Element();
+  trigger.focus();
+  const dialog = env.instance('payment');
+  const close = () => {};
+  dialog.render(false, close);
+  dialog.open(close);
+  dialog.render(false, close);
+  const oldExit = env.nodes(dialog.tree).find(node => node.type === 'presence').props.onExitComplete;
+  dialog.render(true, close);
+  oldExit();
+  dialog.render(true, close);
+  assert.equal(env.doc.body.style.overflow, 'hidden', 'An old exit callback cannot unlock a reopened dialog');
+  assert.equal(env.doc.activeElement, dialog.panel);
+  dialog.render(false, close);
+  dialog.unmount();
+  assert.equal(env.doc.body.style.overflow, 'auto');
+  assert.equal(env.doc.activeElement, trigger);
+  assert.equal(env.listeners.get('keydown').size, 0);
+  assert.equal(env.viewportListeners.get('resize').size, 0);
 });

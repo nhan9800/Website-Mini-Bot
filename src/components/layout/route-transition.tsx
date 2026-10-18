@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 /**
  * Một lớp chuyển cảnh nhẹ cho toàn bộ route. Dùng clip-path để tránh layout shift,
- * không giữ state của trang cũ và tự tắt khi người dùng yêu cầu giảm chuyển động.
+ * không giữ state của trang cũ; chuyển cảnh dùng cùng nhịp thương hiệu trên các thiết bị.
  */
 export function RouteTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

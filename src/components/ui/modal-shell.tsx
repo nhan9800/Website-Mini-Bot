@@ -25,14 +25,18 @@ export function ModalShell({ open, onClose, labelledBy, describedBy, children, c
   const panel = useRef<HTMLDivElement>(null);
   const close = useRef(onClose);
   close.current = onClose;
+  const openRef = useRef(open);
+  openRef.current = open;
   const [ready, setReady] = useState(false);
+  const [boundaryActive, setBoundaryActive] = useState(open);
   const [layer, setLayer] = useState(120);
   const [viewport, setViewport] = useState<{ height: number; top: number } | null>(null);
 
   useEffect(() => { setReady(true); }, []);
+  useEffect(() => { if (open) setBoundaryActive(true); }, [open]);
 
   useEffect(() => {
-    if (!open || !ready || !panel.current) return;
+    if (!boundaryActive || !ready || !panel.current) return;
     const target = panel.current;
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (dialogStack.length === 0) {
@@ -55,7 +59,7 @@ export function ModalShell({ open, onClose, labelledBy, describedBy, children, c
       if (event.key === 'Escape') {
         event.preventDefault();
         event.stopImmediatePropagation();
-        close.current();
+        if (openRef.current) close.current();
       } else if (event.key === 'Tab') {
         const controls = focusable();
         const first = controls[0];
@@ -98,16 +102,20 @@ export function ModalShell({ open, onClose, labelledBy, describedBy, children, c
       }
       if (wasTopmost && previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
     };
-  }, [id, open, ready]);
+  }, [boundaryActive, id, ready]);
 
   if (!ready) return null;
   return createPortal(
-    <AnimatePresence initial={false}>
+    <AnimatePresence initial={false} onExitComplete={() => {
+      // Keep the focus boundary, scrollbar compensation and Lenis pause until
+      // the final panel/backdrop frame has left. Unmount still cleans at once.
+      if (!openRef.current) setBoundaryActive(false);
+    }}>
       {open && (
         <motion.div className="fixed inset-x-0 flex items-center justify-center p-4 sm:p-6"
           style={{ zIndex: layer, top: viewport?.top || 0, height: viewport?.height || '100dvh', paddingTop: 'max(1rem, env(safe-area-inset-top))', paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}>
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" aria-hidden="true" onClick={() => { if (dialogStack.at(-1) === id) close.current(); }} />
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" aria-hidden="true" onClick={() => { if (openRef.current && dialogStack.at(-1) === id) close.current(); }} />
           <motion.div ref={panel} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-describedby={describedBy} tabIndex={-1}
             className={`mimi-modal-panel relative w-full overflow-y-auto overscroll-contain outline-none ${className}`}
             style={{ maxHeight: '100%' }}
