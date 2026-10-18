@@ -167,11 +167,11 @@ export function TrendingChart() {
                       ))}
                     </div>
                   ) : (
-                    <ul className="max-h-[460px] space-y-1.5 overflow-y-auto pr-1 pt-2">
+                    <ul className="trending-scroll-list max-h-[460px] space-y-1.5 overflow-x-hidden overflow-y-auto pr-1 pt-2">
                       {songs.map((s) => (
                         <li
                           key={s.rank}
-                          className="group flex items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-all duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
+                          className="group flex min-w-0 items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-all duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
                         >
                           <span
                             className={`w-8 shrink-0 text-center font-mono text-lg font-black transition-transform duration-300 group-hover:scale-110 ${
@@ -195,7 +195,7 @@ export function TrendingChart() {
                           )}
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <p className="truncate text-sm font-bold text-white">{s.title}</p>
+                              <p className="min-w-0 flex-1 truncate text-sm font-bold text-white">{s.title}</p>
                               {s.rank === 1 && (
                                 <span className="shrink-0 rounded-md bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/40 px-1.5 py-0.5 text-[9px] font-extrabold text-yellow-300">
                                   #1 APPLE HIT
@@ -212,7 +212,7 @@ export function TrendingChart() {
                                 </span>
                               )}
                             </div>
-                            <p className="truncate text-xs text-gray-400">{s.artist}</p>
+                            <p className="min-w-0 truncate text-xs text-gray-400">{s.artist}</p>
                           </div>
                           {/* Equalizer hiện khi hover hoặc đang phát */}
                           <div className={`h-6 items-end gap-0.5 ${(isPlaying && currentTrack?.title === s.title) ? 'flex' : 'hidden group-hover:flex'}`} aria-hidden>
