@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { createContext, useContext, useState, useCallback, useId } from 'react';
+import { ModalShell } from './modal-shell';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -38,6 +38,7 @@ interface NotificationContextType {
 const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
+  const titleId = useId();
   const [modal, setModal] = useState<(NotificationOptions & { isOpen: boolean }) | null>(null);
   const close = useCallback(() => {
     setModal((prev) => (prev ? { ...prev, isOpen: false } : null));
@@ -97,19 +98,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     [show]
   );
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!modal?.isOpen) return;
-      if (e.key === 'Escape') close();
-      if (e.key === 'Enter') {
-        if (modal.onConfirm) modal.onConfirm();
-        close();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [modal, close]);
-
   const typeConfig = {
     success: {
       outerRing: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
@@ -151,39 +139,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     <NotificationContext.Provider value={{ show, success, warning, error, info, close }}>
       {children}
 
-      <AnimatePresence initial={false}>
-        {modal?.isOpen && (
-        <motion.div
-          key="mimi-notification"
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          {/* Backdrop Blur */}
-          <motion.button
-            type="button"
-            aria-label="Đóng thông báo"
-            className="fixed inset-0 cursor-default bg-black/70 backdrop-blur-sm"
-            onClick={close}
-            tabIndex={-1}
-          />
-
-          {/* Modal Container */}
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="mimi-notification-title"
-            className="relative w-full max-w-[420px] overflow-hidden rounded-3xl border border-white/10 bg-[#0f1422] p-7 text-center shadow-2xl backdrop-blur-2xl"
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 50px rgba(16, 185, 129, 0.12)',
-            }}
-          >
+      {modal && (
+        <ModalShell open={modal.isOpen} onClose={close} labelledBy={titleId}
+          className="max-w-[420px] rounded-3xl border border-white/10 bg-[#0f1422] p-7 text-center shadow-2xl backdrop-blur-2xl">
             {/* Header: Brand & Close */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3.5 mb-5">
               <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-gray-300">
@@ -191,8 +149,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 <span>{modal.brandName}</span>
               </div>
               <button
+                type="button"
                 onClick={close}
-                className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors duration-200 ease-[cubic-bezier(.16,1,.3,1)] hover:bg-white/10 hover:text-white"
                 aria-label="Đóng"
               >
                 <X className="h-4 w-4" />
@@ -223,7 +182,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             </div>
 
             {/* Main Title */}
-            <h3 id="mimi-notification-title" className="mt-2 mb-1 text-2xl font-black tracking-tight text-white">
+            <h3 id={titleId} className="mt-2 mb-1 text-2xl font-black tracking-tight text-white">
               {modal.title}
             </h3>
 
@@ -236,18 +195,17 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
             {/* Full-width Solid Action Button */}
             <button
+              type="button"
               onClick={() => {
                 if (modal.onConfirm) modal.onConfirm();
                 close();
               }}
-              className={`w-full rounded-2xl py-3.5 px-6 font-extrabold text-sm sm:text-base tracking-wide transition-all duration-150 active:scale-[0.98] ${typeConfig.btnClass}`}
+              className={`w-full rounded-2xl py-3.5 px-6 font-extrabold text-sm sm:text-base tracking-wide transition-[background-color,color,transform] duration-200 ease-[cubic-bezier(.16,1,.3,1)] active:scale-[0.98] ${typeConfig.btnClass}`}
             >
               {modal.confirmText || 'Đã hiểu'}
             </button>
-          </motion.div>
-        </motion.div>
-        )}
-      </AnimatePresence>
+        </ModalShell>
+      )}
     </NotificationContext.Provider>
   );
 }

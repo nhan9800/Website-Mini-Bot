@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { Star, X, Send, CheckCircle2, User, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
+import { ModalShell } from './modal-shell';
 
 interface FeedbackItem {
   id: string;
@@ -46,6 +47,8 @@ function avatarSource(value: unknown): string | undefined {
 }
 
 export function FeedbackWidget() {
+  const titleId = useId();
+  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'rate' | 'community'>('rate');
@@ -61,6 +64,8 @@ export function FeedbackWidget() {
   const [avgStars, setAvgStars] = useState<number | null>(null);
   const [totalReviews, setTotalReviews] = useState<number | null>(null);
   const [recentFeedbacks, setRecentFeedbacks] = useState<FeedbackItem[]>([]);
+
+  useEffect(() => () => { if (successTimer.current) clearTimeout(successTimer.current); }, []);
 
   useEffect(() => {
     if (pathname.includes('/status')) setSelectedFeature('Trạng Thái Hệ Thống');
@@ -124,7 +129,8 @@ export function FeedbackWidget() {
         setTotalReviews(data.totalReviews ?? 0);
         setRecentFeedbacks(data.recentFeedbacks || recentFeedbacks);
         setSubmitted(true);
-        setTimeout(() => {
+        if (successTimer.current) clearTimeout(successTimer.current);
+        successTimer.current = setTimeout(() => {
           setSubmitted(false);
           setComment('');
         }, 3000);
@@ -138,21 +144,24 @@ export function FeedbackWidget() {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+      <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-50 flex items-center gap-2 sm:bottom-6 sm:right-6">
         <button
           type="button"
+          aria-label="Mở bảng đánh giá Mimi"
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
           onClick={() => {
             setIsOpen(true);
             loadFeedbackStats();
           }}
-          className="group relative flex items-center gap-2 rounded-full border border-mimi-green/40 bg-surface px-4 py-2.5 text-xs font-bold text-white shadow-[0_0_25px_rgba(46,204,113,0.3)] backdrop-blur-md transition-all hover:scale-105 hover:border-mimi-green hover:shadow-[0_0_35px_rgba(46,204,113,0.5)]"
+          className="group relative flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-mimi-green/40 bg-surface text-xs font-bold text-white shadow-[0_0_25px_rgba(46,204,113,0.3)] backdrop-blur-md transition-[transform,border-color,box-shadow] duration-200 ease-[cubic-bezier(.16,1,.3,1)] hover:scale-105 hover:border-mimi-green hover:shadow-[0_0_35px_rgba(46,204,113,0.5)] sm:w-auto sm:px-4"
         >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mimi-green/20 text-mimi-green group-hover:scale-110 transition-transform">
             <Star className="h-3.5 w-3.5 fill-mimi-green text-mimi-green" />
           </span>
-          <span>Đánh Giá</span>
+          <span className="hidden sm:inline">Đánh Giá</span>
           <span
-            className="inline-flex items-center gap-1 rounded-full bg-mimi-green/20 px-2 py-0.5 font-mono text-[11px] font-extrabold text-mimi-green"
+            className="hidden items-center gap-1 rounded-full bg-mimi-green/20 px-2 py-0.5 font-mono text-[11px] font-extrabold text-mimi-green sm:inline-flex"
             aria-label={avgStars === null ? 'Chưa có điểm đánh giá' : `Điểm trung bình ${avgStars} trên 5 sao`}
           >
             {avgStars === null ? (
@@ -167,20 +176,19 @@ export function FeedbackWidget() {
         </button>
       </div>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-[420px] overflow-hidden rounded-3xl border border-white/10 bg-[#0a0a0a] shadow-2xl">
+      <ModalShell open={isOpen} onClose={() => setIsOpen(false)} labelledBy={titleId} animation="lift"
+        className="max-w-[420px] rounded-3xl border border-white/10 bg-[#0a0a0a] shadow-2xl">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
               <div>
-                <h3 className="text-lg font-black text-white">Đánh Giá MIMI</h3>
+                <h3 id={titleId} className="text-lg font-black text-white">Đánh Giá MIMI</h3>
                 <p className="text-[11px] font-medium text-gray-400 mt-0.5">Phản hồi của bạn giúp chúng tôi tốt hơn.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Đóng bảng đánh giá"
-                className="rounded-full bg-white/5 p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-gray-400 transition-colors duration-200 ease-[cubic-bezier(.16,1,.3,1)] hover:bg-white/10 hover:text-white"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -192,7 +200,7 @@ export function FeedbackWidget() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('rate')}
-                  className={`flex-1 rounded-lg py-1.5 text-xs font-bold transition-all ${
+                  className={`flex-1 rounded-lg py-1.5 text-xs font-bold transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] ${
                     activeTab === 'rate'
                       ? 'bg-white/10 text-white shadow-sm'
                       : 'text-gray-500 hover:text-gray-300'
@@ -203,7 +211,7 @@ export function FeedbackWidget() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('community')}
-                  className={`flex-1 rounded-lg py-1.5 text-xs font-bold transition-all ${
+                  className={`flex-1 rounded-lg py-1.5 text-xs font-bold transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] ${
                     activeTab === 'community'
                       ? 'bg-white/10 text-white shadow-sm'
                       : 'text-gray-500 hover:text-gray-300'
@@ -258,9 +266,10 @@ export function FeedbackWidget() {
 
                     {/* Features Select */}
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-gray-400 pl-1">Tính năng quan tâm</label>
+                      <label htmlFor="mimi-feedback-feature" className="text-[11px] font-semibold text-gray-400 pl-1">Tính năng quan tâm</label>
                       <div className="relative">
                         <select
+                          id="mimi-feedback-feature"
                           value={selectedFeature}
                           onChange={(e) => setSelectedFeature(e.target.value)}
                           className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm font-medium text-white transition-colors focus:border-mimi-green focus:outline-none focus:ring-1 focus:ring-mimi-green cursor-pointer"
@@ -283,7 +292,7 @@ export function FeedbackWidget() {
                         <button
                           type="button"
                           onClick={handleLinkDiscord}
-                          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] py-2.5 text-xs font-bold text-on-color transition-all hover:bg-[#4752C4] shadow-sm"
+                          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] py-2.5 text-xs font-bold text-on-color transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] hover:bg-[#4752C4] shadow-sm"
                         >
                           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.3,46,96.19,53,91.13,65.69,84.69,65.69Z"/></svg>
                           Đăng nhập bằng Discord
@@ -295,6 +304,7 @@ export function FeedbackWidget() {
                         </div>
                         <input
                           type="text"
+                          aria-label="Tên hiển thị (tùy chọn)"
                           placeholder="Tên hiển thị (Tùy chọn)"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
@@ -325,6 +335,7 @@ export function FeedbackWidget() {
 
                     {/* Comment */}
                     <textarea
+                      aria-label="Cảm nhận hoặc góp ý của bạn"
                       rows={2}
                       placeholder="Chia sẻ cảm nhận hoặc góp ý của bạn..."
                       value={comment}
@@ -337,7 +348,7 @@ export function FeedbackWidget() {
                     <button
                       type="submit"
                       disabled={loading || !comment.trim()}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-extrabold text-black shadow-lg transition-all hover:bg-gray-200 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 mt-2"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-extrabold text-black shadow-lg transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] hover:bg-gray-200 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 mt-2"
                     >
                       <Send className="h-4 w-4" />
                       <span>{loading ? 'Đang xử lý...' : 'Gửi Đánh Giá Ngay'}</span>
@@ -382,9 +393,7 @@ export function FeedbackWidget() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
+      </ModalShell>
     </>
   );
 }

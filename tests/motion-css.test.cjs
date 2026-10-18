@@ -37,13 +37,13 @@ test('Soundwave gắn class chạy lại khi reduced-motion override animation',
   assert.match(css, /\.animate-soundwave\s*\{\s*animation:\s*soundwave\s+1\.1s\s+ease-in-out\s+infinite\s*!important;/);
 });
 
-test('StatusModal dùng keyframes production thay cho utility plugin chưa cài', () => {
-  const css = fs.readFileSync(path.resolve(__dirname, '../src/app/globals.css'), 'utf8');
+test('StatusModal dùng animation của dialog chung, không phụ thuộc utility plugin chưa cài', () => {
   const modal = fs.readFileSync(path.resolve(__dirname, '../src/components/ui/status-modal.tsx'), 'utf8');
+  const shell = fs.readFileSync(path.resolve(__dirname, '../src/components/ui/modal-shell.tsx'), 'utf8');
   assert.doesNotMatch(modal, /animate-in|zoom-in-95/);
-  assert.match(modal, /status-modal-backdrop/);
-  assert.match(modal, /status-modal-panel/);
-  assert.match(css, /@keyframes status-modal-panel-in/);
+  assert.match(modal, /<ModalShell\b/);
+  assert.match(shell, /<AnimatePresence\b/);
+  assert.match(shell, /<motion\.div\b[\s\S]*?exit=\{\{/);
 });
 
 test('Branded motion không bị OS reduced-motion tắt toàn cục', () => {

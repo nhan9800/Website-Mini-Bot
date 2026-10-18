@@ -140,7 +140,7 @@ export default function PartnersPage() {
               <MotionReveal key={partner.id} variant="scale" delay={idx * 0.1}>
                 <div className="glass-panel card-lift group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-6 text-center transition-[border-color,box-shadow] duration-500 hover:border-yellow-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.15)] sm:p-8">
                   {/* Glowing background behind avatar */}
-                  <div className="absolute left-1/2 top-16 sm:top-20 h-32 w-32 -translate-x-1/2 rounded-full bg-yellow-500/20 blur-[50px] transition-all duration-500 group-hover:bg-yellow-500/40" />
+                  <div className="absolute left-1/2 top-16 sm:top-20 h-32 w-32 -translate-x-1/2 rounded-full bg-yellow-500/20 blur-[50px] transition-colors ease-[cubic-bezier(0.16,1,0.3,1)] duration-500 group-hover:bg-yellow-500/40" />
                   
                   <div className="relative mb-6 h-28 w-28 shrink-0 overflow-hidden rounded-2xl border-[3px] border-yellow-500/50 shadow-[0_0_25px_rgba(234,179,8,0.2)] transition-transform duration-500 group-hover:scale-110 group-hover:border-yellow-400">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -16,7 +16,6 @@ import {
   Rocket,
   Bot,
   Shield,
-  Wallet,
   Infinity,
   Languages,
   Database,
@@ -33,50 +32,10 @@ import { Magnetic, MotionReveal, Odometer, SplitLine } from '@/components/ui/mot
 import { TrendingChart } from '@/components/trending-chart';
 import { TeamSection } from '@/components/team/team-section';
 import { CommunityReviewsSection } from '@/components/feedback/community-reviews-section';
+import { ServicesStory } from '@/components/creative/services-story';
+import { ScrollNarrative } from '@/components/creative/scroll-narrative';
 
 /* ── Dữ liệu nội dung ─────────────────────────────────────────── */
-
-const services: {
-  icon: LucideIcon;
-  ring: string;
-  hover: string;
-  title: string;
-  desc: string;
-  bullets: string[];
-}[] = [
-  {
-    icon: Music,
-    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
-    hover: 'hover:border-mimi-green/50',
-    title: 'Một phòng nhạc cho cả nhóm',
-    desc: 'Tìm bài, quản lý hàng chờ, lặp bài và bật autoplay. Bảng điều khiển nằm ngay trong Discord, dễ dùng cả trên điện thoại.',
-    bullets: ['Không cần API key', 'Ở lại kênh 24/7', 'Lyrics + TTS tiếng Việt'],
-  },
-  {
-    icon: Shield,
-    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
-    hover: 'hover:border-mimi-green/50',
-    title: 'Thành viên và vai trò',
-    desc: 'Quản trị viên cấu hình kênh và vai trò xác thực; thành viên bấm nút để nhận vai trò. Có tùy chọn gỡ xác thực khi bot xử lý mute.',
-    bullets: ['Xác thực bằng nút bấm', 'Cấu hình vai trò', 'Đặt lại theo yêu cầu quản trị'],
-  },
-  {
-    icon: Wallet,
-    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
-    hover: 'hover:border-mimi-green/50',
-    title: 'Sinh hoạt cộng đồng',
-    desc: 'Chấm công, báo cáo tuần, cấp độ và minigame xu giúp quản trị viên theo dõi hoạt động của cộng đồng.',
-    bullets: ['Báo cáo tự động', 'Cảnh báo gian lận', 'Quản lý minh bạch'],
-  },
-  {
-    icon: LayoutDashboard,
-    ring: 'border-mimi-green/25 bg-mimi-green/10 text-mimi-green',
-    hover: 'hover:border-mimi-green/50',
-    title: 'Điều khiển từ trình duyệt',
-    desc: 'Mở dashboard bằng khóa truy cập được cấp trong Discord để xem nhạc, hàng chờ và cấu hình máy chủ.',
-    bullets: ['Khóa truy cập theo server', 'Dữ liệu từ bot', 'Không cần cài đặt'],
-  },
-];
 
 const faqs = [
   {
@@ -197,44 +156,7 @@ export default function HomePage() {
       {/* ══ DỊCH VỤ / TÍNH NĂNG ═══════════════════════════════════ */}
       <section id="dich-vu" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <MotionReveal variant="mask" className="section-heading">
-            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
-              Mimi trong <span className="text-mimi-green">máy chủ của bạn</span>
-            </h2>
-            <p className="text-base text-gray-400 sm:text-lg">
-              Từ một buổi nghe nhạc đến hoạt động thường ngày, mọi tính năng cộng đồng đều miễn phí.
-            </p>
-          </MotionReveal>
-
-          <div className="feature-showcase">
-            {services.map((s, i) => {
-              return (
-                <MotionReveal key={s.title} variant="flip" delay={i * 0.1}>
-                    <div className={`feature-panel group space-y-5 ${['feature-music', '', 'feature-community', 'feature-dashboard'][i]}`}>
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border ${s.ring}`}
-                        >
-                          <s.icon className="h-6 w-6" />
-                        </div>
-                        <h3 className="text-xl font-bold text-white">{s.title}</h3>
-                      </div>
-                      <p className="text-sm leading-relaxed text-gray-400">{s.desc}</p>
-                      <ul className="flex flex-wrap gap-2 pt-1">
-                        {s.bullets.map((b) => (
-                          <li
-                            key={b}
-                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-gray-300"
-                          >
-                            {b}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                </MotionReveal>
-              );
-            })}
-          </div>
+          <ServicesStory />
 
           <MotionReveal variant="drift" delay={0.18} className="mt-6">
             <div className="shield-cta group flex flex-col gap-6 rounded-[2rem] border border-mimi-green/25 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
@@ -261,7 +183,7 @@ export default function HomePage() {
       {/* ══ VỀ MIMI ═══════════════════════════════════════════════ */}
       <section id="ve-mimi" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <MotionReveal variant="clip" className="space-y-6">
+          <ScrollNarrative className="space-y-6">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
               Một Mimi.<br /><span className="text-mimi-green">Nhiều cách kết nối.</span>
             </h2>
@@ -286,7 +208,7 @@ export default function HomePage() {
                 <span>Danh Sách Lệnh</span>
               </Link>
             </div>
-          </MotionReveal>
+          </ScrollNarrative>
 
           <MotionReveal variant="scale" delay={0.12}>
             <div className="glass-panel-glow gradient-ring space-y-5 rounded-[2rem] p-8">

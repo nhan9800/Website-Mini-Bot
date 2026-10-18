@@ -1,4 +1,4 @@
-# Mimi 2.6.0: không gian âm nhạc 3D
+# Mimi: không gian âm nhạc 3D
 
 ## Yêu cầu hiện hành: tự chuyển động, không công tắc — 17/10/2026
 
@@ -6,7 +6,7 @@ Chủ website yêu cầu model tự chuyển động mặc định và không c�
 
 ## Hướng thiết kế
 
-Làm lại diện mạo, giữ nhận diện mint, logo Mimi, Be Vietnam Pro và các URL/luồng quản trị hiện có. DESIGN_VARIANCE 7, MOTION_INTENSITY 7, VISUAL_DENSITY 4. Cảnh 3D có chức năng giới thiệu bot và mời người xem tương tác; các phần đọc nội dung không có vòng lặp chuyển động trang trí.
+Giữ nhận diện mint, logo Mimi và các URL/luồng quản trị hiện có. Font hiện hành là Bricolage Grotesque và IBM Plex Mono, hỗ trợ tiếng Việt. Cảnh 3D tự chuyển động để giới thiệu bot; người xem có thể chọn model và kéo xoay. Các đoạn kết quả ngày 17/10 bên dưới ghi lại lịch sử triển khai, không thay thế yêu cầu hiện hành ở đầu tài liệu.
 
 ## Audit trước khi sửa
 
@@ -20,13 +20,13 @@ Làm lại diện mạo, giữ nhận diện mint, logo Mimi, Be Vietnam Pro và
 - https://threejs.org/ và mẫu https://threejs.org/examples/webgl_animation_skinning_morph.html
 - RobotExpressive: Tomás Laulhé (Quaternius), chỉnh morph/conversion bởi Don McCurdy, CC0 1.0. Model lấy từ bộ examples Three.js, phối lại Main=mint/Grey=silver trong runtime; không nhận là nhân vật nguyên bản do Mimi tạo.
 - Headphones: CreativeTrio, https://poly.pizza/m/PSsWSIAYIL, CC0 1.0. File GLB được lưu local, không hotlink runtime.
-- Đĩa nhạc: geometry Three.js trong dự án. Robot dùng animation GLB thật Dance/Wave, đĩa quay, tai nghe trôi nhẹ; đều có pause.
+- Đĩa nhạc: geometry Three.js trong dự án. Robot dùng animation GLB thật Dance/Wave, đĩa quay, tai nghe trôi nhẹ; tự chạy trên desktop/mobile, chỉ dừng render khi khuất màn hình hoặc ẩn tab, không có công tắc bật/tắt.
 - Áp dụng https://r3f.docs.pmnd.rs/advanced/scaling-performance và /api/hooks: mutate qua useFrame, chặn delta lớn, một canvas, DPR<=1.5, demand khi pause/ẩn, không cập nhật React state mỗi frame.
 - Poster dự phòng được tạo bằng imagegen built-in từ logo tham chiếu, lưu public/images/mimi-studio.webp. Prompt: mint vinyl turntable, graphite headphones, red-blue Mimi helmet; polished isometric 3D still life, transparent, no text. Đây là ảnh minh họa khi WebGL không khả dụng, không phải model tương tác.
 
 ## Kiểm tra trước phát hành
 
-Chạy typecheck/lint/test/build/audit. Xem desktop/mobile, sáng/tối, giảm chuyển động, 3 mô hình, pause/đổi animation, menu/FAQ/tìm lệnh; kiểm dữ liệu review trước/sau deploy. Chỉ xác nhận các kiểm tra đã có bằng chứng trong checkpoint cuối.
+Chạy typecheck/lint/test/build/audit. Xem desktop/mobile, sáng/tối, 3 mô hình tự chạy cả khi hệ thống giảm chuyển động, đổi model/animation, menu/FAQ/tìm lệnh; kiểm dữ liệu review trước/sau deploy. Chỉ xác nhận các kiểm tra đã có bằng chứng trong checkpoint cuối.
 ## Kết quả local ngày 17/10/2026
 
 31/31 kiểm thử đạt, typecheck/lint/build đạt. Model robot đã sửa lỗi đo bounds của skeleton clone; đo scene gốc đã nạp để giữ tỷ lệ đúng. Tai nghe dùng shader đổi vỏ sang mint, giữ đệm tai đen. Đã kiểm tương tác Wave/Dance/pause, chọn 3 model và kéo xoay thật, sáng/tối và viewport 390x844; menu và lọc nowplaying hoạt động.

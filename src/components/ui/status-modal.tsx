@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useId } from 'react';
+import { ModalShell } from './modal-shell';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -36,20 +37,7 @@ export function StatusModal({
   onConfirm,
   brandName = 'MIMI SHIELD STORE',
 }: StatusModalProps) {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'Enter') {
-        if (onConfirm) onConfirm();
-        else onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose, onConfirm]);
-
-  if (!isOpen) return null;
+  const titleId = useId();
 
   const config = {
     success: {
@@ -102,20 +90,8 @@ export function StatusModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      {/* Backdrop */}
-      <div
-        className="status-modal-backdrop fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Modal Box */}
-      <div
-        className={`status-modal-panel relative w-full max-w-md overflow-hidden rounded-3xl border border-white/15 bg-[#0e1220]/95 p-6 sm:p-8 text-center text-white shadow-2xl backdrop-blur-xl transition-all duration-300 ${config.glowColor}`}
-        style={{
-          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(46, 204, 113, 0.1)',
-        }}
-      >
+    <ModalShell open={isOpen} onClose={onClose} labelledBy={titleId}
+      className={`max-w-md rounded-3xl border border-white/15 bg-[#0e1220]/95 p-6 sm:p-8 text-center text-white shadow-2xl backdrop-blur-xl ${config.glowColor}`}>
         {/* Subtle Ambient Radial Light */}
         <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-48 w-48 rounded-full bg-mimi-green/20 blur-3xl" />
 
@@ -126,8 +102,9 @@ export function StatusModal({
             <span>{brandName}</span>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-gray-400 transition-colors duration-200 ease-[cubic-bezier(.16,1,.3,1)] hover:bg-white/10 hover:text-white"
             aria-label="Đóng"
           >
             <X className="h-4 w-4" />
@@ -161,7 +138,7 @@ export function StatusModal({
         </div>
 
         {/* Title */}
-        <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
+        <h3 id={titleId} className="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
           {title}
         </h3>
 
@@ -174,12 +151,12 @@ export function StatusModal({
 
         {/* Action Button */}
         <button
+          type="button"
           onClick={handleAction}
-          className={`w-full rounded-2xl py-3.5 px-6 font-extrabold text-sm sm:text-base uppercase tracking-wider transition-all duration-200 active:scale-95 ${config.btnClass}`}
+          className={`w-full rounded-2xl py-3.5 px-6 font-extrabold text-sm sm:text-base uppercase tracking-wider transition-[background-color,color,transform] duration-200 ease-[cubic-bezier(.16,1,.3,1)] active:scale-95 ${config.btnClass}`}
         >
           {confirmText}
         </button>
-      </div>
-    </div>
+    </ModalShell>
   );
 }

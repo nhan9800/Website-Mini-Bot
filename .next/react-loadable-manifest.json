@@ -7,6 +7,12 @@
     "id": null,
     "files": []
   },
+  "components/creative/creative-director.tsx -> lenis": {
+    "id": 92691,
+    "files": [
+      "static/chunks/2691.4b5ce7e543a25e1c.js"
+    ]
+  },
   "components/three/experience-stage.tsx -> ./music-scene": {
     "id": 45516,
     "files": [
