@@ -3,19 +3,25 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  Sparkles,
   ArrowRight,
+  ArrowUpRight,
   LayoutDashboard,
   ChevronDown,
-  HelpCircle,
   Wifi,
   WifiOff,
   Heart,
   Music,
+  Music2,
   Rocket,
   Bot,
   Shield,
   Wallet,
+  Infinity,
+  Languages,
+  Database,
+  History,
+  KeyRound,
+  Activity,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { env } from '@/lib/env';
@@ -73,25 +79,37 @@ const services: {
 
 const faqs = [
   {
+    icon: Bot,
     q: 'MIMI có miễn phí không?',
     a: 'Có. Mimi nhạc và cộng đồng miễn phí, bao gồm nghe nhạc, autoplay, cấp độ, minigame, xác thực và dashboard. Mimi Shield là bot anti-raid riêng, có các gói bản quyền riêng.',
   },
   {
+    icon: Music2,
     q: 'Làm sao để bắt đầu phát nhạc?',
     a: 'Mời MIMI vào server, vào một kênh thoại rồi gõ /play kèm tên bài hoặc link YouTube. Điều khiển tiếp bằng nút bấm hoặc Dashboard web.',
   },
   {
+    icon: KeyRound,
     q: 'MIMI có cần API key Spotify/Genius không?',
     a: 'Không. Lời bài hát lấy từ lrclib.net, link Spotify được nhận diện tự động rồi tìm bản phát trên YouTube, không cần cấu hình gì thêm.',
   },
   {
+    icon: LayoutDashboard,
     q: 'Dashboard web hoạt động thế nào?',
     a: 'Người có quyền Quản Lý Máy Chủ dùng /dashboard trong Discord để nhận liên kết và khóa truy cập. Bạn cần đúng ID máy chủ cùng khóa dashboard còn hiệu lực để xem và điều khiển; chỉ nhập ID máy chủ chưa đủ.',
   },
   {
+    icon: Activity,
     q: 'Làm sao kiểm tra trạng thái của bot?',
     a: 'Trang Trạng Thái hiển thị ping và thời gian hoạt động khi lấy được dữ liệu từ bot. Chất lượng kết nối và phát nhạc còn phụ thuộc Discord, mạng và nguồn âm thanh.',
   },
+];
+
+const commitments: Array<[LucideIcon, string, string]> = [
+  [Infinity, 'Miễn phí trọn đời', 'Không paywall, không quảng cáo chèn giữa nhạc.'],
+  [Languages, 'Hỗ trợ tiếng Việt', 'Hướng dẫn và kênh hỗ trợ dành cho cộng đồng Việt.'],
+  [Database, 'Dữ liệu theo tính năng', 'Lưu cấu hình và dữ liệu tính năng. DM gửi cho bot có thể được chuyển đến chủ bot khi bật hỗ trợ.'],
+  [History, 'Cập nhật minh bạch', 'Xem thay đổi đã phát hành trong nhật ký cập nhật.'],
 ];
 
 /* ── Trang chủ ────────────────────────────────────────────────── */
@@ -141,8 +159,9 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="btn-primary"
             >
-              <Sparkles className="h-5 w-5" />
+              <Bot className="h-5 w-5" aria-hidden="true" />
               <span>Mời Mimi miễn phí</span>
+              <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
             </a>
             <Link href="/dashboard" className="btn-secondary">
               <LayoutDashboard className="h-5 w-5" />
@@ -283,19 +302,14 @@ export default function HomePage() {
                 <span>Cam Kết Vận Hành</span>
               </h3>
               <ul className="space-y-4">
-                {[
-                  ['Miễn phí trọn đời', 'Không paywall, không quảng cáo chèn giữa nhạc.'],
-                  ['Hỗ trợ tiếng Việt', 'Hướng dẫn và kênh hỗ trợ dành cho cộng đồng Việt.'],
-                  ['Dữ liệu theo tính năng', 'Lưu cấu hình và dữ liệu tính năng. DM gửi cho bot có thể được chuyển đến chủ bot khi bật hỗ trợ.'],
-                  ['Cập nhật minh bạch', 'Xem thay đổi đã phát hành trong nhật ký cập nhật.'],
-                ].map(([t, d]) => (
-                  <li key={t} className="flex items-start gap-3.5">
+                {commitments.map(([Icon, title, description]) => (
+                  <li key={title} className="flex items-start gap-3.5">
                     <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mimi-green/15 text-mimi-green">
-                      <Sparkles className="h-4 w-4" />
+                      {React.createElement(Icon as LucideIcon, { className: 'h-4 w-4', 'aria-hidden': true })}
                     </span>
                     <div>
-                      <p className="text-sm font-bold text-white">{t}</p>
-                      <p className="text-xs leading-relaxed text-gray-400">{d}</p>
+                      <p className="text-sm font-bold text-white">{title}</p>
+                      <p className="text-xs leading-relaxed text-gray-400">{description}</p>
                     </div>
                   </li>
                 ))}
@@ -337,7 +351,7 @@ export default function HomePage() {
                       aria-expanded={open}
                     >
                       <span className="flex items-start gap-3 text-base font-bold text-white">
-                        <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-mimi-green" />
+                        {React.createElement(faq.icon, { className: 'mt-0.5 h-5 w-5 shrink-0 text-mimi-green', 'aria-hidden': true })}
                         <span>{faq.q}</span>
                       </span>
                       <ChevronDown
@@ -379,8 +393,9 @@ export default function HomePage() {
                     rel="noopener noreferrer"
                     className="btn-primary !px-9 !py-4 !text-base"
                   >
-                    <Sparkles className="h-6 w-6" />
+                    <Bot className="h-6 w-6" aria-hidden="true" />
                     <span>Mời Mimi miễn phí</span>
+                    <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
                   </a>
                   <a
                     href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL}
