@@ -9,6 +9,7 @@ export interface CommunitySummary {
   memberCount: number;
   boostCount: number;
   onlineCount: number | null;
+  owner: { id: string; username: string | null; displayName: string | null; avatarUrl: string | null } | null;
   features: { music: boolean; ticket: boolean; level: boolean };
 }
 

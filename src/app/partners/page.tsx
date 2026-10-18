@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Reveal } from '@/components/ui/reveal';
-import { ShieldCheck, Handshake, Users, Zap, Ticket, BarChart3, Radio } from 'lucide-react';
+import { ShieldCheck, Handshake, Users, Zap, Ticket, BarChart3, Radio, Crown, Hash } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
 import type { CommunitySummary } from '@/app/api/communities/route';
 
@@ -70,6 +70,7 @@ export default function PartnersPage() {
             <div>
               <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mimi-green"><Radio className="h-3.5 w-3.5" /> Dữ liệu Discord trực tiếp</p>
               <h2 id="linked-communities" className="mt-2 text-2xl font-extrabold text-white">Cộng đồng đang kết nối với Mimi</h2>
+              {communities.length > 0 && <p className="mt-1 flex items-center gap-1.5 text-sm text-gray-400"><Hash className="h-3.5 w-3.5 text-mimi-cyan" /> {communities.length} server đang được hiển thị cùng chủ server</p>}
             </div>
             <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-400">Cập nhật tự động từ bot</span>
           </div>
@@ -100,6 +101,18 @@ export default function PartnersPage() {
                       <div className="rounded-xl bg-white/[0.04] p-2"><strong className="block text-sm text-mimi-green">{community.onlineCount ?? '—'}</strong><span className="text-gray-500">đang online</span></div>
                       <div className="rounded-xl bg-white/[0.04] p-2"><strong className="block text-sm text-mimi-amber">{community.boostCount}</strong><span className="text-gray-500">boost</span></div>
                       <div className="rounded-xl bg-white/[0.04] p-2"><strong className="block text-sm text-mimi-cyan">{community.id.slice(-4)}</strong><span className="text-gray-500">server ID</span></div>
+                    </div>
+                    <div className="mt-4 flex min-w-0 items-center gap-2 rounded-xl border border-white/10 bg-black/15 px-3 py-2">
+                      {community.owner?.avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={community.owner.avatarUrl} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
+                      ) : (
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mimi-amber/10 text-mimi-amber"><Crown className="h-3.5 w-3.5" /></div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500"><Crown className="h-3 w-3 text-mimi-amber" /> Chủ server</p>
+                        <p className="truncate text-xs font-semibold text-gray-200" title={community.owner?.id || undefined}>{community.owner?.displayName || community.owner?.username || 'Chưa xác định'}{community.owner?.username && community.owner.username !== community.owner.displayName ? <span className="ml-1 font-normal text-gray-500">@{community.owner.username}</span> : null}</p>
+                      </div>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-gray-400">
                       {community.features.music && <span className="inline-flex items-center gap-1 rounded-full bg-mimi-green/10 px-2 py-1 text-mimi-green"><Zap className="h-3 w-3" /> Nhạc</span>}

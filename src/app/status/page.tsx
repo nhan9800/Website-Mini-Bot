@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Activity,
   Server,
@@ -17,9 +17,12 @@ import {
   Music,
   Bot,
   Sparkles,
+  Crown,
+  Hash,
 } from 'lucide-react';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
+import type { CommunitySummary } from '@/app/api/communities/route';
 
 function pingQuality(ping: number): { label: string; color: string } {
   if (ping < 0) return { label: 'Chưa có dữ liệu', color: 'text-gray-400' };
@@ -31,6 +34,22 @@ function pingQuality(ping: number): { label: string; color: string } {
 
 export default function StatusPage() {
   const { status, error, loading, lastUpdated, refresh } = useBotStatus(15000);
+  const [communities, setCommunities] = useState<CommunitySummary[]>([]);
+  const [communitiesLoading, setCommunitiesLoading] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/communities', { cache: 'no-store', signal: controller.signal })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!controller.signal.aborted && response.ok && data?.ok && Array.isArray(data.communities)) {
+          setCommunities(data.communities);
+        }
+      })
+      .catch(() => {})
+      .finally(() => { if (!controller.signal.aborted) setCommunitiesLoading(false); });
+    return () => controller.abort();
+  }, []);
 
   const online = status?.online === true;
   const quality = pingQuality(status?.wsPing ?? -1);
@@ -186,6 +205,44 @@ export default function StatusPage() {
             </p>
           </div>
         </div>
+
+        {/* ── Các server đang phục vụ ───────────────────────────── */}
+        <section aria-labelledby="served-communities" className="glass-panel-glow gradient-ring relative overflow-hidden space-y-6 rounded-[2rem] p-6 sm:p-8">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-mimi-purple/[0.06] via-transparent to-mimi-cyan/[0.04]" />
+          <div className="relative z-10 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-6">
+            <div>
+              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mimi-cyan"><Radio className="h-3.5 w-3.5" /> Đồng bộ trực tiếp từ Discord</p>
+              <h2 id="served-communities" className="mt-2 flex items-center gap-2 text-2xl font-black text-white"><Server className="h-6 w-6 text-mimi-purple" /> Máy chủ Mimi đang phục vụ</h2>
+              <p className="mt-2 text-sm text-gray-400">{status ? `${formatCompact(status.guildCount)} server đang kết nối` : 'Đang lấy số server…'} · hiển thị chủ server và thống kê cơ bản.</p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-mimi-green/25 bg-mimi-green/10 px-3 py-1.5 text-xs font-semibold text-mimi-green"><Hash className="h-3.5 w-3.5" /> {status ? formatCompact(status.guildCount) : (communities.length || '—')} server</span>
+          </div>
+          <div className="relative z-10">
+            {communitiesLoading ? (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><div className="h-24 animate-pulse rounded-2xl bg-white/[0.04]" /><div className="hidden h-24 animate-pulse rounded-2xl bg-white/[0.04] sm:block" /><div className="hidden h-24 animate-pulse rounded-2xl bg-white/[0.04] lg:block" /></div>
+            ) : communities.length === 0 ? (
+              <p role="status" className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-5 text-sm text-gray-400">Danh sách server chưa được công khai từ cấu hình bot. Số tổng vẫn lấy từ Gateway.</p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {communities.map((community) => (
+                  <article key={community.id} className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-black/15 p-3.5 transition-colors hover:border-mimi-purple/40">
+                    {community.iconUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={community.iconUrl} alt="" className="h-11 w-11 shrink-0 rounded-xl border border-white/10 object-cover" />
+                    ) : (
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-mimi-purple/30 bg-mimi-purple/10 text-mimi-purple"><Server className="h-5 w-5" /></div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-sm font-bold text-white" title={community.name}>{community.name}</h3>
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-gray-400"><Users className="h-3.5 w-3.5 text-mimi-cyan" /> {community.memberCount.toLocaleString('vi-VN')} thành viên</p>
+                      <p className="mt-1 flex min-w-0 items-center gap-1.5 truncate text-xs text-gray-500" title={community.owner?.id || undefined}><Crown className="h-3.5 w-3.5 shrink-0 text-mimi-amber" /> <span className="truncate">{community.owner?.displayName || community.owner?.username || 'Chưa xác định'}{community.owner?.username && community.owner.username !== community.owner.displayName ? <span className="ml-1 text-gray-600">@{community.owner.username}</span> : null}</span></p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
 
         {/* ── Bảng hạ tầng ─────────────────────────────────────── */}
         <div className="glass-panel-glow gradient-ring relative overflow-hidden space-y-6 rounded-[2rem] p-8">
