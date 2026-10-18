@@ -13,6 +13,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { env } from '@/lib/env';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 const faqs = [
   {
@@ -73,7 +74,7 @@ export default function SupportPage() {
     <div className="min-h-screen py-12">
       <div className="mx-auto max-w-5xl space-y-14 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="page-intro space-y-4">
+        <MotionReveal variant="mask" className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <LifeBuoy className="h-3.5 w-3.5" />
             <span>Trung tâm hỗ trợ</span>
@@ -84,10 +85,10 @@ export default function SupportPage() {
           <p className="text-base text-gray-400 sm:text-lg">
             Tìm hướng dẫn, báo lỗi và gặp cộng đồng Mimi tại máy chủ hỗ trợ chính thức.
           </p>
-        </div>
+        </MotionReveal>
 
         {/* ── CTA Discord ───────────────────────────────────────── */}
-        <div className="grid grid-cols-1 gap-8 rounded-2xl border border-mimi-green/25 bg-mimi-green/[0.035] p-6 sm:p-9 md:grid-cols-[1.1fr_1fr]">
+        <MotionReveal variant="drift" delay={0.08} className="grid grid-cols-1 gap-8 rounded-2xl border border-mimi-green/25 bg-mimi-green/[0.035] p-6 sm:p-9 md:grid-cols-[1.1fr_1fr]">
           <div className="space-y-5">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-mimi-green/10 text-mimi-green">
               <MessageSquare className="h-6 w-6" />
@@ -130,10 +131,10 @@ export default function SupportPage() {
               </a>
             </li>
           </ol>
-        </div>
+        </MotionReveal>
 
         {/* ── Liên kết nhanh ────────────────────────────────────── */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <MotionReveal variant="scale" delay={0.12} className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           {quickLinks.map((l) => {
             const Icon = l.icon;
             return (
@@ -152,10 +153,10 @@ export default function SupportPage() {
               </Link>
             );
           })}
-        </div>
+        </MotionReveal>
 
         {/* ── FAQ accordion ─────────────────────────────────────── */}
-        <div className="space-y-6">
+        <MotionReveal variant="clip" delay={0.16} className="space-y-6">
           <h2 className="text-2xl font-bold text-white">Câu hỏi thường gặp</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => {
@@ -184,15 +185,15 @@ export default function SupportPage() {
                     />
                   </button>
                   {open && (
-                    <div className="animate-fade-in px-6 pb-6 pl-14 text-sm leading-relaxed text-gray-400">
+                    <MotionReveal variant="clip" className="px-6 pb-6 pl-14 text-sm leading-relaxed text-gray-400" amount={0.05}>
                       {faq.a}
-                    </div>
+                    </MotionReveal>
                   )}
                 </div>
               );
             })}
           </div>
-        </div>
+        </MotionReveal>
       </div>
     </div>
   );

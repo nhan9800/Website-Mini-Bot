@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Reveal } from '@/components/ui/reveal';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 import { ShieldCheck, Handshake, Users, Zap, Ticket, BarChart3, Radio, Crown, Hash } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
 import type { CommunitySummary } from '@/app/api/communities/route';
@@ -52,7 +52,7 @@ export default function PartnersPage() {
   return (
     <div className="min-h-screen pt-12 pb-24">
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <Reveal className="page-intro space-y-4">
+        <MotionReveal variant="mask" className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <Handshake className="h-4 w-4" />
             <span>Cộng Đồng Sử Dụng Bot</span>
@@ -63,7 +63,7 @@ export default function PartnersPage() {
           <p className="text-lg text-gray-400">
             Danh sách cá nhân và cộng đồng đối tác được cung cấp từ dữ liệu đội ngũ Mimi.
           </p>
-        </Reveal>
+        </MotionReveal>
 
         <section aria-labelledby="linked-communities" className="space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
@@ -83,8 +83,8 @@ export default function PartnersPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {communities.map((community, idx) => (
-                <Reveal key={community.id} delay={idx * 80}>
-                  <article className="glass-panel card-lift h-full rounded-3xl p-5 transition-all hover:border-mimi-green/40">
+                <MotionReveal key={community.id} variant="flip" delay={idx * 0.08}>
+                  <article className="glass-panel card-lift h-full rounded-3xl p-5 transition-[border-color,box-shadow,transform] hover:border-mimi-green/40">
                     <div className="flex items-center gap-4">
                       {community.iconUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -120,7 +120,7 @@ export default function PartnersPage() {
                       {community.features.level && <span className="inline-flex items-center gap-1 rounded-full bg-mimi-cyan/10 px-2 py-1 text-mimi-cyan"><BarChart3 className="h-3 w-3" /> Level</span>}
                     </div>
                   </article>
-                </Reveal>
+                </MotionReveal>
               ))}
             </div>
           )}
@@ -137,8 +137,8 @@ export default function PartnersPage() {
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {partners.map((partner, idx) => (
-              <Reveal key={partner.id} delay={idx * 100}>
-                <div className="glass-panel card-lift group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-6 sm:p-8 text-center transition-all duration-500 hover:border-yellow-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.15)]">
+              <MotionReveal key={partner.id} variant="scale" delay={idx * 0.1}>
+                <div className="glass-panel card-lift group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-6 text-center transition-[border-color,box-shadow] duration-500 hover:border-yellow-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.15)] sm:p-8">
                   {/* Glowing background behind avatar */}
                   <div className="absolute left-1/2 top-16 sm:top-20 h-32 w-32 -translate-x-1/2 rounded-full bg-yellow-500/20 blur-[50px] transition-all duration-500 group-hover:bg-yellow-500/40" />
                   
@@ -168,7 +168,7 @@ export default function PartnersPage() {
                     {partner.description}
                   </p>
                 </div>
-              </Reveal>
+              </MotionReveal>
             ))}
           </div>
         )}

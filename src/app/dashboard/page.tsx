@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
 } from 'lucide-react';
 import { env } from '@/lib/env';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 interface RecentGuild {
   id: string;
@@ -71,7 +72,7 @@ export default function DashboardSelectorPage() {
     <div className="min-h-screen py-14">
       <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="page-intro space-y-4">
+        <MotionReveal variant="mask" className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Bảng điều khiển thời gian thực</span>
@@ -84,10 +85,10 @@ export default function DashboardSelectorPage() {
             trong server Discord của bạn, Mimi sẽ gửi link kèm khoá truy cập để mở trình phát
             nhạc, quản lý hàng chờ và chỉnh cấu hình bot.
           </p>
-        </div>
+        </MotionReveal>
 
         {/* ── Hướng dẫn lấy khoá ────────────────────────────────── */}
-        <div className="mx-auto max-w-2xl">
+        <MotionReveal variant="scale" delay={0.08} className="mx-auto max-w-2xl">
           <div className="glass-panel-glow gradient-ring space-y-5 rounded-3xl p-7 text-center sm:p-9">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-mimi-green/25 bg-mimi-green/10">
               <KeyRound className="h-7 w-7 text-mimi-green" />
@@ -105,9 +106,10 @@ export default function DashboardSelectorPage() {
             </code>
             <p className="text-xs text-gray-500">Link nhận được có hạn 7 ngày, hết hạn thì gõ lại lệnh.</p>
           </div>
-        </div>
+        </MotionReveal>
 
         {/* ── Ô nhập Guild ID (chỉ mở trang, vẫn cần khoá) ──────── */}
+        <MotionReveal variant="clip" delay={0.12}>
         <details className="mx-auto max-w-2xl">
           <summary className="cursor-pointer text-center text-xs text-gray-500 transition-colors hover:text-gray-300">
             Đã có khoá trong phiên này? Mở nhanh bằng Guild ID
@@ -146,10 +148,11 @@ export default function DashboardSelectorPage() {
             </div>
           </form>
         </details>
+        </MotionReveal>
 
         {/* ── Server gần đây ────────────────────────────────────── */}
         {recent.length > 0 && (
-          <div className="space-y-5">
+          <MotionReveal variant="flip" delay={0.16} className="space-y-5">
             <h2 className="flex items-center gap-2.5 text-lg font-bold text-white">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-mimi-purple/30 bg-mimi-purple/10 text-mimi-violet shadow-[0_0_12px_rgba(139,92,246,0.2)]">
                 <LayoutDashboard className="h-5 w-5" />
@@ -158,6 +161,7 @@ export default function DashboardSelectorPage() {
             </h2>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {recent.slice(0, 6).map((g) => (
+                <MotionReveal key={g.id} variant="drift" amount={0.05}>
                 <div
                   key={g.id}
                   className="glass-panel card-lift flex flex-col justify-between space-y-5 rounded-3xl p-6 hover:border-mimi-green/40"
@@ -201,13 +205,14 @@ export default function DashboardSelectorPage() {
                     </button>
                   </div>
                 </div>
+                </MotionReveal>
               ))}
             </div>
-          </div>
+          </MotionReveal>
         )}
 
         {/* ── Banner mời bot ────────────────────────────────────── */}
-        <div className="glass-panel flex flex-col items-center justify-between gap-6 rounded-3xl p-8 md:flex-row">
+        <MotionReveal variant="drift" delay={0.12} className="glass-panel flex flex-col items-center justify-between gap-6 rounded-3xl p-8 md:flex-row">
           <div className="space-y-2 text-center md:text-left">
             <h3 className="text-lg font-bold text-white">Mimi chưa có trong server của bạn?</h3>
             <p className="max-w-2xl text-sm text-gray-400">
@@ -224,7 +229,7 @@ export default function DashboardSelectorPage() {
             <span>Mời Mimi Vào Server</span>
             <ExternalLink className="h-4 w-4" />
           </a>
-        </div>
+        </MotionReveal>
       </div>
     </div>
   );

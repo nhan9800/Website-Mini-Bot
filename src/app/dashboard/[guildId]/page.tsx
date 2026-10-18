@@ -33,6 +33,7 @@ import type { PlayerState, GuildSettingsResponse, GuildStatsResponse, ApiErrorBo
 import { formatDuration } from '@/lib/format';
 import { Soundwave } from '@/components/ui/soundwave';
 import { adoptAccessKeyFromUrl, accessKeyHeader, clearAccessKey } from '@/lib/access-key';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 type PlayerAction = 'pause' | 'resume' | 'skip' | 'stop' | 'volume';
 
@@ -278,7 +279,7 @@ export default function GuildDashboardPage() {
     <div className="min-h-screen py-12">
       <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="flex flex-col justify-between gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-center">
+        <MotionReveal variant="mask" className="flex flex-col justify-between gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-center">
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
@@ -356,11 +357,11 @@ export default function GuildDashboardPage() {
               <span>Cấu Hình</span>
             </button>
           </div>
-        </div>
+        </MotionReveal>
 
         {/* ── Banner lỗi ────────────────────────────────────────── */}
         {(activeTab === 'player' ? playerError : settingsError) && (
-          <div className="glass-panel flex items-start gap-4 rounded-3xl border-mimi-amber/30 p-5">
+          <MotionReveal variant="drift" className="glass-panel flex items-start gap-4 rounded-3xl border-mimi-amber/30 p-5">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-mimi-amber" />
             <div className="space-y-1 text-sm">
               <p className="font-semibold text-white">
@@ -390,13 +391,15 @@ export default function GuildDashboardPage() {
                 Gỡ khoá
               </button>
             </div>
-          </div>
+          </MotionReveal>
         )}
 
         {/* ══ TAB 1: TRÌNH PHÁT ══════════════════════════════════ */}
         {activeTab === 'player' && (
           <div className="space-y-8">
-            <GuildStatsPanel stats={guildStats} loading={statsLoading} error={statsError} onRefresh={fetchStats} />
+            <MotionReveal variant="scale" amount={0.08}>
+              <GuildStatsPanel stats={guildStats} loading={statsLoading} error={statsError} onRefresh={fetchStats} />
+            </MotionReveal>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Cột trái: player */}
             <div className="space-y-6 lg:col-span-7">

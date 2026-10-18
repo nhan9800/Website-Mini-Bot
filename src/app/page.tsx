@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -28,7 +29,7 @@ import { env } from '@/lib/env';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
 import { ExperienceStage } from '@/components/three/experience-stage';
-import { Reveal } from '@/components/ui/reveal';
+import { Magnetic, MotionReveal, Odometer, SplitLine } from '@/components/ui/motion-primitives';
 import { TrendingChart } from '@/components/trending-chart';
 import { TeamSection } from '@/components/team/team-section';
 import { CommunityReviewsSection } from '@/components/feedback/community-reviews-section';
@@ -123,7 +124,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <section className="home-hero">
         <div className="home-hero-grid">
-          <div className="home-hero-copy animate-fade-up">
+          <div className="home-hero-copy">
           <div className="inline-flex items-center gap-2 text-xs font-medium text-mimi-green" role="status">
             {loading ? (
               <span className="h-2 w-2 animate-pulse-soft rounded-full bg-gray-400" />
@@ -143,30 +144,36 @@ export default function HomePage() {
             </span>
           </div>
 
-          <h1>
-            Cùng nghe nhạc.<br />
-            <span className="text-mimi-green">Cùng kết nối.</span>
+          <h1 aria-label="Cùng nghe nhạc. Cùng kết nối.">
+            <SplitLine delay={0.08}>Cùng nghe nhạc.</SplitLine><br />
+            <SplitLine delay={0.18}><span className="text-mimi-green">Cùng kết nối.</span></SplitLine>
           </h1>
 
-          <p>
-            Bot nhạc và cộng đồng tiếng Việt, miễn phí cho máy chủ Discord của bạn.
-          </p>
+          <MotionReveal variant="clip" delay={0.34}>
+            <p>
+              Bot nhạc và cộng đồng tiếng Việt, miễn phí cho máy chủ Discord của bạn.
+            </p>
+          </MotionReveal>
 
           <div className="home-hero-actions">
-            <a
-              href={env.NEXT_PUBLIC_BOT_INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-            >
-              <Bot className="h-5 w-5" aria-hidden="true" />
-              <span>Mời Mimi miễn phí</span>
-              <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
-            </a>
-            <Link href="/dashboard" className="btn-secondary">
-              <LayoutDashboard className="h-5 w-5" />
-              <span>Mở dashboard</span>
-            </Link>
+            <Magnetic>
+              <a
+                href={env.NEXT_PUBLIC_BOT_INVITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                <Bot className="h-5 w-5" aria-hidden="true" />
+                <span>Mời Mimi miễn phí</span>
+                <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+              </a>
+            </Magnetic>
+            <Magnetic strength={0.1}>
+              <Link href="/dashboard" className="btn-secondary">
+                <LayoutDashboard className="h-5 w-5" />
+                <span>Mở dashboard</span>
+              </Link>
+            </Magnetic>
           </div>
 
           </div>
@@ -177,26 +184,10 @@ export default function HomePage() {
       {/* ══ SỐ LIỆU THẬT ══════════════════════════════════════════ */}
       <section className="home-stat-strip">
         <div className="grid grid-cols-2 gap-7 lg:grid-cols-4">
-          <StatBlock
-            icon={Bot}
-            value={!error && status ? formatCompact(status.guildCount) : 'Chưa có'}
-            label="Máy chủ đang phục vụ"
-          />
-          <StatBlock
-            icon={Heart}
-            value={!error && status ? formatCompact(status.reachableUsers) : 'Chưa có'}
-            label="Thành viên tiếp cận"
-          />
-          <StatBlock
-            icon={Music}
-            value={!error && status ? String(status.activeVoiceSessions) : 'Chưa có'}
-            label="Phiên nhạc đang phát"
-          />
-          <StatBlock
-            icon={Rocket}
-            value={!error && status ? formatUptime(status.uptimeSeconds) : 'Chưa có'}
-            label="Thời gian hoạt động"
-          />
+          <StatBlock icon={Bot} value={!error && status ? formatCompact(status.guildCount) : 'Chưa có'} label="Máy chủ đang phục vụ" />
+          <StatBlock icon={Heart} value={!error && status ? formatCompact(status.reachableUsers) : 'Chưa có'} label="Thành viên tiếp cận" />
+          <StatBlock icon={Music} value={!error && status ? String(status.activeVoiceSessions) : 'Chưa có'} label="Phiên nhạc đang phát" />
+          <StatBlock icon={Rocket} value={!error && status ? formatUptime(status.uptimeSeconds) : 'Chưa có'} label="Thời gian hoạt động" />
         </div>
       </section>
 
@@ -206,19 +197,19 @@ export default function HomePage() {
       {/* ══ DỊCH VỤ / TÍNH NĂNG ═══════════════════════════════════ */}
       <section id="dich-vu" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal className="section-heading">
+          <MotionReveal variant="mask" className="section-heading">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
               Mimi trong <span className="text-mimi-green">máy chủ của bạn</span>
             </h2>
             <p className="text-base text-gray-400 sm:text-lg">
               Từ một buổi nghe nhạc đến hoạt động thường ngày, mọi tính năng cộng đồng đều miễn phí.
             </p>
-          </Reveal>
+          </MotionReveal>
 
           <div className="feature-showcase">
             {services.map((s, i) => {
               return (
-                <Reveal key={s.title} delay={i * 90}>
+                <MotionReveal key={s.title} variant="flip" delay={i * 0.1}>
                     <div className={`feature-panel group space-y-5 ${['feature-music', '', 'feature-community', 'feature-dashboard'][i]}`}>
                       <div className="flex items-center gap-4">
                         <div
@@ -240,12 +231,12 @@ export default function HomePage() {
                         ))}
                       </ul>
                     </div>
-                </Reveal>
+                </MotionReveal>
               );
             })}
           </div>
 
-          <Reveal delay={180} className="mt-6">
+          <MotionReveal variant="drift" delay={0.18} className="mt-6">
             <div className="shield-cta group flex flex-col gap-6 rounded-[2rem] border border-mimi-green/25 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
               <div className="flex items-start gap-4">
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-glow">
@@ -257,18 +248,20 @@ export default function HomePage() {
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Thuê bot anti-raid riêng, chọn thời hạn, thanh toán VietQR và kích hoạt theo Server ID trong cùng một luồng.</p>
                 </div>
               </div>
-              <Link href="/pricing" className="btn-secondary shrink-0 !px-5 !py-3 !text-sm">
-                Xem gói &amp; thanh toán <ArrowRight className="h-4 w-4" />
-              </Link>
+              <Magnetic strength={0.1}>
+                <Link href="/pricing" className="btn-secondary shrink-0 !px-5 !py-3 !text-sm">
+                  Xem gói &amp; thanh toán <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Magnetic>
             </div>
-          </Reveal>
+          </MotionReveal>
         </div>
       </section>
 
       {/* ══ VỀ MIMI ═══════════════════════════════════════════════ */}
       <section id="ve-mimi" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <Reveal className="space-y-6">
+          <MotionReveal variant="clip" className="space-y-6">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
               Một Mimi.<br /><span className="text-mimi-green">Nhiều cách kết nối.</span>
             </h2>
@@ -293,9 +286,9 @@ export default function HomePage() {
                 <span>Danh Sách Lệnh</span>
               </Link>
             </div>
-          </Reveal>
+          </MotionReveal>
 
-          <Reveal delay={120}>
+          <MotionReveal variant="scale" delay={0.12}>
             <div className="glass-panel-glow gradient-ring space-y-5 rounded-[2rem] p-8">
               <h3 className="flex items-center gap-2.5 border-b border-white/10 pb-4 text-lg font-bold text-white">
                 <Bot className="h-6 w-6" />
@@ -315,7 +308,7 @@ export default function HomePage() {
                 ))}
               </ul>
             </div>
-          </Reveal>
+          </MotionReveal>
         </div>
       </section>
 
@@ -328,22 +321,18 @@ export default function HomePage() {
       {/* ══ FAQ ═══════════════════════════════════════════════════ */}
       <section id="faq" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <Reveal className="mx-auto mb-12 max-w-3xl space-y-4 text-center">
+          <MotionReveal variant="mask" className="mx-auto mb-12 max-w-3xl space-y-4 text-center">
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
               Câu Hỏi <span className="text-gradient-mimi">Thường Gặp</span>
             </h2>
-          </Reveal>
+          </MotionReveal>
 
           <div className="space-y-3">
             {faqs.map((faq, i) => {
               const open = openFaq === i;
               return (
-                <Reveal key={i} delay={i * 60}>
-                  <div
-                    className={`glass-panel overflow-hidden rounded-3xl transition-colors ${
-                      open ? 'border-mimi-green/30' : 'hover:border-white/20'
-                    }`}
-                  >
+                <MotionReveal key={i} variant="drift" delay={i * 0.06}>
+                  <div className={`glass-panel overflow-hidden rounded-3xl transition-colors ${open ? 'border-mimi-green/30' : 'hover:border-white/20'}`}>
                     <button
                       type="button"
                       onClick={() => setOpenFaq(open ? null : i)}
@@ -360,13 +349,21 @@ export default function HomePage() {
                         }`}
                       />
                     </button>
-                    {open && (
-                      <div className="animate-fade-in px-6 pb-6 pl-14 text-sm leading-relaxed text-gray-400">
-                        {faq.a}
-                      </div>
-                    )}
+                    <AnimatePresence initial={false}>
+                      {open && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-6 pb-6 pl-14 text-sm leading-relaxed text-gray-400">{faq.a}</div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                </Reveal>
+                </MotionReveal>
               );
             })}
           </div>
@@ -376,7 +373,7 @@ export default function HomePage() {
       {/* ══ CTA CUỐI ══════════════════════════════════════════════ */}
       <section className="relative pb-8 pt-4">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <Reveal>
+          <MotionReveal variant="scale">
             <div className="glass-panel-glow gradient-ring relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-14">
               <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-mimi-green/10 blur-3xl" />
               <div className="relative space-y-7">
@@ -387,29 +384,23 @@ export default function HomePage() {
                   Mời Mimi, chọn một phòng thoại và bắt đầu bằng lệnh /play.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                  <a
-                    href={env.NEXT_PUBLIC_BOT_INVITE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary !px-9 !py-4 !text-base"
-                  >
-                    <Bot className="h-6 w-6" aria-hidden="true" />
-                    <span>Mời Mimi miễn phí</span>
-                    <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
-                  </a>
-                  <a
-                    href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-secondary !px-9 !py-4 !text-base"
-                  >
-                    <span>Vào Server Hỗ Trợ</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
+                  <Magnetic>
+                    <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary !px-9 !py-4 !text-base">
+                      <Bot className="h-6 w-6" aria-hidden="true" />
+                      <span>Mời Mimi miễn phí</span>
+                      <ArrowUpRight className="h-4 w-4 opacity-70" aria-hidden="true" />
+                    </a>
+                  </Magnetic>
+                  <Magnetic strength={0.1}>
+                    <a href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary !px-9 !py-4 !text-base">
+                      <span>Vào Server Hỗ Trợ</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </Magnetic>
                 </div>
               </div>
             </div>
-          </Reveal>
+          </MotionReveal>
         </div>
       </section>
     </div>
@@ -427,10 +418,10 @@ function StatBlock({
   label: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2.5 text-center">
+    <MotionReveal variant="flip" className="flex flex-col items-center gap-2.5 text-center">
       <Icon className="h-10 w-10 text-mimi-green" />
-      <span className="stat-value font-mono font-extrabold text-white">{value}</span>
+      <Odometer value={value} className="stat-value font-mono font-extrabold text-white" />
       <span className="stat-label text-gray-400">{label}</span>
-    </div>
+    </MotionReveal>
   );
 }

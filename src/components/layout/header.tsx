@@ -7,6 +7,7 @@ import { Activity, ArrowUpRight, LayoutDashboard, LifeBuoy, Menu, Shield, Termin
 import { env } from '@/lib/env';
 import { websiteVersion } from '@/lib/release-info';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Magnetic } from '@/components/ui/motion-primitives';
 
 const navItems = [
   { href: '/', label: 'Trang chủ' },
@@ -71,10 +72,12 @@ export function Header() {
             <Link href="/dashboard" className="hidden items-center gap-2 rounded-lg border border-white/15 px-3.5 py-2.5 text-sm font-medium text-gray-200 transition-colors hover:border-mimi-green/40 hover:text-white xl:inline-flex">
               <LayoutDashboard size={16} /> Dashboard
             </Link>
-            <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
-              className="hidden items-center gap-2 rounded-lg bg-mimi-green px-4 py-2.5 text-sm font-bold text-[var(--accent-text)] transition-colors hover:bg-mimi-green-bright sm:inline-flex">
-              Mời Mimi <ArrowUpRight size={16} />
-            </a>
+            <Magnetic strength={0.08} className="hidden sm:block">
+              <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
+                className="hidden items-center gap-2 rounded-lg bg-mimi-green px-4 py-2.5 text-sm font-bold text-[var(--accent-text)] transition-colors hover:bg-mimi-green-bright sm:inline-flex">
+                Mời Mimi <ArrowUpRight size={16} />
+              </a>
+            </Magnetic>
             <button ref={menuButton} type="button" onClick={() => setMobileMenuOpen((open) => !open)}
               className="rounded-lg border border-white/15 p-2.5 text-gray-200 xl:hidden"
               aria-label={mobileMenuOpen ? 'Đóng menu điều hướng' : 'Mở menu điều hướng'}

@@ -16,6 +16,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import type { ApiCommand } from '@/lib/types';
 import commandSnapshot from '@/lib/commands-fallback.json';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 type Category = 'music' | 'verification' | 'attendance' | 'economy' | 'voice' | 'system';
 
@@ -113,7 +114,7 @@ export default function CommandsPage() {
     <div className="min-h-screen py-14">
       <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="page-intro space-y-4">
+        <MotionReveal variant="mask" className="page-intro space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
             <Terminal className="h-3.5 w-3.5" />
             <span>Tra cứu lệnh</span>
@@ -138,10 +139,10 @@ export default function CommandsPage() {
               <span>{isLive ? 'Dữ liệu trực tiếp từ bot' : 'Bản chụp từ mã nguồn Mimi'}</span>
             </div>
           )}
-        </div>
+        </MotionReveal>
 
         {/* ── Tìm kiếm + lọc ────────────────────────────────────── */}
-        <div className="space-y-5">
+        <MotionReveal variant="scale" delay={0.08} className="space-y-5">
           <div className="relative mx-auto max-w-xl">
             <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
             <input
@@ -176,28 +177,29 @@ export default function CommandsPage() {
               );
             })}
           </div>
-        </div>
+        </MotionReveal>
 
         {/* ── Danh sách lệnh ────────────────────────────────────── */}
         {loading ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <MotionReveal variant="drift" className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="glass-panel h-32 animate-pulse rounded-3xl" />
             ))}
-          </div>
+          </MotionReveal>
         ) : filtered.length === 0 ? (
-          <div className="glass-panel space-y-3 rounded-3xl p-12 text-center">
+          <MotionReveal variant="clip" className="glass-panel space-y-3 rounded-3xl p-12 text-center">
             <Search className="mx-auto h-10 w-10 text-gray-500" />
             <p className="text-lg font-semibold text-white">Không tìm thấy lệnh nào</p>
             <p className="text-sm text-gray-400">
               Thử từ khóa khác hoặc chọn danh mục &ldquo;Tất Cả&rdquo;.
             </p>
-          </div>
+          </MotionReveal>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {filtered.map((cmd) => {
               const cat = inferCategory(cmd.name);
               return (
+                <MotionReveal key={cmd.name} variant="flip" delay={Math.min(0.4, (filtered.indexOf(cmd) % 6) * 0.04)}>
                 <div
                   key={cmd.name}
                   className="glass-panel card-lift space-y-3 rounded-3xl p-6 hover:border-white/20"
@@ -233,13 +235,14 @@ export default function CommandsPage() {
                     </div>
                   )}
                 </div>
+                </MotionReveal>
               );
             })}
           </div>
         )}
 
         {/* ── Ghi chú ───────────────────────────────────────────── */}
-        <div className="glass-panel flex flex-col items-center justify-between gap-4 rounded-3xl p-7 sm:flex-row">
+        <MotionReveal variant="clip" delay={0.1} className="glass-panel flex flex-col items-center justify-between gap-4 rounded-3xl p-7 sm:flex-row">
           <div className="flex items-center gap-3 text-sm text-gray-400">
             <Sparkles className="h-5 w-5 shrink-0 text-mimi-green" />
             <span>
@@ -248,7 +251,7 @@ export default function CommandsPage() {
               tả chi tiết.
             </span>
           </div>
-        </div>
+        </MotionReveal>
       </div>
     </div>
   );
