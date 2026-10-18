@@ -125,7 +125,7 @@ export function Magnetic({ children, className, strength = 0.16 }: MagneticProps
     <motion.div
       ref={ref}
       className={className}
-      style={reduced ? undefined : { x, y, willChange: 'transform' }}
+      style={reduced ? undefined : { x, y }}
       onPointerMove={(event) => {
         if (reduced || !ref.current) return;
         const rect = ref.current.getBoundingClientRect();

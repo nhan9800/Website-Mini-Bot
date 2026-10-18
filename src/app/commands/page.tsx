@@ -165,7 +165,7 @@ export default function CommandsPage() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => setCategory(c.key)}
-                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-[background-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     active
                       ? 'bg-mimi-green text-[var(--accent-text)]'
                       : 'border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'

@@ -335,7 +335,7 @@ export default function GuildDashboardPage() {
             <button
               type="button"
               onClick={() => setActiveTab('player')}
-              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-[color,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 activeTab === 'player'
                   ? 'bg-gradient-brand text-[#05060f] shadow-glow'
                   : 'text-gray-300 hover:bg-white/5 hover:text-white'
@@ -347,7 +347,7 @@ export default function GuildDashboardPage() {
             <button
               type="button"
               onClick={() => setActiveTab('settings')}
-              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-[color,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 activeTab === 'settings'
                   ? 'bg-gradient-brand text-[#05060f] shadow-glow'
                   : 'text-gray-300 hover:bg-white/5 hover:text-white'
@@ -479,8 +479,8 @@ export default function GuildDashboardPage() {
                 <div className="space-y-2">
                   <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/10">
                     <div
-                      className="h-full rounded-full bg-gradient-brand transition-all duration-500"
-                      style={{ width: `${track?.isStream ? 100 : progress}%` }}
+                      className="h-full origin-left rounded-full bg-gradient-brand transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      style={{ transform: `scaleX(${track?.isStream ? 1 : progress / 100})` }}
                     />
                   </div>
                   <div className="flex justify-between font-mono text-xs text-gray-400">
@@ -512,7 +512,7 @@ export default function GuildDashboardPage() {
                       type="button"
                       onClick={() => sendAction(player?.paused ? 'resume' : 'pause')}
                       disabled={!player?.connected || !track || actionBusy !== null}
-                      className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-brand text-[#05060f] shadow-glow transition-all duration-200 hover:shadow-glow-lg active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                      className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-brand text-[#05060f] shadow-glow transition-[transform,box-shadow,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-glow-lg active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                       aria-label={player?.paused ? 'Tiếp tục phát' : 'Tạm dừng'}
                     >
                       {actionBusy === 'pause' || actionBusy === 'resume' ? (
@@ -862,8 +862,8 @@ function ToggleRow({
         }`}
       >
         <span
-          className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all duration-300 ${
-            checked ? 'left-6' : 'left-1'
+          className={`absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            checked ? 'translate-x-5' : 'translate-x-0'
           }`}
         />
       </button>

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { env } from '@/lib/env';
 import { websiteVersion } from '@/lib/release-info';
+import { FooterWave } from '@/components/creative/footer-wave';
 
 const exploreLinks = [
   { href: '/commands', label: 'Danh sách lệnh' },
@@ -23,9 +24,7 @@ const resourceLinks = [
 export function Footer() {
   return (
     <footer className="relative z-10 mt-20 border-t border-white/10 bg-background">
-      <svg className="footer-wave" viewBox="0 0 1440 36" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 18 C180 2 300 34 480 18 S780 2 960 18 S1260 34 1440 18" />
-      </svg>
+      <FooterWave />
       <div className="mx-auto max-w-[1440px] px-5 py-14 sm:px-8 lg:px-10">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
           <div>

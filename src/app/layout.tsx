@@ -9,6 +9,7 @@ import { env } from "@/lib/env";
 import { AuthProvider } from "@/components/layout/auth-provider";
 import { NotificationProvider } from "@/components/ui/notification-provider";
 import { RouteTransition } from "@/components/layout/route-transition";
+import { CreativeDirector } from "@/components/creative/creative-director";
 
 // Bricolage Grotesque: display sans có cá tính, hỗ trợ tiếng Việt và vẫn rõ ở cỡ nhỏ.
 const brico = Bricolage_Grotesque({
@@ -81,6 +82,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans text-gray-100 antialiased">
         <AuthProvider>
           <NotificationProvider>
+            <CreativeDirector />
             {/* Nền aurora + lưới chấm cố định phía sau toàn trang */}
             <div className="mimi-aurora" aria-hidden />
             <div className="mimi-grid" aria-hidden />

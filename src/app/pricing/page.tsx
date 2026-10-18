@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Shield,
@@ -26,6 +25,7 @@ import {
 } from 'lucide-react';
 import { env } from '@/lib/env';
 import { StatusModal } from '@/components/ui/status-modal';
+import { ModalShell } from '@/components/ui/modal-shell';
 import { MotionReveal } from '@/components/ui/motion-primitives';
 
 interface Plan {
@@ -144,15 +144,6 @@ export default function PricingPage() {
       .catch(() => undefined);
     return () => { cancelled = true; };
   }, []);
-
-  useEffect(() => {
-    if (!isModalOpen) return;
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsModalOpen(false);
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isModalOpen]);
 
   // Status Modal Thông Báo Cyberpunk (Thay Alert Trình Duyệt)
   const [modalState, setModalState] = useState<{
@@ -430,7 +421,7 @@ export default function PricingPage() {
           return (
             <MotionReveal key={p.id} variant={index === 1 ? 'clip' : 'flip'} delay={index * 0.08} className="h-full rounded-2xl overflow-visible">
               <div
-                className={`relative flex h-full flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
+                className={`relative flex h-full flex-col justify-between rounded-3xl p-8 transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] duration-300 ${
                   p.popular
                     ? 'border-2 border-mimi-green/70 bg-mimi-green/[0.035]'
                     : 'border border-white/10 bg-white/[0.025] hover:border-white/20'
@@ -468,7 +459,7 @@ export default function PricingPage() {
 
                 <button
                   onClick={() => handleOpenPayment(p)}
-                  className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                  className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] duration-200 flex items-center justify-center gap-2 ${
                     p.popular
                       ? 'bg-mimi-green text-[#05060f] hover:bg-mimi-green/90 active:scale-[0.98]'
                       : 'bg-white/10 text-white hover:bg-white/15 active:scale-[0.98]'
@@ -701,7 +692,7 @@ export default function PricingPage() {
               <button
                 onClick={() => handleAdminAction('activate')}
                 disabled={adminLoading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] shadow-lg flex items-center justify-center gap-2"
               >
                 {adminLoading ? (
                   'Đang xử lý...'
@@ -716,7 +707,7 @@ export default function PricingPage() {
               <button
                 onClick={() => handleAdminAction('generate_key')}
                 disabled={adminLoading}
-                className="w-full py-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 text-yellow-400 font-bold text-sm transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 text-yellow-400 font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)] flex items-center justify-center gap-2"
               >
                 {adminLoading ? (
                   'Đang tạo...'
@@ -770,31 +761,12 @@ export default function PricingPage() {
       </div>
 
       {/* Payment Modal */}
-      <AnimatePresence>
-      {isModalOpen && (
-        <motion.div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="mimi-payment-title"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={() => setIsModalOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.985 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg rounded-3xl border border-white/15 bg-[#0e111a] p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
-          >
+      <ModalShell open={isModalOpen} onClose={() => setIsModalOpen(false)} labelledBy="mimi-payment-title"
+        className="max-w-lg rounded-3xl border border-white/15 bg-[#0e111a] p-6 sm:p-8 shadow-2xl space-y-5">
             {/* Nút X đóng nổi bật ở góc phải */}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-300 hover:bg-red-500/80 hover:text-white transition-all shadow-md"
+              className="absolute top-4 right-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-gray-300 hover:bg-red-500/80 hover:text-white transition-colors shadow-md"
               aria-label="Đóng cửa sổ thanh toán"
             >
               <X className="h-5 w-5" />
@@ -817,7 +789,7 @@ export default function PricingPage() {
                 href={env.NEXT_PUBLIC_SHIELD_BOT_INVITE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black text-xs shadow-lg shadow-cyan-500/30 hover:scale-[1.01] active:scale-[0.98] transition-all"
+                className="inline-flex w-full items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-black text-xs shadow-lg shadow-cyan-500/30 hover:scale-[1.01] active:scale-[0.98] transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)]"
               >
                 <Bot className="h-4 w-4" />
                 MỜI MIMI SHIELD BOT VÀO SERVER NGAY
@@ -826,11 +798,13 @@ export default function PricingPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+              <label htmlFor="mimi-payment-guild" className="block text-xs font-semibold text-gray-300 mb-1.5">
                 Nhập Server ID (Guild ID) của bạn:
               </label>
               <input
+                id="mimi-payment-guild"
                 type="text"
+                inputMode="numeric"
                 value={serverGuildId}
                 onChange={(e) => setServerGuildId(e.target.value)}
                 placeholder="Nhập Server ID..."
@@ -897,17 +871,18 @@ export default function PricingPage() {
             {/* Nút Đóng Cửa Sổ ở dưới đáy */}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all"
+              className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform] ease-[cubic-bezier(.16,1,.3,1)]"
             >
               <span className="inline-flex items-center justify-center gap-2">
                 <X className="h-4 w-4" aria-hidden="true" />
                 Đóng Cửa Sổ
               </span>
             </button>
-          </motion.div>
-        </motion.div>
-      )}
-      </AnimatePresence>
+      </ModalShell>
+      <StatusModal
+        {...modalState}
+        onClose={() => setModalState(current => ({ ...current, isOpen: false }))}
+      />
     </div>
   );
 }

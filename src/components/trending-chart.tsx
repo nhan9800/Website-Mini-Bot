@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Copy, Check, TrendingUp, Music, Play, Pause, RefreshCw } from 'lucide-react';
 import { Magnetic, MotionReveal } from '@/components/ui/motion-primitives';
@@ -26,13 +26,21 @@ export function TrendingChart() {
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [copiedRank, setCopiedRank] = useState<number | null>(null);
+  const activeRequest = useRef<AbortController | null>(null);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mounted = useRef(false);
   const { playTrack, track: currentTrack, isPlaying, setIsPlaying } = usePlayerStore();
 
-  const fetchTrending = useCallback(async () => {
+  const fetchTrending = useCallback(async (replacePending = true) => {
+    if (!mounted.current || (!replacePending && activeRequest.current)) return;
+    activeRequest.current?.abort();
+    const controller = new AbortController();
+    activeRequest.current = controller;
     setLoading(true);
     try {
-      const res = await fetch(`https://itunes.apple.com/vn/rss/topsongs/limit=10/json?t=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`https://itunes.apple.com/vn/rss/topsongs/limit=10/json?t=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
       const data = await res.json();
+      if (controller.signal.aborted || activeRequest.current !== controller) return;
       const entries = data?.feed?.entry ?? [];
       
       if (res.ok && Array.isArray(entries) && entries.length) {
@@ -63,24 +71,41 @@ export function TrendingChart() {
         setFailed(true);
       }
     } catch (e) {
+      if (controller.signal.aborted || !mounted.current) return;
       console.error("Fetch trending error:", e);
       setFailed(true);
     } finally {
-      setLoading(false);
+      if (activeRequest.current === controller) {
+        activeRequest.current = null;
+        if (mounted.current) setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
+    mounted.current = true;
     fetchTrending();
-    const timer = setInterval(fetchTrending, 45000);
-    return () => clearInterval(timer);
+    // A slow provider response keeps its slot; polling must not stack requests.
+    const timer = setInterval(() => fetchTrending(false), 45000);
+    return () => {
+      mounted.current = false;
+      clearInterval(timer);
+      activeRequest.current?.abort();
+      activeRequest.current = null;
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+    };
   }, [fetchTrending]);
 
   const copyPlayCommand = async (song: TrendingSong) => {
     try {
       await navigator.clipboard.writeText(`/play ${song.title} ${song.artist}`);
+      if (!mounted.current) return;
       setCopiedRank(song.rank);
-      setTimeout(() => setCopiedRank(null), 2000);
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => {
+        copyTimer.current = null;
+        setCopiedRank(null);
+      }, 2000);
     } catch {}
   };
 
@@ -151,7 +176,7 @@ export function TrendingChart() {
                       <Magnetic strength={0.08}>
                         <button
                           type="button"
-                          onClick={fetchTrending}
+                          onClick={() => fetchTrending()}
                           disabled={loading}
                           title="Làm mới bảng xếp hạng LIVE"
                           className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-gray-300 transition-colors hover:border-mimi-green/40 hover:bg-mimi-green/10 hover:text-mimi-green disabled:opacity-50"

@@ -22,10 +22,12 @@ export function CommunityReviewsSection() {
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchReviews() {
       try {
-        const res = await fetch('/api/feedback', { cache: 'no-store' });
+        const res = await fetch('/api/feedback', { cache: 'no-store', signal: controller.signal });
         const data = await res.json();
+        if (controller.signal.aborted) return;
         if (res.ok && data?.ok) {
           setAvgStars(data.averageStars ?? null);
           setTotalReviews(data.totalReviews ?? 0);
@@ -36,9 +38,12 @@ export function CommunityReviewsSection() {
         } else {
           setLoadState('unavailable');
         }
-      } catch { setLoadState('unavailable'); }
+      } catch {
+        if (!controller.signal.aborted) setLoadState('unavailable');
+      }
     }
     fetchReviews();
+    return () => controller.abort();
   }, []);
 
   return (
