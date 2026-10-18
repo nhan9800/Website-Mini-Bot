@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -15,8 +15,9 @@ interface TiltCardProps {
 /** Cập nhật hiệu ứng bằng MotionValue, không render lại nội dung ở mỗi lần rê chuột. */
 export function TiltCard({ children, className = '', maxTilt = 7, spotlight = true }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
-  const allowMotion = reducedMotion === false;
+  // Branded tilt/spotlight is intentional site motion and must not be disabled
+  // by an inherited OS media query on the live desktop experience.
+  const allowMotion = true;
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
   const scale = useMotionValue(1);
@@ -27,17 +28,6 @@ export function TiltCard({ children, className = '', maxTilt = 7, spotlight = tr
   const springY = useSpring(rotateY, { stiffness: 220, damping: 28 });
   const springScale = useSpring(scale, { stiffness: 220, damping: 28 });
   const spotBackground = useMotionTemplate`radial-gradient(420px circle at ${spotX}px ${spotY}px, rgba(98, 166, 143, 0.14), transparent 75%)`;
-
-  useEffect(() => {
-    if (allowMotion) return;
-    rotateX.set(0);
-    rotateY.set(0);
-    scale.set(1);
-    spotOpacity.set(0);
-    springX.jump(0);
-    springY.jump(0);
-    springScale.jump(1);
-  }, [allowMotion, rotateX, rotateY, scale, spotOpacity, springX, springY, springScale]);
 
   const reset = () => {
     rotateX.set(0);

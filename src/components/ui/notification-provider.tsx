@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -39,8 +39,6 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [modal, setModal] = useState<(NotificationOptions & { isOpen: boolean }) | null>(null);
-  const reducedMotion = useReducedMotion();
-
   const close = useCallback(() => {
     setModal((prev) => (prev ? { ...prev, isOpen: false } : null));
   }, []);
@@ -158,10 +156,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         <motion.div
           key="mimi-notification"
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-          initial={reducedMotion ? false : { opacity: 0 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={reducedMotion ? { opacity: 0 } : { opacity: 0 }}
-          transition={{ duration: reducedMotion ? 0 : 0.2 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
           {/* Backdrop Blur */}
           <motion.button
@@ -178,10 +176,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             aria-modal="true"
             aria-labelledby="mimi-notification-title"
             className="relative w-full max-w-[420px] overflow-hidden rounded-3xl border border-white/10 bg-[#0f1422] p-7 text-center shadow-2xl backdrop-blur-2xl"
-            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.96 }}
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             style={{
               boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 50px rgba(16, 185, 129, 0.12)',
             }}

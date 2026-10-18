@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 interface RevealProps {
   children: React.ReactNode;
@@ -15,19 +15,15 @@ interface RevealProps {
  * Viewport observer chỉ giữ hiệu ứng một lần, tránh chạy lại khi cuộn ngược.
  */
 export function Reveal({ children, className = '', delay = 0 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
-
   return (
     <motion.div
-      ref={ref}
       className={className}
-      initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.12 }}
       transition={{
-        duration: reducedMotion ? 0 : 0.68,
-        delay: reducedMotion ? 0 : delay / 1000,
+        duration: 0.68,
+        delay: delay / 1000,
         ease: [0.22, 1, 0.36, 1],
       }}
     >

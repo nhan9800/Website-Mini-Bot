@@ -21,7 +21,7 @@ export function Soundwave({ playing, bars = 20, className = '' }: SoundwaveProps
       {heights.map((h, i) => (
         <span
           key={i}
-          className="w-1.5 origin-bottom rounded-full bg-gradient-to-t from-mimi-green to-mimi-cyan"
+          className={`soundwave-bar w-1.5 origin-bottom rounded-full bg-gradient-to-t from-mimi-green to-mimi-cyan ${playing ? 'animate-soundwave' : ''}`}
           style={{
             height: `${h}%`,
             animation: playing ? `soundwave ${0.9 + (i % 5) * 0.12}s ease-in-out ${i * 0.06}s infinite` : 'none',

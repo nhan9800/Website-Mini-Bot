@@ -186,10 +186,10 @@ export function TrendingChart() {
                               src={s.artworkUrl.replace(/\/\d+x\d+bb\./, '/96x96bb.')}
                               alt=""
                               loading="lazy"
-                              className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md transition-transform duration-300 group-hover:scale-108 group-hover:rotate-2"
+                              className="h-12 w-12 shrink-0 rounded-xl border border-white/10 object-cover shadow-md transition-transform duration-300 group-hover:scale-[1.08] group-hover:rotate-2"
                             />
                           ) : (
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm transition-transform duration-300 group-hover:scale-108">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-sm transition-transform duration-300 group-hover:scale-[1.08]">
                               <Music className="h-6 w-6" />
                             </div>
                           )}

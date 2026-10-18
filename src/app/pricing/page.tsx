@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Shield,
@@ -110,7 +110,6 @@ export default function PricingPage() {
   });
   const [serverGuildId, setServerGuildId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const reducedMotion = useReducedMotion();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   useEffect(() => {
@@ -776,18 +775,18 @@ export default function PricingPage() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="mimi-payment-title"
-          initial={reducedMotion ? false : { opacity: 0 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reducedMotion ? 0 : 0.2 }}
+          transition={{ duration: 0.2 }}
           onClick={() => setIsModalOpen(false)}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto"
         >
           <motion.div
-            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
+            initial={{ opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.985 }}
-            transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, y: 8, scale: 0.985 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-lg rounded-3xl border border-white/15 bg-[#0e111a] p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
           >
