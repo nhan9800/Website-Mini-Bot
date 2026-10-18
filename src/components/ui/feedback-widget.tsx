@@ -151,8 +151,18 @@ export function FeedbackWidget() {
             <Star className="h-3.5 w-3.5 fill-mimi-green text-mimi-green" />
           </span>
           <span>Đánh Giá</span>
-          <span className="rounded-full bg-mimi-green/20 px-2 py-0.5 font-mono text-[11px] font-extrabold text-mimi-green">
-            {avgStars === null ? 'Chưa có điểm' : `${avgStars}★`}
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-mimi-green/20 px-2 py-0.5 font-mono text-[11px] font-extrabold text-mimi-green"
+            aria-label={avgStars === null ? 'Chưa có điểm đánh giá' : `Điểm trung bình ${avgStars} trên 5 sao`}
+          >
+            {avgStars === null ? (
+              'Chưa có điểm'
+            ) : (
+              <>
+                <span>{avgStars}</span>
+                <Star className="h-3 w-3 fill-current" aria-hidden="true" />
+              </>
+            )}
           </span>
         </button>
       </div>
