@@ -16,7 +16,7 @@ test('vinyl thương hiệu vẫn chuyển động khi desktop bật reduced-mot
 test('equalizer BXH dùng nhịp riêng để không đứng hình trên desktop', () => {
   const css = fs.readFileSync(path.resolve(__dirname, '../src/app/globals.css'), 'utf8');
   assert.match(css, /@keyframes trendingEqualizer\s*\{/);
-  assert.match(css, /\.trending-equalizer\s*\{[\s\S]*animation-name:\s*trendingEqualizer\s*!important;[\s\S]*animation-duration:\s*var\(--trending-animation-duration,\s*0\.96s\)\s*!important;/);
+  assert.match(css, /\.trending-equalizer\s*\{[\s\S]*display:\s*inline-block;[\s\S]*animation-name:\s*trendingEqualizer\s*!important;[\s\S]*animation-duration:\s*var\(--trending-animation-duration,\s*0\.96s\)\s*!important;/);
 });
 
 test('BXH dùng thanh cuộn dọc riêng và chặn tràn ngang', () => {
@@ -26,6 +26,7 @@ test('BXH dùng thanh cuộn dọc riêng và chặn tràn ngang', () => {
   assert.match(css, /\.trending-scroll-list\s*\{[\s\S]*scrollbar-gutter:\s*stable;[\s\S]*overscroll-behavior:\s*contain;/);
   assert.match(css, /\.trending-scroll-list::\-webkit-scrollbar\s*\{[\s\S]*width:\s*7px;[\s\S]*height:\s*0;/);
   assert.match(css, /\.trending-scroll-list::\-webkit-scrollbar-corner\s*\{[\s\S]*background:\s*transparent;/);
+  assert.match(css, /@media \(max-width:\s*767px\)\s*\{[\s\S]*\.trending-scroll-list\s*\{[\s\S]*overscroll-behavior-y:\s*auto;[\s\S]*-webkit-overflow-scrolling:\s*touch;/);
 });
 
 test('Soundwave gắn class chạy lại khi reduced-motion override animation', () => {

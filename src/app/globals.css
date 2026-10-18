@@ -560,6 +560,9 @@ html[data-theme="light"] .text-on-color { color: #fcfefd; }
 }
 
 .trending-equalizer {
+  /* Keep the bars transformable even when a browser does not blockify a
+     flex item during a hidden -> flex transition (notably on mobile Safari). */
+  display: inline-block;
   animation-name: trendingEqualizer !important;
   animation-duration: var(--trending-animation-duration, 0.96s) !important;
   animation-delay: var(--trending-animation-delay, 0s) !important;
@@ -684,6 +687,13 @@ html[data-theme="light"] .text-on-color { color: #fcfefd; }
   .experience-caption { width: auto; font-size: 10px; }
   .home-stat-strip { margin: 0 18px; padding: 24px 0; }
   .home-stat-strip > div { padding: 0 8px; }
+  /* Let a finger swipe continue the page once the nested BXH list reaches an
+     edge. `contain` is useful for desktop wheel input but feels like a frozen
+     page on touch devices when the list is shorter than the viewport. */
+  .trending-scroll-list {
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .feature-showcase { grid-template-columns: 1fr; }
   .feature-showcase > :first-child, .feature-showcase > :last-child { grid-column: auto; grid-row: auto; }
   .feature-panel { padding: 24px; }
