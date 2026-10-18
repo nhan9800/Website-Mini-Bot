@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Activity, ArrowUpRight, LayoutDashboard, LifeBuoy, Menu, Terminal, Users, X } from 'lucide-react';
+import { Activity, ArrowUpRight, LayoutDashboard, LifeBuoy, Menu, Shield, Terminal, Users, X } from 'lucide-react';
 import { env } from '@/lib/env';
 import { websiteVersion } from '@/lib/release-info';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/partners', label: 'Cộng đồng', icon: Users },
   { href: '/status', label: 'Trạng thái', icon: Activity },
   { href: '/support', label: 'Hỗ trợ', icon: LifeBuoy },
+  { href: '/pricing', label: 'Mimi Shield', icon: Shield },
 ];
 
 export function Header() {

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import {
   Shield,
@@ -32,6 +33,13 @@ interface Plan {
   popular?: boolean;
   vip?: boolean;
   features: string[];
+}
+
+interface BankInfo {
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+  bankBin: string;
 }
 
 const plans: Plan[] = [
@@ -87,10 +95,59 @@ const plans: Plan[] = [
 ];
 
 export default function PricingPage() {
+  const [catalog, setCatalog] = useState<Plan[]>(plans);
   const [selectedPlan, setSelectedPlan] = useState<Plan>((plans[1] || plans[0])!);
+  const [bank, setBank] = useState<BankInfo>({
+    bankName: 'Vietcombank (VCB)',
+    accountNumber: '9369144188',
+    accountName: 'DAO NGOC QUANG',
+    bankBin: '970436',
+  });
   const [serverGuildId, setServerGuildId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const reducedMotion = useReducedMotion();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/pricing', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((payload) => {
+        if (cancelled || !payload?.ok || !payload.plans) return;
+        const nextCatalog = plans
+          .map((fallback) => {
+            const upstream = payload.plans[fallback.id];
+            if (!upstream) return fallback;
+            return {
+              ...fallback,
+              price: Number(upstream.price) || fallback.price,
+              priceFormatted: upstream.priceFormatted || fallback.priceFormatted,
+              duration: `${upstream.durationDays || 0} ngày bảo vệ`,
+            };
+          });
+        setCatalog(nextCatalog);
+        setSelectedPlan((current) => nextCatalog.find((plan) => plan.id === current.id) || nextCatalog[0] || current);
+        if (payload.bank) {
+          setBank((current) => ({
+            ...current,
+            bankName: payload.bank.bankName || current.bankName,
+            accountNumber: payload.bank.accountNumber || current.accountNumber,
+            accountName: payload.bank.accountName || current.accountName,
+          }));
+        }
+      })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsModalOpen(false);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isModalOpen]);
 
   // Status Modal Thông Báo Cyberpunk (Thay Alert Trình Duyệt)
   const [modalState, setModalState] = useState<{
@@ -137,14 +194,17 @@ export default function PricingPage() {
 
   const handleOpenPayment = (plan: Plan) => {
     setSelectedPlan(plan);
+    setServerGuildId('');
     setIsModalOpen(true);
   };
 
-  const cleanGuildId = serverGuildId.trim() || 'SERVER_ID';
+  const cleanGuildId = serverGuildId.trim();
+  const validGuildId = /^\d{17,20}$/.test(cleanGuildId);
+  const qrReady = validGuildId && bank.bankName.toLowerCase().includes('vietcombank') && Boolean(bank.bankBin);
   const transferContent = `MIMI ${selectedPlan.id.toUpperCase()} ${cleanGuildId}`;
-  const vietQrUrl = `https://img.vietqr.io/image/970436-9369144188-compact2.png?amount=${selectedPlan.price}&addInfo=${encodeURIComponent(
+  const vietQrUrl = qrReady ? `https://img.vietqr.io/image/${bank.bankBin}-${bank.accountNumber}-compact2.png?amount=${selectedPlan.price}&addInfo=${encodeURIComponent(
     transferContent
-  )}&accountName=DAO%20NGOC%20QUANG`;
+  )}&accountName=${encodeURIComponent(bank.accountName)}` : '';
 
   const copyToClipboard = async (text: string, keyName: string, label = 'Thông tin') => {
     try {
@@ -172,7 +232,7 @@ export default function PricingPage() {
         showModal(
           'success',
           'Bản Quyền Đang Hoạt Động!',
-          `Máy chủ ${checkId.trim()} đang kích hoạt gói ${data.license.planName}. Còn ${data.license.remainingDays} ngày bản quyền Mimi Shield.`,
+          `Máy chủ ${checkId.trim()} đang kích hoạt gói ${data.license.planName || data.license.plan || 'Mimi Shield'}. Còn ${data.license.remainingDays} ngày bản quyền Mimi Shield.`,
           'ĐANG BẢO VỆ'
         );
       } else if (data.ok && !data.license?.active) {
@@ -361,7 +421,7 @@ export default function PricingPage() {
 
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-4 mb-20 items-stretch overflow-visible">
-        {plans.map((p) => {
+        {catalog.map((p) => {
           return (
             <div key={p.id} className="h-full rounded-2xl overflow-visible">
               <div
@@ -458,7 +518,7 @@ export default function PricingPage() {
                       <div className="font-bold flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4" /> Bản Quyền Đang Hoạt Động
                       </div>
-                      <div className="text-xs text-gray-300">Gói: {checkResult.license.planName}</div>
+                      <div className="text-xs text-gray-300">Gói: {checkResult.license.planName || checkResult.license.plan || 'Mimi Shield'}</div>
                       <div className="text-xs text-gray-300">
                         Còn lại: {checkResult.license.remainingDays} ngày (Hết hạn:{' '}
                         {new Date(checkResult.license.expiresTimestamp).toLocaleDateString('vi-VN')})
@@ -663,12 +723,24 @@ export default function PricingPage() {
       </div>
 
       {/* Payment Modal */}
+      <AnimatePresence>
       {isModalOpen && (
-        <div
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mimi-payment-title"
+          initial={reducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.2 }}
           onClick={() => setIsModalOpen(false)}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto"
         >
-          <div
+          <motion.div
+            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.985 }}
+            transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-lg rounded-3xl border border-white/15 bg-[#0e111a] p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
           >
@@ -682,7 +754,7 @@ export default function PricingPage() {
             </button>
 
             <div className="text-center pr-8 pl-8">
-              <h3 className="text-2xl font-bold text-white">Mimi Shield · Gói {selectedPlan.name}</h3>
+              <h3 id="mimi-payment-title" className="text-2xl font-bold text-white">Mimi Shield · Gói {selectedPlan.name}</h3>
               <p className="text-sm text-mimi-green font-semibold mt-1">Số tiền: {selectedPlan.priceFormatted}</p>
             </div>
 
@@ -720,38 +792,48 @@ export default function PricingPage() {
             </div>
 
             {/* QR Image */}
-            <div className="rounded-2xl bg-white p-4 text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={vietQrUrl} alt="VietQR Vietcombank" className="mx-auto max-w-[200px] w-full rounded-lg" />
-              <div className="text-[11px] text-gray-600 font-bold mt-2">Quét mã bằng App Ngân hàng hoặc MoMo</div>
-            </div>
+            {qrReady ? (
+              <div className="rounded-2xl bg-white p-4 text-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={vietQrUrl} alt={`VietQR ${bank.bankName}`} className="mx-auto max-w-[200px] w-full rounded-lg" />
+                <div className="mt-2 text-[11px] font-bold text-gray-600">Quét mã bằng App Ngân hàng hoặc MoMo</div>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-center text-xs leading-5 text-amber-100">
+                {!validGuildId
+                  ? 'Nhập Server ID Discord hợp lệ (17–20 chữ số) để tạo mã QR đúng máy chủ và nội dung chuyển khoản.'
+                  : 'Cấu hình ngân hàng hiện chưa hỗ trợ tạo VietQR tự động. Vui lòng liên hệ Admin để nhận hướng dẫn thanh toán.'}
+              </div>
+            )}
 
             {/* Bank Info */}
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-2.5 text-xs text-gray-300">
               <div className="flex justify-between">
                 <span>Ngân Hàng:</span>
-                <b className="text-white">Vietcombank (VCB)</b>
+                <b className="text-white">{bank.bankName}</b>
               </div>
               <div className="flex justify-between items-center">
                 <span>Số Tài Khoản:</span>
                 <button
-                  onClick={() => copyToClipboard('9369144188', 'stk')}
+                  onClick={() => copyToClipboard(bank.accountNumber, 'stk')}
                   className="flex items-center gap-1 font-bold text-mimi-green hover:underline"
                 >
-                  9369144188 {copiedKey === 'stk' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                  {bank.accountNumber} {copiedKey === 'stk' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                 </button>
               </div>
               <div className="flex justify-between">
                 <span>Chủ Tài Khoản:</span>
-                <b className="text-white">DAO NGOC QUANG</b>
+                <b className="text-white">{bank.accountName}</b>
               </div>
               <div className="flex justify-between items-center">
                 <span>Nội Dung Chuyển Khoản:</span>
                 <button
+                  type="button"
+                  disabled={!validGuildId}
                   onClick={() => copyToClipboard(transferContent, 'content')}
-                  className="flex items-center gap-1 font-mono font-bold text-yellow-300 hover:underline"
+                  className="flex items-center gap-1 font-mono font-bold text-yellow-300 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {transferContent}{' '}
+                  {validGuildId ? transferContent : 'Nhập Server ID trước'}{' '}
                   {copiedKey === 'content' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                 </button>
               </div>
@@ -769,9 +851,10 @@ export default function PricingPage() {
             >
               ✕ Đóng Cửa Sổ
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }

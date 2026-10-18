@@ -8,6 +8,7 @@ import { FeedbackWidget } from "@/components/ui/feedback-widget";
 import { env } from "@/lib/env";
 import { AuthProvider } from "@/components/layout/auth-provider";
 import { NotificationProvider } from "@/components/ui/notification-provider";
+import { RouteTransition } from "@/components/layout/route-transition";
 
 // Bricolage Grotesque: display sans có cá tính, hỗ trợ tiếng Việt và vẫn rõ ở cỡ nhỏ.
 const brico = Bricolage_Grotesque({
@@ -83,8 +84,11 @@ export default function RootLayout({
             {/* Nền aurora + lưới chấm cố định phía sau toàn trang */}
             <div className="mimi-aurora" aria-hidden />
             <div className="mimi-grid" aria-hidden />
+            <a href="#main-content" className="skip-link">Bỏ qua điều hướng</a>
             <Header />
-            <main className="page-shell relative z-10 pt-24 pb-32">{children}</main>
+            <main id="main-content" className="page-shell relative z-10 pt-24 pb-32">
+              <RouteTransition>{children}</RouteTransition>
+            </main>
             <WebPlayer />
             <FeedbackWidget />
             <Footer />
