@@ -105,13 +105,13 @@ export function StatusModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
+        className="status-modal-backdrop fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Box */}
       <div
-        className={`relative w-full max-w-md overflow-hidden rounded-3xl border border-white/15 bg-[#0e1220]/95 p-6 sm:p-8 text-center text-white shadow-2xl backdrop-blur-xl transition-all duration-300 animate-in zoom-in-95 fade-in duration-200 ${config.glowColor}`}
+        className={`status-modal-panel relative w-full max-w-md overflow-hidden rounded-3xl border border-white/15 bg-[#0e1220]/95 p-6 sm:p-8 text-center text-white shadow-2xl backdrop-blur-xl transition-all duration-300 ${config.glowColor}`}
         style={{
           boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(46, 204, 113, 0.1)',
         }}
@@ -145,7 +145,7 @@ export function StatusModal({
             <div
               className={`relative flex h-20 w-20 items-center justify-center rounded-full border-2 transition-transform duration-300 hover:scale-105 ${config.ringColor}`}
             >
-              <IconComponent className={`h-10 w-10 ${config.iconColor} animate-in zoom-in duration-300`} />
+              <IconComponent className={`status-modal-icon h-10 w-10 ${config.iconColor}`} />
             </div>
           </div>
         </div>

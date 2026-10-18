@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
 /**
@@ -9,16 +9,14 @@ import { usePathname } from 'next/navigation';
  */
 export function RouteTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const reducedMotion = useReducedMotion();
-
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
-        initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-        transition={{ duration: reducedMotion ? 0 : 0.34, ease: [0.22, 1, 0.36, 1] }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
         className="min-h-full"
       >
         {children}

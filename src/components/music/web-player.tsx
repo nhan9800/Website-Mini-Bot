@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX, Music, X } from "lucide-react";
 import { usePlayerStore } from "@/lib/store/use-player-store";
 
@@ -19,8 +19,6 @@ export function WebPlayer() {
   const [duration, setDuration] = useState(0);
   const [playbackError, setPlaybackError] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const reducedMotion = useReducedMotion();
-  const animateMotion = reducedMotion === false;
 
   useEffect(() => {
     setCurrentTime(0);
@@ -77,15 +75,15 @@ export function WebPlayer() {
         }} />
       <AnimatePresence>
         {track && (
-          <motion.div initial={animateMotion ? { y: 30, opacity: 0 } : false} animate={{ y: 0, opacity: 1 }}
-            exit={animateMotion ? { y: 30, opacity: 0 } : { opacity: 1 }} transition={{ duration: animateMotion ? 0.2 : 0 }}
+          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 30, opacity: 0 }} transition={{ duration: 0.2 }}
             className="fixed bottom-20 left-1/2 z-50 w-[calc(100%_-_24px)] max-w-2xl sm:bottom-6"
             style={{ x: "-50%" }}
             aria-label="Trình nghe thử nhạc trên website">
             <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-surface p-3 shadow-xl sm:gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-background sm:h-14 sm:w-14" aria-hidden="true">
                 {track.cover?.trim() ? <motion.img src={track.cover.trim()} alt="" className="h-full w-full rounded-full object-cover"
-                  animate={{ rotate: animateMotion && isPlaying ? 360 : 0 }} transition={{ repeat: animateMotion && isPlaying ? Infinity : 0, duration: animateMotion ? 8 : 0, ease: "linear" }} /> : <Music className="h-6 w-6 text-mimi-green" />}
+                  animate={{ rotate: isPlaying ? 360 : 0 }} transition={{ repeat: isPlaying ? Infinity : 0, duration: 8, ease: "linear" }} /> : <Music className="h-6 w-6 text-mimi-green" />}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-500">Nghe thử trên website</p>
