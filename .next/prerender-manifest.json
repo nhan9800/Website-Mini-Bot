@@ -84,7 +84,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/partners": {
+    "/commands": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -97,8 +97,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/partners",
-      "dataRoute": "/partners.rsc",
+      "srcRoute": "/commands",
+      "dataRoute": "/commands.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -156,30 +156,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/commands": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/commands",
-      "dataRoute": "/commands.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/pricing": {
       "experimentalBypassFor": [
         {
@@ -195,6 +171,30 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/pricing",
       "dataRoute": "/pricing.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/partners": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/partners",
+      "dataRoute": "/partners.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -252,30 +252,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/privacy": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/privacy",
-      "dataRoute": "/privacy.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/changelog": {
       "experimentalBypassFor": [
         {
@@ -323,13 +299,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/privacy": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/privacy",
+      "dataRoute": "/privacy.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "c624baf973b4d28894072800967396ed",
-    "previewModeSigningKey": "b91ce74266b5c344c0217f6d0ee32f38ca6af918e11a5963e6ab81bbde97cb4d",
-    "previewModeEncryptionKey": "2e1a5acce77f6a88322098c342f9a203d198bbab5a3305e1783439de0bf9416b"
+    "previewModeId": "bff9f810695bd3df3939b39f7788af35",
+    "previewModeSigningKey": "4535a0d32a7f69bff7b97ccf5ad9e7de41270a4b6b8b51fbcf51576620c4a97f",
+    "previewModeEncryptionKey": "9fb77116e60a9c594252c727b59735d9deb7d4a97e41af52fc5477b772ddf8bf"
   }
 }

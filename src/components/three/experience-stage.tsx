@@ -19,7 +19,10 @@ export function ExperienceStage() {
   const stage = useRef<HTMLDivElement>(null);
   const [model, setModel] = useState<ExperienceModel>('robot');
   const [motion, setMotion] = useState<RobotMotion>('Dance');
-  const [visible, setVisible] = useState(false);
+  // Khởi động ở trạng thái nhìn thấy để canvas desktop không bị đứng nếu trình duyệt
+  // trì hoãn callback IntersectionObserver trong lần render đầu. Observer vẫn
+  // tạm dừng khi cảnh thật sự ra khỏi viewport để tránh tốn GPU.
+  const [visible, setVisible] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
   const [ready, setReady] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
@@ -30,8 +33,14 @@ export function ExperienceStage() {
     const syncPage = () => setPageVisible(document.visibilityState === 'visible');
     syncPage();
     document.addEventListener('visibilitychange', syncPage);
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry?.isIntersecting === true), { rootMargin: '80px' });
-    if (stage.current) observer.observe(stage.current);
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry?.isIntersecting !== false), { rootMargin: '80px' });
+    if (stage.current) {
+      // Đồng bộ một lần ngay lập tức; một số desktop browser chỉ phát
+      // intersection callback sau một frame hoặc khi có scroll.
+      const rect = stage.current.getBoundingClientRect();
+      setVisible(rect.bottom > -80 && rect.top < window.innerHeight + 80);
+      observer.observe(stage.current);
+    }
     return () => {
       document.removeEventListener('visibilitychange', syncPage);
       observer.disconnect();

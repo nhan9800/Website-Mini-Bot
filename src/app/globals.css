@@ -489,7 +489,8 @@ html[data-theme="light"] .text-on-color { color: #fcfefd; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
   .hover-3d-tilt:hover, .card-lift:hover { transform: none; }
-  .vinyl-disc { animation: none !important; }
+  /* Mimi giữ chuyển động vinyl thương hiệu trên mọi thiết bị theo yêu cầu 3D mặc định. */
+  .vinyl-disc { animation: vinylSpin 7s linear infinite !important; }
 }
 /* Không gian 3D Mimi. Canvas/model là lớp hình ảnh, chữ và nút luôn ở DOM. */
 .experience-stage {
