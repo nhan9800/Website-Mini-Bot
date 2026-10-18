@@ -57,10 +57,12 @@ export function MotionReveal({
   amount = 0.18,
   ...props
 }: MotionRevealProps) {
-  const reduced = useReducedMotion();
-  const transition = reduced
-    ? { duration: 0.01 }
-    : { duration: variant === 'mask' ? 0.82 : 0.62, delay, ease: [0.16, 1, 0.3, 1] as const };
+  // Section choreography is part of Mimi's branded navigation language. Keep
+  // it alive on desktop/mobile even when the browser has a reduced-motion
+  // preference; only continuous ambient effects and pointer physics opt out.
+  // This prevents the PC configuration that previously made every route look
+  // frozen while leaving the interactive primitives below accessible.
+  const transition = { duration: variant === 'mask' ? 0.82 : 0.62, delay, ease: [0.16, 1, 0.3, 1] as const };
 
   return (
     <motion.div
