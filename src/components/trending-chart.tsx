@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Flame, Copy, Check, TrendingUp, Music, Play, Pause, RefreshCw } from 'lucide-react';
-import { Reveal } from '@/components/ui/reveal';
+import { Magnetic, MotionReveal } from '@/components/ui/motion-primitives';
 import { TiltCard } from '@/components/ui/tilt-card';
 import { usePlayerStore } from '@/lib/store/use-player-store';
 
@@ -91,7 +92,7 @@ export function TrendingChart() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12">
           {/* Cột trái: đĩa vinyl 3D + lời dẫn */}
-          <Reveal className="space-y-8 text-center lg:col-span-5 lg:text-left">
+          <MotionReveal variant="clip" className="space-y-8 text-center lg:col-span-5 lg:text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/30 bg-mimi-green/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-mimi-green">
               <Flame className="h-3.5 w-3.5" />
               <span>Nhạc đang thịnh hành</span>
@@ -115,11 +116,11 @@ export function TrendingChart() {
                 </div>
               </div>
             </div>
-          </Reveal>
+          </MotionReveal>
 
           {/* Cột phải: bảng xếp hạng */}
           <div className="lg:col-span-7">
-            <Reveal delay={120}>
+            <MotionReveal variant="scale" delay={0.12}>
               <TiltCard maxTilt={4}>
                 <div className="glass-panel-glow gradient-ring space-y-2 rounded-[2rem] p-5 sm:p-7">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-2 pb-4">
@@ -147,16 +148,18 @@ export function TrendingChart() {
                           Cập nhật: {lastUpdated}
                         </span>
                       )}
-                      <button
-                        type="button"
-                        onClick={fetchTrending}
-                        disabled={loading}
-                        title="Làm mới bảng xếp hạng LIVE"
-                        className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:border-mimi-green/40 hover:bg-mimi-green/10 hover:text-mimi-green transition-all disabled:opacity-50"
-                      >
-                        <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-mimi-green' : ''}`} />
-                        <span>Làm mới</span>
-                      </button>
+                      <Magnetic strength={0.08}>
+                        <button
+                          type="button"
+                          onClick={fetchTrending}
+                          disabled={loading}
+                          title="Làm mới bảng xếp hạng LIVE"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-gray-300 transition-colors hover:border-mimi-green/40 hover:bg-mimi-green/10 hover:text-mimi-green disabled:opacity-50"
+                        >
+                          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-mimi-green' : ''}`} />
+                          <span>Làm mới</span>
+                        </button>
+                      </Magnetic>
                     </div>
                   </div>
 
@@ -168,10 +171,15 @@ export function TrendingChart() {
                     </div>
                   ) : (
                     <ul className="trending-scroll-list max-h-[460px] space-y-1.5 overflow-x-hidden overflow-y-auto pr-1 pt-2">
-                      {songs.map((s) => (
-                        <li
+                      {songs.map((s, index) => (
+                        <motion.li
                           key={s.rank}
-                          className="group flex min-w-0 items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-all duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
+                          className="group flex min-w-0 items-center gap-3.5 rounded-2xl border border-transparent p-2.5 transition-[transform,border-color,background-color,box-shadow] duration-300 hover:border-mimi-green/30 hover:bg-white/[0.07] hover:translate-x-1.5 hover:shadow-lg hover:shadow-mimi-green/10"
+                          style={{ '--rank-delay': `${Math.min(index, 5) * 55}ms` } as React.CSSProperties}
+                          initial={{ opacity: 0, clipPath: 'inset(0 12% 0 0)' }}
+                          whileInView={{ opacity: 1, clipPath: 'inset(0 0% 0 0)' }}
+                          viewport={{ once: true, amount: 0.24 }}
+                          transition={{ duration: 0.48, delay: Math.min(index, 5) * 0.055, ease: [0.16, 1, 0.3, 1] }}
                         >
                           <span
                             className={`w-8 shrink-0 text-center font-mono text-lg font-black transition-transform duration-300 group-hover:scale-110 ${
@@ -231,34 +239,32 @@ export function TrendingChart() {
                           
                           <div className="flex items-center gap-1 shrink-0">
                             {s.previewUrl && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (currentTrack?.title === s.title) {
-                                    setIsPlaying(!isPlaying);
-                                  } else {
-                                    playTrack({
-                                      title: s.title,
-                                      artist: s.artist,
-                                      cover: s.artworkUrl || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=200&h=200',
-                                      url: s.previewUrl!
-                                    });
-                                  }
-                                }}
-                                className={`rounded-xl border p-2.5 transition-colors ${
-                                  currentTrack?.title === s.title && isPlaying
-                                    ? 'border-mimi-green bg-mimi-green/20 text-mimi-green'
-                                    : 'border-white/10 bg-white/5 text-gray-300 hover:border-mimi-green/40 hover:text-mimi-green'
-                                }`}
-                                title={`Nghe thử ${s.title}`}
-                                aria-label={`Nghe thử ${s.title}`}
-                              >
-                                {currentTrack?.title === s.title && isPlaying ? (
-                                  <Pause className="h-4 w-4" />
-                                ) : (
-                                  <Play className="h-4 w-4" />
-                                )}
-                              </button>
+                              <Magnetic strength={0.06}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (currentTrack?.title === s.title) {
+                                      setIsPlaying(!isPlaying);
+                                    } else {
+                                      playTrack({
+                                        title: s.title,
+                                        artist: s.artist,
+                                        cover: s.artworkUrl || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=200&h=200',
+                                        url: s.previewUrl!
+                                      });
+                                    }
+                                  }}
+                                  className={`rounded-xl border p-2.5 transition-colors ${
+                                    currentTrack?.title === s.title && isPlaying
+                                      ? 'border-mimi-green bg-mimi-green/20 text-mimi-green'
+                                      : 'border-white/10 bg-white/5 text-gray-300 hover:border-mimi-green/40 hover:text-mimi-green'
+                                  }`}
+                                  title={`Nghe thử ${s.title}`}
+                                  aria-label={`Nghe thử ${s.title}`}
+                                >
+                                  {currentTrack?.title === s.title && isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                </button>
+                              </Magnetic>
                             )}
                             <button
                               type="button"
@@ -274,7 +280,7 @@ export function TrendingChart() {
                               )}
                             </button>
                           </div>
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                   )}
@@ -295,7 +301,7 @@ export function TrendingChart() {
                   </div>
                 </div>
               </TiltCard>
-            </Reveal>
+            </MotionReveal>
           </div>
         </div>
       </div>

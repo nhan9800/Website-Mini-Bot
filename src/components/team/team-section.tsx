@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Reveal } from '@/components/ui/reveal';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 import { ShieldCheck, UserCheck, Crown, Code2 } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
 const STATUS_COLORS: Record<string, string> = {
@@ -44,7 +44,7 @@ export function TeamSection() {
   return (
     <section id="doi-ngu" className="scroll-mt-24 border-y border-white/5 bg-white/[0.02] py-24">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <Reveal className="section-heading space-y-4">
+        <MotionReveal variant="mask" className="section-heading space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-mimi-green/40 bg-mimi-green/10 px-3.5 py-1 text-xs font-bold text-mimi-green shadow-[0_0_15px_rgba(46,204,113,0.25)]">
             <ShieldCheck className="h-4 w-4" />
             <span>Nhận diện tự động qua Role Discord</span>
@@ -55,7 +55,7 @@ export function TeamSection() {
           <p className="text-gray-400">
             Danh sách thành viên được tự động đồng bộ từ Role trong server Discord chính thức của MIMI.
           </p>
-        </Reveal>
+        </MotionReveal>
 
         {team.length === 0 && (
           <p role="status" className="text-center text-sm text-gray-400">
@@ -95,7 +95,7 @@ export function TeamSection() {
             }
 
             return (
-              <Reveal key={member.id} delay={idx * 100}>
+              <MotionReveal key={member.id} variant="scale" delay={idx * 0.1}>
                 <div
                   className={`${vipClass} ${borderHoverClass} relative group flex h-full flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 overflow-hidden`}
                 >
@@ -148,7 +148,7 @@ export function TeamSection() {
                     </p>
                   </div>
                 </div>
-              </Reveal>
+              </MotionReveal>
             );
           })}
         </div>
@@ -156,10 +156,10 @@ export function TeamSection() {
         {/* --- ADMIN & SUPPORT TEAM --- */}
         {team.filter(m => m.group === 'admin' || m.group === 'community').length > 0 && (
           <div className="mt-20">
-            <Reveal className="mx-auto mb-10 max-w-2xl space-y-3 text-center">
+            <MotionReveal variant="clip" className="mx-auto mb-10 max-w-2xl space-y-3 text-center">
               <h3 className="text-2xl font-bold text-white">Đội Ngũ Quản Trị & Hỗ Trợ</h3>
               <p className="text-sm text-gray-400">Những người hùng thầm lặng điều phối sự kiện và hỗ trợ giải đáp thắc mắc của cộng đồng MIMI.</p>
-            </Reveal>
+            </MotionReveal>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {team
@@ -179,7 +179,7 @@ export function TeamSection() {
                   return (a.role || '').localeCompare(b.role || '');
                 })
                 .map((member, idx) => (
-                <Reveal key={member.id} delay={idx * 50}>
+                <MotionReveal key={member.id} variant="drift" delay={idx * 0.05}>
                   <div
                     className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04]"
                     style={{
@@ -220,7 +220,7 @@ export function TeamSection() {
                       </p>
                     </div>
                   </div>
-                </Reveal>
+                </MotionReveal>
               ))}
             </div>
           </div>
