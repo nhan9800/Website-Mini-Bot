@@ -11,28 +11,37 @@ export const metadata: Metadata = {
 
 const latestChanges = [
   {
+    label: 'Chữ & dấu',
+    title: 'Đổi hệ chữ cho tiếng Việt rõ và có cá tính.',
+    detail: 'Bricolage Grotesque hỗ trợ tiếng Việt được dùng xuyên suốt giao diện; IBM Plex Mono dành cho mã lệnh, số liệu và trạng thái. Các dấu tiếng Việt giữ đúng hình dạng ở mọi màn hình.',
+  },
+  {
+    label: 'Chuyển động',
+    title: 'Thông báo và reveal có nhịp chuyển cảnh thống nhất.',
+    detail: 'Các khối nội dung xuất hiện theo viewport bằng Framer Motion, thông báo có backdrop và exit animation, còn lớp nền aurora chuyển động rất nhẹ. Animation tự dọn khi rời route để không nhân bản timeline.',
+  },
+  {
     label: 'Không gian 3D',
-    title: 'Gặp Mimi trong một phòng nhạc mới.',
-    detail: 'Mô hình robot từ bộ ví dụ Three.js được phối màu mint riêng, có animation nhảy và vẫy tay. Chọn thêm đĩa nhạc hoặc tai nghe rồi kéo để khám phá từ nhiều góc.',
+    title: 'Mimi tự chuyển động ngay khi mở trang.',
+    detail: 'Robot, đĩa nhạc và tai nghe tự tải trên desktop lẫn mobile; không còn nút bắt đầu hoặc bật/tắt chuyển động. Cảnh vẫn dừng render khi khuất màn hình hoặc tab ẩn để tiết kiệm GPU.',
   },
   {
-    label: 'Tương tác',
-    title: 'Chuyển động theo lựa chọn của bạn.',
-    detail: 'Nút tạm dừng giữ nguyên góc nhìn. Thiết lập giảm chuyển động được tôn trọng; cảnh tự ngừng khi ra khỏi màn hình hoặc chuyển tab. Thiết bị không hỗ trợ WebGL hiển thị ảnh minh họa.',
-  },
-  {
-    label: 'Giao diện',
-    title: 'Đồng bộ từ trang chủ đến các công cụ.',
-    detail: 'Bố cục tính năng mới, màu mint thống nhất, tiêu đề và bề mặt có chiều sâu trên cả giao diện sáng và tối. Các trang lệnh, cộng đồng, hỗ trợ, đánh giá và dashboard cùng nhận diện mới.',
-  },
-  {
-    label: 'Tải trang',
-    title: 'Mô hình tải từ website, chỉ một canvas hoạt động.',
-    detail: 'Tệp mô hình được đóng gói tại website, giới hạn độ phân giải dựng hình và dừng vòng lặp khi tạm nghỉ. Dữ liệu đánh giá và khóa dashboard tiếp tục được bảo toàn qua các lần cập nhật.',
+    label: 'UX/UI',
+    title: 'Các route dùng chung một nhịp thị giác.',
+    detail: 'Header, card, focus ring, CTA và khoảng cách được cân lại theo cùng hệ token mint. Theme sáng/tối, dashboard, trang lệnh, cộng đồng và hỗ trợ cùng giữ nguyên luồng dữ liệu thật.',
   },
 ];
 
 const history = [
+  {
+    version: '2.6.0',
+    date: '17/10/2026',
+    title: 'Cảnh 3D Mimi và dữ liệu cộng đồng',
+    items: [
+      'Thêm RobotExpressive, đĩa nhạc và tai nghe với tương tác kéo xoay.',
+      'Bảo toàn 19 đánh giá cộng đồng và bộ dữ liệu runtime khi nhận bản dựng trên cPanel.',
+    ],
+  },
   {
     version: '2.5.0',
     date: '02/10/2026',

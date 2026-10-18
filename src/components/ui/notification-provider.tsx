@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -38,6 +39,7 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [modal, setModal] = useState<(NotificationOptions & { isOpen: boolean }) | null>(null);
+  const reducedMotion = useReducedMotion();
 
   const close = useCallback(() => {
     setModal((prev) => (prev ? { ...prev, isOpen: false } : null));
@@ -151,18 +153,35 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     <NotificationContext.Provider value={{ show, success, warning, error, info, close }}>
       {children}
 
-      {/* Modal Popup khớp 100% hình mẫu đính kèm (Ảnh 2) nhưng hiện đại & mượt mà */}
-      {modal?.isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <AnimatePresence initial={false}>
+        {modal?.isOpen && (
+        <motion.div
+          key="mimi-notification"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+          initial={reducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reducedMotion ? { opacity: 0 } : { opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.2 }}
+        >
           {/* Backdrop Blur */}
-          <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-200 animate-in fade-in"
+          <motion.button
+            type="button"
+            aria-label="Đóng thông báo"
+            className="fixed inset-0 cursor-default bg-black/70 backdrop-blur-sm"
             onClick={close}
+            tabIndex={-1}
           />
 
           {/* Modal Container */}
-          <div
-            className="relative w-full max-w-[420px] overflow-hidden rounded-3xl border border-white/10 bg-[#0f1422] p-7 text-center shadow-2xl backdrop-blur-2xl transition-all duration-200 animate-in zoom-in-95 fade-in"
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mimi-notification-title"
+            className="relative w-full max-w-[420px] overflow-hidden rounded-3xl border border-white/10 bg-[#0f1422] p-7 text-center shadow-2xl backdrop-blur-2xl"
+            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
             style={{
               boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 50px rgba(16, 185, 129, 0.12)',
             }}
@@ -206,7 +225,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             </div>
 
             {/* Main Title */}
-            <h3 className="text-2xl font-black tracking-tight text-white mt-2 mb-1">
+            <h3 id="mimi-notification-title" className="mt-2 mb-1 text-2xl font-black tracking-tight text-white">
               {modal.title}
             </h3>
 
@@ -227,9 +246,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             >
               {modal.confirmText || 'Đã hiểu'}
             </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
     </NotificationContext.Provider>
   );
 }

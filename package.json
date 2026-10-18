@@ -1,6 +1,6 @@
 {
   "name": "website-mini-bot",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "private": true,
   "description": "Website & Dashboard chính thức của Mimi — Discord Music & Community Bot",
   "main": "server.js",

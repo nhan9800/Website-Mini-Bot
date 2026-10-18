@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -9,18 +9,19 @@ import { env } from "@/lib/env";
 import { AuthProvider } from "@/components/layout/auth-provider";
 import { NotificationProvider } from "@/components/ui/notification-provider";
 
-// Be Vietnam Pro: bộ font thiết kế riêng cho tiếng Việt — dấu má chuẩn, đẹp ở mọi weight.
-const beVietnam = Be_Vietnam_Pro({
+// Bricolage Grotesque: display sans có cá tính, hỗ trợ tiếng Việt và vẫn rõ ở cỡ nhỏ.
+const brico = Bricolage_Grotesque({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-mimi",
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
+// IBM Plex Mono: số liệu và lệnh có nhịp chữ rõ, hỗ trợ dấu tiếng Việt.
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600"],
-  variable: "--font-jetbrains",
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -75,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={`${beVietnam.variable} ${jetbrains.variable}`}>
+    <html lang="vi" className={`${brico.variable} ${plexMono.variable}`}>
       <body className="min-h-screen bg-background font-sans text-gray-100 antialiased">
         <AuthProvider>
           <NotificationProvider>
@@ -83,7 +84,7 @@ export default function RootLayout({
             <div className="mimi-aurora" aria-hidden />
             <div className="mimi-grid" aria-hidden />
             <Header />
-            <main className="relative z-10 pt-24 pb-32">{children}</main>
+            <main className="page-shell relative z-10 pt-24 pb-32">{children}</main>
             <WebPlayer />
             <FeedbackWidget />
             <Footer />
