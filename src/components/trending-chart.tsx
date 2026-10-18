@@ -219,8 +219,12 @@ export function TrendingChart() {
                             {[0, 1, 2].map((b) => (
                               <span
                                 key={b}
-                                className="w-1 origin-bottom animate-soundwave rounded-full bg-gradient-to-t from-mimi-green to-mimi-cyan"
-                                style={{ height: '100%', animationDelay: `${b * 0.15}s` }}
+                                className="trending-equalizer w-1 origin-bottom rounded-full bg-gradient-to-t from-mimi-green to-mimi-cyan"
+                                style={{
+                                  height: '100%',
+                                  '--trending-animation-delay': `${b * 0.15}s`,
+                                  '--trending-animation-duration': `${0.82 + b * 0.12}s`,
+                                } as React.CSSProperties}
                               />
                             ))}
                           </div>
