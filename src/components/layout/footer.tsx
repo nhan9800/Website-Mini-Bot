@@ -9,6 +9,7 @@ const exploreLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/status', label: 'Trạng thái hệ thống' },
   { href: '/partners', label: 'Cộng đồng' },
+  { href: '/pricing', label: 'Thuê Mimi Shield' },
 ];
 
 const resourceLinks = [

@@ -28,7 +28,12 @@ const latestChanges = [
   {
     label: 'UX/UI',
     title: 'Các route dùng chung một nhịp thị giác.',
-    detail: 'Header, card, focus ring, CTA và khoảng cách được cân lại theo cùng hệ token mint. Theme sáng/tối, dashboard, trang lệnh, cộng đồng và hỗ trợ cùng giữ nguyên luồng dữ liệu thật.',
+    detail: 'Header, card, focus ring, CTA và khoảng cách được cân lại theo cùng hệ token mint. Thêm chuyển cảnh route, skip link, sitemap/robots và lối vào Mimi Shield rõ ràng từ desktop lẫn mobile.',
+  },
+  {
+    label: 'Thanh toán',
+    title: 'Thuê Mimi Shield và kích hoạt bản quyền không bị thất lạc.',
+    detail: 'Khôi phục lối vào Bảng Giá trên điều hướng chính, đồng bộ catalog gói từ bot, giữ VietQR/manual approval, chặn mã QR placeholder và hiển thị đúng gói cũ kể cả khi thiếu planName.',
   },
 ];
 

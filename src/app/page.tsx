@@ -225,6 +225,24 @@ export default function HomePage() {
               );
             })}
           </div>
+
+          <Reveal delay={180} className="mt-6">
+            <div className="shield-cta group flex flex-col gap-6 rounded-[2rem] border border-mimi-green/25 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div className="flex items-start gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-glow">
+                  <Shield className="h-6 w-6" />
+                </span>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-mimi-green">Mimi Shield · Anti-Raid</p>
+                  <h3 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Bảo vệ máy chủ trước khi sự cố xảy ra.</h3>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Thuê bot anti-raid riêng, chọn thời hạn, thanh toán VietQR và kích hoạt theo Server ID trong cùng một luồng.</p>
+                </div>
+              </div>
+              <Link href="/pricing" className="btn-secondary shrink-0 !px-5 !py-3 !text-sm">
+                Xem gói &amp; thanh toán <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
