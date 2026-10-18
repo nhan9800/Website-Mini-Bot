@@ -54,7 +54,9 @@ export function MotionReveal({
   className,
   variant = 'lift',
   delay = 0,
-  amount = 0.18,
+  // A directory can be taller than the viewport. Requiring a percentage of its
+  // total height can leave the entire block hidden on short mobile screens.
+  amount = 0,
   ...props
 }: MotionRevealProps) {
   // Section choreography is part of Mimi's branded navigation language. Keep
@@ -113,6 +115,10 @@ export function Magnetic({ children, className, strength = 0.16 }: MagneticProps
   const pointerY = useMotionValue(0);
   const x = useSpring(pointerX, { stiffness: 420, damping: 28, mass: 0.45 });
   const y = useSpring(pointerY, { stiffness: 420, damping: 28, mass: 0.45 });
+  const reset = () => {
+    pointerX.set(0);
+    pointerY.set(0);
+  };
 
   useEffect(() => {
     if (reduced) {
@@ -127,15 +133,13 @@ export function Magnetic({ children, className, strength = 0.16 }: MagneticProps
       className={className}
       style={reduced ? undefined : { x, y }}
       onPointerMove={(event) => {
-        if (reduced || !ref.current) return;
+        if (reduced || event.pointerType !== 'mouse' || !ref.current) return;
         const rect = ref.current.getBoundingClientRect();
         pointerX.set((event.clientX - (rect.left + rect.width / 2)) * strength);
         pointerY.set((event.clientY - (rect.top + rect.height / 2)) * strength);
       }}
-      onPointerLeave={() => {
-        pointerX.set(0);
-        pointerY.set(0);
-      }}
+      onPointerLeave={reset}
+      onPointerCancel={reset}
     >
       {children}
     </motion.div>

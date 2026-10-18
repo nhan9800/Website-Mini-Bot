@@ -83,7 +83,7 @@ export default function PartnersPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {communities.map((community, idx) => (
-                <MotionReveal key={community.id} variant="flip" delay={idx * 0.08}>
+                <MotionReveal key={community.id} variant="flip" delay={(idx % 3) * 0.08}>
                   <article className="glass-panel card-lift h-full rounded-3xl p-5 transition-[border-color,box-shadow,transform] hover:border-mimi-green/40">
                     <div className="flex items-center gap-4">
                       {community.iconUrl ? (
@@ -137,7 +137,7 @@ export default function PartnersPage() {
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {partners.map((partner, idx) => (
-              <MotionReveal key={partner.id} variant="scale" delay={idx * 0.1}>
+              <MotionReveal key={partner.id} variant="scale" delay={(idx % 3) * 0.08}>
                 <div className="glass-panel card-lift group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-6 text-center transition-[border-color,box-shadow] duration-500 hover:border-yellow-500/40 hover:shadow-[0_0_40px_rgba(234,179,8,0.15)] sm:p-8">
                   {/* Glowing background behind avatar */}
                   <div className="absolute left-1/2 top-16 sm:top-20 h-32 w-32 -translate-x-1/2 rounded-full bg-yellow-500/20 blur-[50px] transition-colors ease-[cubic-bezier(0.16,1,0.3,1)] duration-500 group-hover:bg-yellow-500/40" />

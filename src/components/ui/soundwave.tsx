@@ -24,10 +24,11 @@ export function Soundwave({ playing, bars = 20, className = '' }: SoundwaveProps
           className={`soundwave-bar w-1.5 origin-bottom rounded-full bg-gradient-to-t from-mimi-green to-mimi-cyan ${playing ? 'animate-soundwave' : ''}`}
           style={{
             height: `${h}%`,
-            animation: playing ? `soundwave ${0.9 + (i % 5) * 0.12}s ease-in-out ${i * 0.06}s infinite` : 'none',
+            '--soundwave-duration': `${0.9 + (i % 5) * 0.12}s`,
+            '--soundwave-delay': `${i * 0.06}s`,
             transform: playing ? undefined : 'scaleY(0.22)',
-            transition: 'transform 0.4s ease',
-          }}
+            transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          } as React.CSSProperties}
         />
       ))}
     </div>

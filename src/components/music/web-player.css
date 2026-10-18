@@ -1,0 +1,2 @@
+.web-player-record { animation: webPlayerRecordSpin 8s linear infinite; }
+@keyframes webPlayerRecordSpin { to { transform: rotate(360deg); } }
