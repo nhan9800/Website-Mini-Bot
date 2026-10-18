@@ -2,13 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { Reveal } from '@/components/ui/reveal';
-import { ShieldCheck, Handshake } from 'lucide-react';
+import { ShieldCheck, Handshake, Users, Zap, Ticket, BarChart3, Radio } from 'lucide-react';
 import type { TeamMember } from '@/app/api/team/route';
+import type { CommunitySummary } from '@/app/api/communities/route';
 
 export default function PartnersPage() {
   const [partners, setPartners] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [unavailable, setUnavailable] = useState(false);
+  const [communities, setCommunities] = useState<CommunitySummary[]>([]);
+  const [communityLoading, setCommunityLoading] = useState(true);
+  const [communityUnavailable, setCommunityUnavailable] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,6 +36,19 @@ export default function PartnersPage() {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/communities', { cache: 'no-store', signal: controller.signal })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!controller.signal.aborted && res.ok && data?.ok && Array.isArray(data.communities)) setCommunities(data.communities);
+        else if (!controller.signal.aborted) setCommunityUnavailable(true);
+      })
+      .catch(() => { if (!controller.signal.aborted) setCommunityUnavailable(true); })
+      .finally(() => { if (!controller.signal.aborted) setCommunityLoading(false); });
+    return () => controller.abort();
+  }, []);
+
   return (
     <div className="min-h-screen pt-12 pb-24">
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -47,6 +64,54 @@ export default function PartnersPage() {
             Danh sách cá nhân và cộng đồng đối tác được cung cấp từ dữ liệu đội ngũ Mimi.
           </p>
         </Reveal>
+
+        <section aria-labelledby="linked-communities" className="space-y-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-mimi-green"><Radio className="h-3.5 w-3.5" /> Dữ liệu Discord trực tiếp</p>
+              <h2 id="linked-communities" className="mt-2 text-2xl font-extrabold text-white">Cộng đồng đang kết nối với Mimi</h2>
+            </div>
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-400">Cập nhật tự động từ bot</span>
+          </div>
+          {communityLoading ? (
+            <div className="h-28 animate-pulse rounded-3xl border border-white/10 bg-white/[0.03]" />
+          ) : communities.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-sm text-gray-400">
+              {communityUnavailable ? 'Bot chưa phản hồi dữ liệu cộng đồng. Vui lòng thử lại sau.' : 'Chưa có server nào được chủ bot cho phép hiển thị công khai.'}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {communities.map((community, idx) => (
+                <Reveal key={community.id} delay={idx * 80}>
+                  <article className="glass-panel card-lift h-full rounded-3xl p-5 transition-all hover:border-mimi-green/40">
+                    <div className="flex items-center gap-4">
+                      {community.iconUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={community.iconUrl} alt="" className="h-14 w-14 rounded-2xl border border-white/10 object-cover" />
+                      ) : (
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-mimi-green/30 bg-mimi-green/10 text-xl font-black text-mimi-green">{community.name.charAt(0)}</div>
+                      )}
+                      <div className="min-w-0">
+                        <h3 className="truncate font-bold text-white">{community.name}</h3>
+                        <p className="mt-1 flex items-center gap-1.5 text-xs text-gray-400"><Users className="h-3.5 w-3.5" /> {community.memberCount.toLocaleString('vi-VN')} thành viên</p>
+                      </div>
+                    </div>
+                    <div className="mt-5 grid grid-cols-3 gap-2 text-center text-[11px]">
+                      <div className="rounded-xl bg-white/[0.04] p-2"><strong className="block text-sm text-mimi-green">{community.onlineCount ?? '—'}</strong><span className="text-gray-500">đang online</span></div>
+                      <div className="rounded-xl bg-white/[0.04] p-2"><strong className="block text-sm text-mimi-amber">{community.boostCount}</strong><span className="text-gray-500">boost</span></div>
+                      <div className="rounded-xl bg-white/[0.04] p-2"><strong className="block text-sm text-mimi-cyan">{community.id.slice(-4)}</strong><span className="text-gray-500">server ID</span></div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-gray-400">
+                      {community.features.music && <span className="inline-flex items-center gap-1 rounded-full bg-mimi-green/10 px-2 py-1 text-mimi-green"><Zap className="h-3 w-3" /> Nhạc</span>}
+                      {community.features.ticket && <span className="inline-flex items-center gap-1 rounded-full bg-mimi-purple/10 px-2 py-1 text-mimi-violet"><Ticket className="h-3 w-3" /> Ticket</span>}
+                      {community.features.level && <span className="inline-flex items-center gap-1 rounded-full bg-mimi-cyan/10 px-2 py-1 text-mimi-cyan"><BarChart3 className="h-3 w-3" /> Level</span>}
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          )}
+        </section>
 
         {loading ? (
           <div className="flex h-40 items-center justify-center">

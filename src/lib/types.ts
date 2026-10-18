@@ -63,6 +63,36 @@ export interface GuildSettingsResponse {
   };
 }
 
+/** GET /internal/guilds/:id/stats — số liệu tổng hợp của đúng server. */
+export interface GuildStatsResponse {
+  ok: boolean;
+  stats: {
+    guild: {
+      id: string;
+      name: string;
+      iconUrl: string | null;
+      memberCount: number;
+      boostCount: number;
+    };
+    members: { total: number; humans: number | null; bots: number | null; online: number | null };
+    channels: { total: number; text: number; voice: number; category: number } | null;
+    roles: number | null;
+    music: { connected: boolean; queueCount: number; hasTrack: boolean; voiceChannelId: string | null };
+    features: {
+      setup: boolean;
+      verify: boolean;
+      ticket: boolean;
+      feedback: boolean;
+      levelChat: boolean;
+      levelVoice: boolean;
+      music: boolean;
+    };
+    levels: { chatUsers: number; voiceUsers: number; monthlyChat: boolean; monthlyVoice: boolean };
+    invites: { eventEnabled: boolean; trackedMembers: number; eventMembers: number };
+    updatedAt: string;
+  };
+}
+
 /** GET /internal/commands */
 export interface ApiCommand {
   name: string;

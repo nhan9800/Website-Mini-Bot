@@ -44,6 +44,14 @@
       "namedRegex": "^/api/guilds/(?<nxtPguildId>[^/]+?)/settings(?:/)?$"
     },
     {
+      "page": "/api/guilds/[guildId]/stats",
+      "regex": "^/api/guilds/([^/]+?)/stats(?:/)?$",
+      "routeKeys": {
+        "nxtPguildId": "nxtPguildId"
+      },
+      "namedRegex": "^/api/guilds/(?<nxtPguildId>[^/]+?)/stats(?:/)?$"
+    },
+    {
       "page": "/dashboard/[guildId]",
       "regex": "^/dashboard/([^/]+?)(?:/)?$",
       "routeKeys": {
