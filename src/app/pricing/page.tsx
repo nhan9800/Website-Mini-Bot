@@ -17,7 +17,12 @@ import {
   QrCode,
   ExternalLink,
   Crown,
-  X
+  X,
+  AlertTriangle,
+  CircleX,
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { env } from '@/lib/env';
 import { StatusModal } from '@/components/ui/status-modal';
@@ -507,7 +512,14 @@ export default function PricingPage() {
               disabled={checkLoading}
               className="w-full py-3 rounded-xl bg-mimi-green/20 border border-mimi-green/40 text-mimi-green font-bold text-sm hover:bg-mimi-green/30 transition-colors"
             >
-              {checkLoading ? 'Đang tra cứu...' : '🔍 Tra Cứu Ngay'}
+              {checkLoading ? (
+                'Đang tra cứu...'
+              ) : (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Search className="h-4 w-4" aria-hidden="true" />
+                  Tra Cứu Ngay
+                </span>
+              )}
             </button>
 
             {checkResult && (
@@ -526,7 +538,10 @@ export default function PricingPage() {
                     </div>
                   ) : (
                     <div className="text-red-400 space-y-1">
-                      <div className="font-bold">⚠️ Máy chủ chưa kích hoạt hoặc đã hết hạn!</div>
+                      <div className="font-bold inline-flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        Máy chủ chưa kích hoạt hoặc đã hết hạn!
+                      </div>
                       <div className="text-xs text-gray-400">Vui lòng mua gói hoặc kích hoạt mã key bên dưới.</div>
                     </div>
                   )
@@ -574,18 +589,31 @@ export default function PricingPage() {
               disabled={redeemLoading}
               className="w-full py-3 rounded-xl bg-mimi-green/20 border border-mimi-green/40 text-mimi-green font-bold text-sm hover:bg-mimi-green/30 transition-colors"
             >
-              {redeemLoading ? 'Đang kích hoạt...' : '🔑 Kích Hoạt Bản Quyền'}
+              {redeemLoading ? (
+                'Đang kích hoạt...'
+              ) : (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <KeyRound className="h-4 w-4" aria-hidden="true" />
+                  Kích Hoạt Bản Quyền
+                </span>
+              )}
             </button>
 
             {redeemResult && (
               <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10 text-sm">
                 {redeemResult.ok ? (
                   <div className="space-y-1.5 text-mimi-green">
-                    <div className="font-bold">🎉 Kích Hoạt Thành Công!</div>
+                    <div className="font-bold inline-flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" aria-hidden="true" />
+                      Kích Hoạt Thành Công!
+                    </div>
                     <div className="text-xs text-gray-300">Đã cộng: +{redeemResult.daysAdded} ngày bảo vệ.</div>
                   </div>
                 ) : (
-                  <div className="text-red-400 text-xs">❌ {redeemResult.error || 'Kích hoạt thất bại.'}</div>
+                  <div className="text-red-400 text-xs inline-flex items-center gap-2">
+                    <CircleX className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    {redeemResult.error || 'Kích hoạt thất bại.'}
+                  </div>
                 )}
               </div>
             )}
@@ -608,8 +636,12 @@ export default function PricingPage() {
           <button
             onClick={() => setShowAdminPanel(!showAdminPanel)}
             className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 transition-colors"
+            aria-expanded={showAdminPanel}
           >
-            {showAdminPanel ? 'Thu Gọn Bảng Admin ▲' : 'Mở Bảng Xác Nhận Admin ▼'}
+            <span className="inline-flex items-center gap-2">
+              {showAdminPanel ? 'Thu Gọn Bảng Admin' : 'Mở Bảng Xác Nhận Admin'}
+              {showAdminPanel ? <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" /> : <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />}
+            </span>
           </button>
         </div>
 
@@ -634,10 +666,10 @@ export default function PricingPage() {
                   onChange={(e) => setAdminPlan(e.target.value)}
                   className="w-full rounded-xl border border-white/10 bg-[#121422] px-4 py-2.5 text-sm text-white focus:border-yellow-400 focus:outline-none"
                 >
-                  <option value="1m">🌟 Gói 1 Tháng (50.000đ - 30 ngày)</option>
-                  <option value="3m">💎 Gói 3 Tháng (140.000đ - 90 ngày)</option>
-                  <option value="12m">👑 Gói 12 Tháng (390.000đ - 365 ngày)</option>
-                  <option value="permanent">♾️ Gói Vĩnh Viễn (Lifetime VIP)</option>
+                  <option value="1m">Gói 1 Tháng (50.000đ - 30 ngày)</option>
+                  <option value="3m">Gói 3 Tháng (140.000đ - 90 ngày)</option>
+                  <option value="12m">Gói 12 Tháng (390.000đ - 365 ngày)</option>
+                  <option value="permanent">Gói Vĩnh Viễn (Lifetime VIP)</option>
                 </select>
               </div>
             </div>
@@ -671,7 +703,14 @@ export default function PricingPage() {
                 disabled={adminLoading}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
               >
-                {adminLoading ? 'Đang xử lý...' : '✅ Xác Nhận Đã Nhận Tiền & Kích Hoạt Server'}
+                {adminLoading ? (
+                  'Đang xử lý...'
+                ) : (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                    Xác Nhận Đã Nhận Tiền & Kích Hoạt Server
+                  </span>
+                )}
               </button>
 
               <button
@@ -679,7 +718,14 @@ export default function PricingPage() {
                 disabled={adminLoading}
                 className="w-full py-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 text-yellow-400 font-bold text-sm transition-all flex items-center justify-center gap-2"
               >
-                {adminLoading ? 'Đang tạo...' : '🔑 Tạo Mã License Key Mới'}
+                {adminLoading ? (
+                  'Đang tạo...'
+                ) : (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <KeyRound className="h-4 w-4" aria-hidden="true" />
+                    Tạo Mã License Key Mới
+                  </span>
+                )}
               </button>
             </div>
 
@@ -713,7 +759,8 @@ export default function PricingPage() {
                   </div>
                 ) : (
                   <div className="text-red-400 text-xs flex items-center gap-2">
-                    <span>❌ {adminResult.error || 'Thao tác thất bại.'}</span>
+                    <CircleX className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>{adminResult.error || 'Thao tác thất bại.'}</span>
                   </div>
                 )}
               </div>
@@ -840,8 +887,11 @@ export default function PricingPage() {
             </div>
 
             <div className="text-[11px] text-gray-400 bg-mimi-green/10 border border-mimi-green/20 p-3 rounded-xl">
-              ℹ️ <b>Sau khi chuyển khoản:</b> Vui lòng gửi bill cho Admin qua Discord để nhận Key kích hoạt hoặc hệ
-              thống duyệt kích hoạt trực tiếp sau khi xác nhận thanh toán.
+              <span className="inline-flex items-start gap-2">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-mimi-green" aria-hidden="true" />
+                <span><b>Sau khi chuyển khoản:</b> Vui lòng gửi bill cho Admin qua Discord để nhận Key kích hoạt hoặc hệ
+                thống duyệt kích hoạt trực tiếp sau khi xác nhận thanh toán.</span>
+              </span>
             </div>
 
             {/* Nút Đóng Cửa Sổ ở dưới đáy */}
@@ -849,7 +899,10 @@ export default function PricingPage() {
               onClick={() => setIsModalOpen(false)}
               className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all"
             >
-              ✕ Đóng Cửa Sổ
+              <span className="inline-flex items-center justify-center gap-2">
+                <X className="h-4 w-4" aria-hidden="true" />
+                Đóng Cửa Sổ
+              </span>
             </button>
           </motion.div>
         </motion.div>
