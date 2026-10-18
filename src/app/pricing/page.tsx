@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { env } from '@/lib/env';
 import { StatusModal } from '@/components/ui/status-modal';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 interface Plan {
   id: string;
@@ -381,7 +382,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="space-y-4 max-w-3xl mb-10">
+      <MotionReveal variant="mask" className="space-y-4 max-w-3xl mb-10">
         <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
           <Shield className="h-4 w-4" />
           Mimi Shield · Bot anti-raid riêng
@@ -416,18 +417,18 @@ export default function PricingPage() {
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
-      </div>
+      </MotionReveal>
 
-      <div className="mb-10 rounded-2xl border border-mimi-green/25 bg-mimi-green/[0.035] px-6 py-5">
+      <MotionReveal variant="drift" delay={0.08} className="mb-10 rounded-2xl border border-mimi-green/25 bg-mimi-green/[0.035] px-6 py-5">
         <h2 className="mb-2 flex items-center gap-2 font-bold text-white"><Music className="h-5 w-5 shrink-0 text-mimi-green" /> Mimi nhạc & cộng đồng luôn miễn phí</h2>
         <p className="max-w-3xl text-sm leading-relaxed text-gray-300">Nghe nhạc, phát 24/7, autoplay, cấp độ và minigame xu không cần key trả phí. Mimi Shield cung cấp công cụ anti-raid riêng; hiệu quả xử lý phụ thuộc cấu hình, quyền Discord và tình trạng kết nối.</p>
-      </div>
+      </MotionReveal>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-4 mb-20 items-stretch overflow-visible">
-        {catalog.map((p) => {
+      <MotionReveal variant="scale" delay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 pb-4 mb-20 items-stretch overflow-visible">
+        {catalog.map((p, index) => {
           return (
-            <div key={p.id} className="h-full rounded-2xl overflow-visible">
+            <MotionReveal key={p.id} variant={index === 1 ? 'clip' : 'flip'} delay={index * 0.08} className="h-full rounded-2xl overflow-visible">
               <div
                 className={`relative flex h-full flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
                   p.popular
@@ -477,13 +478,13 @@ export default function PricingPage() {
                   Chọn gói {p.name}
                 </button>
               </div>
-            </div>
+            </MotionReveal>
           );
         })}
-      </div>
+      </MotionReveal>
 
       {/* HWID Checker & Redeem Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
+      <MotionReveal variant="clip" delay={0.08} className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
         {/* Check HWID */}
         <div className="rounded-3xl border border-white/10 bg-[#0a0c16] p-8">
           <div className="flex items-center gap-3 mb-4">
@@ -618,7 +619,7 @@ export default function PricingPage() {
             )}
           </div>
         </div>
-      </div>
+      </MotionReveal>
 
       {/* Admin Panel Duyệt Tiền & Cấp Key */}
       <div className="mt-12 rounded-3xl border border-white/10 bg-[#070913] p-8">

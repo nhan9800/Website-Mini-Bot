@@ -4,6 +4,7 @@ import { Star, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import { loadFeedback, feedbackStats } from '@/lib/feedback-store';
 import { ReviewList } from '@/components/feedback/review-list';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 export const metadata: Metadata = {
   title: 'Đánh Giá Từ Cộng Đồng | MIMI BOT',
@@ -21,7 +22,7 @@ export default function ReviewsPage() {
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="page-intro space-y-5">
+        <MotionReveal variant="mask" className="page-intro space-y-5">
           <div className="inline-flex items-center gap-2 text-sm font-medium text-mimi-green">
             <MessageSquare className="h-4 w-4" aria-hidden="true" />
             Cộng đồng Mimi
@@ -49,9 +50,11 @@ export default function ReviewsPage() {
             </div>
             <p className="text-sm text-gray-400">{unavailable ? 'Chưa tải được dữ liệu' : `${stats.totalReviews} đánh giá đã lưu`}</p>
           </div>
-        </div>
+        </MotionReveal>
 
-        <ReviewList reviews={reviews} unavailable={unavailable} />
+        <MotionReveal variant="clip" delay={0.12}>
+          <ReviewList reviews={reviews} unavailable={unavailable} />
+        </MotionReveal>
       </div>
     </div>
   );

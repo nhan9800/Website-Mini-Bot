@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useBotStatus } from '@/lib/use-bot-status';
 import { formatCompact, formatUptime } from '@/lib/format';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 import type { CommunitySummary } from '@/app/api/communities/route';
 
 function pingQuality(ping: number): { label: string; color: string } {
@@ -58,7 +59,7 @@ export default function StatusPage() {
     <div className="relative min-h-screen py-14 overflow-hidden">
       <div className="relative z-10 mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
         {/* ── Đầu trang ─────────────────────────────────────────── */}
-        <div className="flex flex-col justify-between gap-6 border-b border-white/10 pb-8 sm:flex-row sm:items-center">
+        <MotionReveal variant="mask" className="flex flex-col justify-between gap-6 border-b border-white/10 pb-8 sm:flex-row sm:items-center">
           <div className="space-y-3">
             <div
               className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider ${
@@ -97,11 +98,11 @@ export default function StatusPage() {
               {lastUpdated ? ` (${lastUpdated.toLocaleTimeString('vi-VN')})` : ''}
             </span>
           </button>
-        </div>
+        </MotionReveal>
 
         {/* ── Cảnh báo lỗi ──────────────────────────────────────── */}
         {error && !loading && (
-          <div className="glass-panel flex items-start gap-4 rounded-3xl border-mimi-pink/30 p-6">
+          <MotionReveal variant="drift" className="glass-panel flex items-start gap-4 rounded-3xl border-mimi-pink/30 p-6">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mimi-pink/15 text-mimi-pink">
               <AlertTriangle className="h-5 w-5" />
             </div>
@@ -112,11 +113,11 @@ export default function StatusPage() {
                 Website vẫn hoạt động bình thường; kết nối Web ↔ Bot đang gián đoạn.
               </p>
             </div>
-          </div>
+          </MotionReveal>
         )}
 
         {/* ── Thẻ số liệu ───────────────────────────────────────── */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <MotionReveal variant="scale" delay={0.06} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Ping */}
           <div className="glass-panel-glow gradient-ring relative overflow-hidden group space-y-3 rounded-3xl p-6 transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(46,204,113,0.15)]">
             <div className="flex items-center justify-between relative z-10">
@@ -204,9 +205,10 @@ export default function StatusPage() {
               <span>Số kết nối voice hiện tại</span>
             </p>
           </div>
-        </div>
+        </MotionReveal>
 
         {/* ── Các server đang phục vụ ───────────────────────────── */}
+        <MotionReveal variant="clip" delay={0.1}>
         <section aria-labelledby="served-communities" className="glass-panel-glow gradient-ring relative overflow-hidden space-y-6 rounded-[2rem] p-6 sm:p-8">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-mimi-purple/[0.06] via-transparent to-mimi-cyan/[0.04]" />
           <div className="relative z-10 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-6">
@@ -243,8 +245,10 @@ export default function StatusPage() {
             )}
           </div>
         </section>
+        </MotionReveal>
 
         {/* ── Bảng hạ tầng ─────────────────────────────────────── */}
+        <MotionReveal variant="flip" delay={0.12}>
         <div className="glass-panel-glow gradient-ring relative overflow-hidden space-y-6 rounded-[2rem] p-8">
           {/* Lớp nền mờ bên trong bảng */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent" />
@@ -327,6 +331,7 @@ export default function StatusPage() {
             </table>
           </div>
         </div>
+        </MotionReveal>
       </div>
     </div>
   );

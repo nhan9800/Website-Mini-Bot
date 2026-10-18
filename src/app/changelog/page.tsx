@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowRight, ArrowUpRight, Check, History, MessageCircle, Monitor, ShieldCheck } from 'lucide-react';
 import { websiteReleaseDate, websiteReleaseDateLabel, websiteReleaseTitle, websiteVersion } from '@/lib/release-info';
+import { MotionReveal } from '@/components/ui/motion-primitives';
 
 export const metadata: Metadata = {
   title: 'Nhật ký cập nhật',
@@ -108,16 +109,16 @@ export default function ChangelogPage() {
   return (
     <div className="min-h-screen pb-8 pt-10 sm:pt-16">
       <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
-        <div className="border-b border-white/10 pb-10 sm:pb-14">
+        <MotionReveal variant="mask" className="border-b border-white/10 pb-10 sm:pb-14">
           <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-mimi-green"><History size={15} /> Nhật ký Mimi</p>
           <div className="mt-6 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.14] tracking-tight text-white sm:text-6xl">Từng thay đổi.<br /><span className="text-mimi-green">Một Mimi tốt hơn.</span></h1>
             <p className="max-w-sm text-sm leading-7 text-gray-400 sm:text-base">Theo dõi những gì thay đổi trên website và cộng đồng. Phiên bản bot được ghi riêng theo trạng thái thực tế.</p>
           </div>
-        </div>
+        </MotionReveal>
 
         <div className="grid gap-10 pt-10 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-14">
-          <aside className="space-y-7 lg:sticky lg:top-28 lg:self-start">
+          <MotionReveal variant="drift" className="space-y-7 lg:sticky lg:top-28 lg:self-start">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">Website hiện tại</p>
               <p className="mt-3 font-mono text-3xl font-semibold text-white">v{websiteVersion}</p>
@@ -134,9 +135,10 @@ export default function ChangelogPage() {
               <p className="mt-3 text-xs leading-6 text-gray-400">Máy chủ hỗ trợ đã có bố cục, phân quyền và bộ emoji mới. Cấu hình máy chủ được cập nhật riêng; mã bot 1.4.0 chưa được triển khai trong đợt này.</p>
               <a href="https://discord.com/channels/1517068246493429852/1555605739949531137" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-gray-200 hover:text-mimi-green">Hướng dẫn trên Discord <ArrowUpRight size={15} /></a>
             </div>
-          </aside>
+          </MotionReveal>
 
           <div className="min-w-0">
+            <MotionReveal variant="clip" delay={0.08}>
             <article id="ban-moi-nhat" className="scroll-mt-28 overflow-hidden rounded-2xl border border-mimi-green/25 bg-surface">
               <div className="border-b border-white/10 p-6 sm:p-9">
                 <div className="flex flex-wrap items-center gap-3 text-xs">
@@ -148,14 +150,14 @@ export default function ChangelogPage() {
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400">Làm mới trải nghiệm duyệt web và hoàn thiện những phần kết nối dữ liệu, truy cập và đánh giá cộng đồng.</p>
               </div>
               <div className="divide-y divide-white/[0.07] px-6 sm:px-9">
-                {latestChanges.map((change) => (
-                  <div key={change.label} className="grid gap-3 py-6 sm:grid-cols-[100px_minmax(0,1fr)] sm:gap-6">
+                {latestChanges.map((change, index) => (
+                  <MotionReveal key={change.label} variant="flip" delay={index * 0.06} className="grid gap-3 py-6 sm:grid-cols-[100px_minmax(0,1fr)] sm:gap-6" amount={0.05}>
                     <span className="pt-1 font-mono text-[11px] uppercase tracking-wider text-mimi-green">{change.label}</span>
                     <div>
                       <h3 className="text-base font-semibold leading-6 text-white">{change.title}</h3>
                       <p className="mt-2 text-sm leading-7 text-gray-400">{change.detail}</p>
                     </div>
-                  </div>
+                  </MotionReveal>
                 ))}
               </div>
               <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:px-9">
@@ -163,13 +165,15 @@ export default function ChangelogPage() {
                 <Link href="/commands" className="inline-flex items-center gap-2 text-sm font-semibold text-mimi-green">Khám phá lệnh Mimi <ArrowRight size={16} /></Link>
               </div>
             </article>
+            </MotionReveal>
 
             <div className="mb-3 mt-14 flex items-center justify-between gap-4 border-b border-white/10 pb-5">
               <h2 className="text-lg font-semibold text-white">Những phiên bản trước</h2>
               <span className="font-mono text-[11px] uppercase tracking-wider text-gray-500">Lịch sử website</span>
             </div>
-            {history.map((release) => (
-              <article key={release.version} className="grid gap-4 border-b border-white/10 py-7 sm:grid-cols-[115px_minmax(0,1fr)] sm:gap-8">
+            {history.map((release, index) => (
+              <MotionReveal key={release.version} variant={index % 2 === 0 ? 'drift' : 'flip'} delay={Math.min(0.28, index * 0.04)} amount={0.05}>
+              <article className="grid gap-4 border-b border-white/10 py-7 sm:grid-cols-[115px_minmax(0,1fr)] sm:gap-8">
                 <div>
                   <p className="font-mono text-sm font-semibold text-gray-200">v{release.version}</p>
                   <p className="mt-2 text-xs text-gray-500">{release.date}</p>
@@ -181,6 +185,7 @@ export default function ChangelogPage() {
                   </ul>
                 </div>
               </article>
+              </MotionReveal>
             ))}
             <p className="mt-6 text-xs leading-6 text-gray-500">Các mục lịch sử mô tả thay đổi tại thời điểm phát hành. Tính năng và điều kiện truy cập hiện tại được ghi trong hướng dẫn sử dụng.</p>
           </div>
