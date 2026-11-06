@@ -12,6 +12,11 @@ export const metadata: Metadata = {
 
 const latestChanges = [
   {
+    label: 'Dừng dịch vụ',
+    title: 'Mimi Shield đã ngừng cung cấp.',
+    detail: 'Trang mua, thanh toán và kích hoạt Mimi Shield đã đóng. Liên hệ kênh hỗ trợ nếu cần trao đổi về giao dịch trước đây.',
+  },
+  {
     label: 'Chữ & dấu',
     title: 'Đổi hệ chữ cho tiếng Việt rõ và có cá tính.',
     detail: 'Bricolage Grotesque hỗ trợ tiếng Việt được dùng xuyên suốt giao diện; IBM Plex Mono dành cho mã lệnh, số liệu và trạng thái. Các dấu tiếng Việt giữ đúng hình dạng ở mọi màn hình.',
@@ -29,12 +34,7 @@ const latestChanges = [
   {
     label: 'UX/UI',
     title: 'Các route dùng chung một nhịp thị giác.',
-    detail: 'Header, card, focus ring, CTA và khoảng cách được cân lại theo cùng hệ token mint. Thêm chuyển cảnh route, skip link, sitemap/robots và lối vào Mimi Shield rõ ràng từ desktop lẫn mobile.',
-  },
-  {
-    label: 'Thanh toán',
-    title: 'Thuê Mimi Shield và kích hoạt bản quyền không bị thất lạc.',
-    detail: 'Khôi phục lối vào Bảng Giá trên điều hướng chính, đồng bộ catalog gói từ bot, giữ VietQR/manual approval, chặn mã QR placeholder và hiển thị đúng gói cũ kể cả khi thiếu planName.',
+    detail: 'Header, card, focus ring, CTA và khoảng cách được cân lại theo cùng hệ token mint. Thêm chuyển cảnh route, skip link, sitemap/robots.',
   },
 ];
 

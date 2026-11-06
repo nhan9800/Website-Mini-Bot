@@ -39,7 +39,7 @@ const faqs = [
   },
   {
     q: 'Tôi có phải mua key để dùng Mimi nhạc không?',
-    a: 'Không. Mimi nhạc và cộng đồng miễn phí, không cần key trả phí cho nhạc, autoplay, cấp độ hay minigame. Trang Bảng Giá & Key dành cho bot Mimi Shield anti-raid riêng.',
+    a: 'Không. Mimi nhạc và cộng đồng miễn phí, không cần key trả phí cho nhạc, autoplay, cấp độ hay minigame.',
   },
   {
     q: 'Cảnh báo Economy 5.000.000 xu là gì?',

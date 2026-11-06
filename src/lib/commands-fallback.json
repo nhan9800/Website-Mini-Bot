@@ -464,6 +464,25 @@
     "defaultMemberPermissions": null
   },
   {
+    "name": "category",
+    "description": "Tạo bảng danh mục và thêm nội dung, liên kết kênh",
+    "options": [
+      {
+        "name": "create",
+        "description": "Tạo tin nhắn danh mục mới",
+        "type": 1,
+        "required": false
+      },
+      {
+        "name": "add",
+        "description": "Thêm mục vào bảng danh mục đã tạo",
+        "type": 1,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": "32"
+  },
+  {
     "name": "cauca",
     "description": "Đi câu cá thư giãn nhận xu và cá vào kho đồ",
     "options": [],
@@ -500,25 +519,6 @@
       }
     ],
     "defaultMemberPermissions": "8192"
-  },
-  {
-    "name": "confess",
-    "description": "Gửi tâm sự công khai hoặc ẩn danh vào kênh Confession",
-    "options": [
-      {
-        "name": "nội_dung",
-        "description": "Nội dung muốn chia sẻ",
-        "type": 3,
-        "required": true
-      },
-      {
-        "name": "che_do",
-        "description": "Cách đăng; mặc định ẩn danh",
-        "type": 3,
-        "required": false
-      }
-    ],
-    "defaultMemberPermissions": null
   },
   {
     "name": "confession",
@@ -626,31 +626,6 @@
     "description": "Mở nông trại MIMI Farm: Trồng trọt, tưới nước, thu hoạch và làm giàu",
     "options": [],
     "defaultMemberPermissions": null
-  },
-  {
-    "name": "genkey",
-    "description": "[Admin/Owner] Tạo mã License Key bản quyền để cấp cho khách hàng",
-    "options": [
-      {
-        "name": "gói",
-        "description": "Gói bản quyền cần tạo",
-        "type": 3,
-        "required": true
-      },
-      {
-        "name": "số_lượng",
-        "description": "Số lượng mã key muốn tạo (1-20)",
-        "type": 4,
-        "required": false
-      },
-      {
-        "name": "ghi_chú",
-        "description": "Ghi chú người mua / lý do",
-        "type": 3,
-        "required": false
-      }
-    ],
-    "defaultMemberPermissions": "8"
   },
   {
     "name": "giveawaycreate",
@@ -826,19 +801,6 @@
     "defaultMemberPermissions": null
   },
   {
-    "name": "kichhoat",
-    "description": "Kích hoạt hoặc gia hạn bản quyền Anti-Raid bằng mã Key",
-    "options": [
-      {
-        "name": "mã_key",
-        "description": "Mã License Key (dạng MIMI-ANTI-XXXX-XXXX-XXXX)",
-        "type": 3,
-        "required": true
-      }
-    ],
-    "defaultMemberPermissions": null
-  },
-  {
     "name": "kick",
     "description": "Kick một thành viên khỏi server",
     "options": [
@@ -976,12 +938,6 @@
     "defaultMemberPermissions": "32"
   },
   {
-    "name": "license",
-    "description": "Xem thông tin bản quyền bảo vệ Anti-Raid của máy chủ",
-    "options": [],
-    "defaultMemberPermissions": null
-  },
-  {
     "name": "lichsugiaodich",
     "description": "Xem lịch sử biến động số dư (Give, Bán đồ, v.v.)",
     "options": [
@@ -1063,13 +1019,13 @@
     "options": [
       {
         "name": "từ_khóa",
-        "description": "Tên bài hát hoặc link (YouTube, Spotify, SoundCloud, v.v.)",
+        "description": "Tên bài, link bài hát hoặc playlist YouTube/SoundCloud (tối đa 50 bài)",
         "type": 3,
         "required": true
       },
       {
         "name": "nguồn",
-        "description": "Nguồn tìm kiếm ưu tiên (mặc định: Tự động)",
+        "description": "Nguồn tìm kiếm (mặc định: YouTube, giữ đúng nguồn khi phát)",
         "type": 3,
         "required": false
       }
@@ -1115,7 +1071,7 @@
   },
   {
     "name": "reactionrole-create",
-    "description": "Tạo bảng chọn vai trò bằng Reaction Emoji (Tính năng riêng, không ảnh hưởng /setup)",
+    "description": "Tạo bảng chọn vai trò thủ công hoặc mẫu sẵn Nam/Nữ, Game, Vùng miền",
     "options": [
       {
         "name": "kênh",
@@ -1132,6 +1088,12 @@
       {
         "name": "nội_dung",
         "description": "Mô tả hướng dẫn phía trên (Dùng \\n để xuống dòng)",
+        "type": 3,
+        "required": false
+      },
+      {
+        "name": "mẫu",
+        "description": "Tạo sẵn vai trò và bảng chọn; bỏ trống để tạo bảng Emoji thủ công",
         "type": 3,
         "required": false
       }
@@ -1671,6 +1633,18 @@
         "description": "Vai trò cần ping (tùy chọn)",
         "type": 8,
         "required": false
+      },
+      {
+        "name": "ảnh",
+        "description": "Đính kèm ảnh PNG/JPG/GIF/WebP, tối đa 10 MB",
+        "type": 11,
+        "required": false
+      },
+      {
+        "name": "link_ảnh",
+        "description": "Link HTTPS ảnh lớn trong thông báo",
+        "type": 3,
+        "required": false
       }
     ],
     "defaultMemberPermissions": "32"
@@ -1713,6 +1687,19 @@
       {
         "name": "so_lan",
         "description": "Số lần muốn tìm (1 đến 30 lần, mặc định: 10)",
+        "type": 4,
+        "required": false
+      }
+    ],
+    "defaultMemberPermissions": null
+  },
+  {
+    "name": "topinvites",
+    "description": "Xem top người mời trong event hiện tại",
+    "options": [
+      {
+        "name": "trang",
+        "description": "Trang top lời mời",
         "type": 4,
         "required": false
       }
@@ -1775,31 +1762,6 @@
       }
     ],
     "defaultMemberPermissions": "1099511627776"
-  },
-  {
-    "name": "xacnhan",
-    "description": "[Admin/Owner] Xác nhận đã nhận tiền và kích hoạt ngay bản quyền cho Server ID",
-    "options": [
-      {
-        "name": "server_id",
-        "description": "Server ID (Guild ID) của máy chủ khách hàng",
-        "type": 3,
-        "required": true
-      },
-      {
-        "name": "gói",
-        "description": "Gói bản quyền kích hoạt",
-        "type": 3,
-        "required": true
-      },
-      {
-        "name": "ghi_chú",
-        "description": "Ghi chú bill/người mua",
-        "type": 3,
-        "required": false
-      }
-    ],
-    "defaultMemberPermissions": "8"
   },
   {
     "name": "yeuthich",

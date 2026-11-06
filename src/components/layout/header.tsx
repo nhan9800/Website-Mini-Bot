@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Activity, ArrowUpRight, LayoutDashboard, LifeBuoy, Menu, Shield, Terminal, Users, X } from 'lucide-react';
+import { Activity, ArrowUpRight, LayoutDashboard, LifeBuoy, Menu, Terminal, Users, X } from 'lucide-react';
 import { env } from '@/lib/env';
 import { websiteVersion } from '@/lib/release-info';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -15,7 +15,6 @@ const navItems = [
   { href: '/partners', label: 'Cộng đồng', icon: Users },
   { href: '/status', label: 'Trạng thái', icon: Activity },
   { href: '/support', label: 'Hỗ trợ', icon: LifeBuoy },
-  { href: '/pricing', label: 'Mimi Shield', icon: Shield },
 ];
 
 export function Header() {
@@ -104,7 +103,6 @@ export function Header() {
               <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="rounded-lg bg-white/5 px-3 py-3 text-sm text-gray-200">Dashboard</Link>
               <Link href="/changelog" onClick={() => setMobileMenuOpen(false)} className="rounded-lg bg-white/5 px-3 py-3 text-sm text-gray-200">Cập nhật · v{websiteVersion}</Link>
               <Link href="/reviews" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm text-gray-400">Đánh giá</Link>
-              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm text-gray-400">Mimi Shield</Link>
             </div>
             <a href={env.NEXT_PUBLIC_BOT_INVITE_URL} target="_blank" rel="noopener noreferrer"
               onClick={() => setMobileMenuOpen(false)} className="mt-3 flex items-center justify-between rounded-lg bg-mimi-green px-4 py-3 text-sm font-bold text-[var(--accent-text)] sm:hidden">

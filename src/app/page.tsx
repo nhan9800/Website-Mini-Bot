@@ -15,7 +15,6 @@ import {
   Music2,
   Rocket,
   Bot,
-  Shield,
   Infinity,
   Languages,
   Database,
@@ -41,7 +40,7 @@ const faqs = [
   {
     icon: Bot,
     q: 'MIMI có miễn phí không?',
-    a: 'Có. Mimi nhạc và cộng đồng miễn phí, bao gồm nghe nhạc, autoplay, cấp độ, minigame, xác thực và dashboard. Mimi Shield là bot anti-raid riêng, có các gói bản quyền riêng.',
+    a: 'Có. Mimi nhạc và cộng đồng miễn phí, bao gồm nghe nhạc, autoplay, cấp độ, minigame, xác thực và dashboard.',
   },
   {
     icon: Music2,
@@ -157,26 +156,6 @@ export default function HomePage() {
       <section id="dich-vu" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <ServicesStory />
-
-          <MotionReveal variant="drift" delay={0.18} className="mt-6">
-            <div className="shield-cta group flex flex-col gap-6 rounded-[2rem] border border-mimi-green/25 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-              <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-mimi-green/30 bg-mimi-green/10 text-mimi-green shadow-glow">
-                  <Shield className="h-6 w-6" />
-                </span>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-mimi-green">Mimi Shield · Anti-Raid</p>
-                  <h3 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Bảo vệ máy chủ trước khi sự cố xảy ra.</h3>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Thuê bot anti-raid riêng, chọn thời hạn, thanh toán VietQR và kích hoạt theo Server ID trong cùng một luồng.</p>
-                </div>
-              </div>
-              <Magnetic strength={0.1}>
-                <Link href="/pricing" className="btn-secondary shrink-0 !px-5 !py-3 !text-sm">
-                  Xem gói &amp; thanh toán <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Magnetic>
-            </div>
-          </MotionReveal>
         </div>
       </section>
 

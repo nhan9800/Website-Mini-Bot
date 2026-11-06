@@ -10,7 +10,6 @@ const exploreLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/status', label: 'Trạng thái hệ thống' },
   { href: '/partners', label: 'Cộng đồng' },
-  { href: '/pricing', label: 'Thuê Mimi Shield' },
 ];
 
 const resourceLinks = [
@@ -44,7 +43,6 @@ export function Footer() {
             <a href={env.NEXT_PUBLIC_DISCORD_SUPPORT_URL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-mimi-green hover:text-mimi-green-bright">
               Tham gia máy chủ hỗ trợ <ArrowUpRight size={16} />
             </a>
-            <Link href="/pricing" className="mt-5 block text-xs leading-6 text-gray-400 hover:text-gray-200">Mimi Shield · Bot bảo vệ riêng, có các gói bản quyền</Link>
           </div>
         </div>
         <div className="mt-12 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-xs text-gray-400 sm:flex-row">
