@@ -2,11 +2,11 @@
 
 ## Không gian 3D 2.6.0
 
-Robot có animation từ bộ ví dụ Three.js, đĩa nhạc và tai nghe GLB được đóng gói local. Có chọn model, kéo xoay, pause và Wave/Dance. Khi giảm chuyển động, cảnh giữ trạng thái tĩnh; rời màn hình hoặc đổi tab thì dừng vòng lặp. Thiết bị không có WebGL 2 dùng ảnh minh họa. Nguồn/license và quyết định thiết kế: [docs/WEBSITE-3D.md](docs/WEBSITE-3D.md), [public/models/sources.json](public/models/sources.json). Không thay route, OAuth, khóa dashboard, dữ liệu review hay thanh toán Mimi Shield.
+Robot có animation từ bộ ví dụ Three.js, đĩa nhạc và tai nghe GLB được đóng gói local. Có chọn model, kéo xoay, pause và Wave/Dance. Khi giảm chuyển động, cảnh giữ trạng thái tĩnh; rời màn hình hoặc đổi tab thì dừng vòng lặp. Thiết bị không có WebGL 2 dùng ảnh minh họa. Nguồn/license và quyết định thiết kế: [docs/WEBSITE-3D.md](docs/WEBSITE-3D.md), [public/models/sources.json](public/models/sources.json). Không thay route, OAuth, khóa dashboard, dữ liệu review.
 
 ## Môi trường
 
-Yêu cầu Node.js **22.12.0 trở lên** ở máy phát triển, CI và nodevenv hosting. Bản này dùng Next.js 15.5.27, React 19.3, React Three Fiber 9 và Drei 10 theo [hướng dẫn App Router của Next.js 15](https://nextjs.org/docs/app/guides/upgrading/version-15). Giữ giao diện và tính năng hiện có; tham số route được chuyển sang API bất đồng bộ của Next.js 15. Website 2.5.0 đã triển khai ngày 17/10/2026; `/api/version` xác nhận source `271a357`, build run 82. cPanel Passenger đã chuyển sang Node 22.23.0.
+Yêu cầu Node.js **22.12.0 trở lên** ở máy phát triển, CI và nodevenv hosting. Bản này dùng Next.js 15.5.28, React 19.3, React Three Fiber 9 và Drei 10 theo [hướng dẫn App Router của Next.js 15](https://nextjs.org/docs/app/guides/upgrading/version-15). Giữ giao diện và tính năng hiện có; tham số route được chuyển sang API bất đồng bộ của Next.js 15. Website 2.5.0 đã triển khai ngày 17/10/2026; `/api/version` xác nhận source `271a357`, build run 82. cPanel Passenger đã chuyển sang Node 22.23.0.
 
 Đợt 02/10/2026 làm mới header/footer, trang chủ, nhật ký cập nhật và hướng dẫn cộng đồng; hỗ trợ giao diện sáng/tối, giảm chuyển động và phân biệt rõ Mimi Bot miễn phí với Mimi Shield trả phí. `src/lib/release-info.ts` là nguồn phiên bản/ngày phát hành chung; `package.json`, header, nhật ký và `/api/version` phải đồng bộ. API phiên bản vẫn trả metadata commit bản dựng thật để kiểm chứng deploy.
 
@@ -18,7 +18,6 @@ Sao chép `.env.example` thành `.env.local` ở máy phát triển hoặc đặ
 
 - `MIMI_API_BASE` và `MIMI_API_TOKEN`: kết nối tới Internal API của bot; token phải khớp phía bot.
 - `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`: đăng nhập Discord. Khi thiếu cấu hình, API đăng nhập trả trạng thái 503. Khoá ký cần một giá trị ngẫu nhiên riêng cho môi trường triển khai.
-- `ADMIN_SECRET`: khoá riêng của bảng duyệt Admin, được web kiểm tra trước khi chuyển yêu cầu tới bot. Không đặt biến này thì chức năng Admin bị vô hiệu hóa.
 - `MIMI_FEEDBACK_STORE`: đường dẫn tuyệt đối đến kho đánh giá bền vững, ngoài thư mục triển khai. Mặc định dùng `data/mimi_feedback_store.json`; cần giữ thư mục `data/` qua các lần cập nhật và sao lưu theo vận hành hosting.
 
 `npm run build` nạp `.env.local` trước bước migration, giống lúc Next.js khởi động. Lệnh CLI migration không cần khởi chạy website. `npm run build` chạy bước bảo toàn đánh giá thật trong kho `.next` cũ trước khi rebuild. Dữ liệu mẫu bị loại; cờ xác minh do client tự khai trong bản cũ không được giữ. Kho mới đã có sẽ không bị ghi đè. Build dừng nếu kho cũ bị hỏng để tránh làm mất dữ liệu. Khi triển khai artifact build sẵn vào hosting cũ, chạy `node scripts/migrate-feedback.cjs` trên host trước khi thay thế `.next`, hoặc sao lưu/chuyển kho đánh giá sang đường dẫn `MIMI_FEEDBACK_STORE`.

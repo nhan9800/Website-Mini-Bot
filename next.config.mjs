@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [{ source: '/pricing', destination: '/changelog', permanent: true }];
+  },
   // Web được build ở máy dev/CI, artifact .next được chuyển lên hosting.
   // Trên cPanel Nhân Hòa KHÔNG chạy `next build` nữa (2GB RAM sẽ bị OOM Killed),
   // cPanel pull artifact, npm ci và migration trước khi restart Passenger.

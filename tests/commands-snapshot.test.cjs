@@ -6,13 +6,13 @@ const test = require('node:test');
 const catalog = require('../src/lib/commands-fallback.json');
 
 test('Danh mục dự phòng có tên và tùy chọn lệnh thật của Mimi 1.4.0', () => {
-  assert.equal(catalog.length, 99);
-  assert.equal(new Set(catalog.map(command => command.name)).size, 99);
+  assert.equal(catalog.length, 96);
+  assert.equal(new Set(catalog.map(command => command.name)).size, catalog.length);
   for (const name of ['play', 'queue', 'leave', 'setupverify', 'setupemoji', 'addemoji', 'help']) {
     assert.ok(catalog.some(command => command.name === name), `Có /${name}`);
   }
   assert.equal(catalog.find(command => command.name === 'play').options[0].name, 'từ_khóa');
-  for (const name of ['pause', 'resume', 'skip', 'volume', 'loop', 'lyrics', 'attendance', 'config']) {
+  for (const name of ['pause', 'resume', 'skip', 'volume', 'loop', 'lyrics', 'attendance', 'config', 'license', 'kichhoat', 'xacnhan', 'genkey']) {
     assert.ok(!catalog.some(command => command.name === name), `Không tạo lệnh /${name}`);
   }
 });

@@ -39,15 +39,6 @@ test('Soundwave gắn class chạy lại khi reduced-motion override animation',
   assert.match(soundwave, /'--soundwave-delay'/);
 });
 
-test('StatusModal dùng animation của dialog chung, không phụ thuộc utility plugin chưa cài', () => {
-  const modal = fs.readFileSync(path.resolve(__dirname, '../src/components/ui/status-modal.tsx'), 'utf8');
-  const shell = fs.readFileSync(path.resolve(__dirname, '../src/components/ui/modal-shell.tsx'), 'utf8');
-  assert.doesNotMatch(modal, /animate-in|zoom-in-95/);
-  assert.match(modal, /<ModalShell\b/);
-  assert.match(shell, /<AnimatePresence\b/);
-  assert.match(shell, /<motion\.div\b[\s\S]*?exit=\{\{/);
-});
-
 test('Branded motion không bị OS reduced-motion tắt toàn cục', () => {
   const css = fs.readFileSync(path.resolve(__dirname, '../src/app/globals.css'), 'utf8');
   assert.doesNotMatch(css, /\*\s*,\s*\*::before\s*,\s*\*::after\s*\{\s*animation:\s*none\s*!important/);
@@ -57,7 +48,6 @@ test('Branded motion không bị OS reduced-motion tắt toàn cục', () => {
     '../src/components/ui/tilt-card.tsx',
     '../src/components/music/web-player.tsx',
     '../src/components/ui/notification-provider.tsx',
-    '../src/app/pricing/page.tsx',
   ]) {
     const source = fs.readFileSync(path.resolve(__dirname, file), 'utf8');
     assert.doesNotMatch(source, /useReducedMotion|reducedMotion/);

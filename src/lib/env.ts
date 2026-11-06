@@ -10,9 +10,6 @@ export const env = {
   NEXT_PUBLIC_MIMI_BOT_INVITE_URL:
     process.env.NEXT_PUBLIC_MIMI_BOT_INVITE_URL ||
     'https://discord.com/oauth2/authorize?client_id=1516603522584416376&permissions=8&integration_type=0&scope=bot',
-  NEXT_PUBLIC_SHIELD_BOT_INVITE_URL:
-    process.env.NEXT_PUBLIC_SHIELD_BOT_INVITE_URL ||
-    'https://discord.com/oauth2/authorize?client_id=1539527939723497473&permissions=8&integration_type=0&scope=bot',
   NEXT_PUBLIC_BOT_INVITE_URL:
     process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
     'https://discord.com/oauth2/authorize?client_id=1516603522584416376&permissions=8&integration_type=0&scope=bot',

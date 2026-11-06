@@ -302,7 +302,14 @@
     "configFileName": "next.config.mjs",
     "turbopack": {
       "root": "/home/runner/work/Website-Mini-Bot/Website-Mini-Bot"
-    }
+    },
+    "_originalRedirects": [
+      {
+        "source": "/pricing",
+        "destination": "/changelog",
+        "permanent": true
+      }
+    ]
   },
   "appDir": "/home/runner/work/Website-Mini-Bot/Website-Mini-Bot",
   "relativeAppDir": "",

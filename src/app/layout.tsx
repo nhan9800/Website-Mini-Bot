@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     template: "%s · MIMI BOT",
   },
   description:
-    "Mimi nhạc và cộng đồng miễn phí cho máy chủ Discord: nghe nhạc, hàng chờ, xác thực theo cấu hình, cấp độ và dashboard dùng khóa truy cập. Mimi Shield là bot anti-raid riêng.",
+    "Mimi nhạc và cộng đồng miễn phí cho máy chủ Discord: nghe nhạc, hàng chờ, xác thực theo cấu hình, cấp độ và dashboard dùng khóa truy cập.",
   keywords: [
     "Discord bot",
     "music bot",

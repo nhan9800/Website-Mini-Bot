@@ -10,6 +10,12 @@
       "internal": true,
       "statusCode": 308,
       "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/changelog",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/pricing(?:/)?$"
     }
   ],
   "headers": [],
@@ -96,12 +102,6 @@
       "regex": "^/partners(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/partners(?:/)?$"
-    },
-    {
-      "page": "/pricing",
-      "regex": "^/pricing(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/pricing(?:/)?$"
     },
     {
       "page": "/privacy",

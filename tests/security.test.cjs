@@ -61,26 +61,6 @@ test('Cấu hình guild từ chối JSON không phải đối tượng trước 
   assert.equal(Object.hasOwn(calls[0].init.body, 'token'), false);
 });
 
-test('Admin proxy từ chối mã tuỳ ý và không gửi credential client tới bot', async () => {
-  const calls = [];
-  const api = {
-    async callMimiApi(endpoint, init) { calls.push({ endpoint, init }); return { ok: true, data: { ok: true } }; },
-    toRouteResponse(result) { return Response.json(result.data); },
-  };
-  const noSecret = loadTS('src/app/api/license/admin/confirm/route.ts', { '@/lib/mimi-api': api });
-  assert.equal((await noSecret.POST(request({ secret: 'anything' }))).status, 503);
-  const configured = loadTS('src/app/api/license/admin/confirm/route.ts', { '@/lib/mimi-api': api }, { ADMIN_SECRET: 'test-admin-key' });
-  for (const secret of ['anything', '', 'test-admin-kez']) {
-    assert.equal((await configured.POST(request({ secret }))).status, 401);
-  }
-  assert.equal(calls.length, 0);
-  assert.equal((await configured.POST(request({ secret: 'test-admin-key', guildId: '123', plan: 'pro', action: 'confirm' }))).status, 200);
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].init.method, 'POST');
-  assert.equal(calls[0].init.body.guildId, '123');
-  assert.equal(Object.hasOwn(calls[0].init.body, 'secret'), false);
-});
-
 test('Đăng nhập Discord dừng khi thiếu khoá ký hoặc OAuth và không có khoá mặc định', async () => {
   let handled = 0;
   const mock = { 'next-auth': () => async () => { handled++; return Response.json({ ok: true }); }, '@/lib/auth-options': { authOptions: {} } };
